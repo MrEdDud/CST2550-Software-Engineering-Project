@@ -1,0 +1,6 @@
+{
+  // Serve the app's static files folder when using Live Server
+  "liveServer.settings.root": "/CST2550Project/wwwroot",
+  "liveServer.settings.port": 5500,
+  "liveServer.settings.useLocalIp": false
+}
