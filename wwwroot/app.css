@@ -3,7 +3,7 @@
 ========================================================= */
 
 :root {
-    --bg: #0b1020;
+    --bg: #FF0022;
     --card: #121a33;
     --card2: #0d1430;
     --text: #e9ecff;
@@ -16,24 +16,17 @@
     --shadow: 0 18px 40px rgba(0,0,0,0.35);
 }
 
-* {
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-}
+* { box-sizing: border-box; }
 
 body {
+    height: 100%;
     margin: 0;
     color: var(--text);
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: radial-gradient(1200px 600px at 20% 10%, #1b2a6b 0%, var(--bg) 55%);
+    background: radial-gradient(100% 100% at 20% 10%, #F55536 0%, var(--bg) 55%);
 }
 
-a {
-    color: inherit;
-}
+a { color: inherit; }
 
 /* =========================================================
    APP SHELL (No sidebar) - used by MainLayout.razor
@@ -54,9 +47,8 @@ a {
     align-items: center;
     gap: 18px;
     padding: 14px 18px;
-    background: rgba(12, 18, 40, 0.75);
     border-bottom: 1px solid var(--border2);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
 }
 
 .brand {
@@ -137,8 +129,8 @@ a {
 /* Card */
 .login-card {
     width: 100%;
-    max-width: 420px;
-    background: rgba(18, 26, 51, 0.92);
+    max-width: 500px;
+    backdrop-filter: blur(20px);
     border: 1px solid var(--border2);
     border-radius: 18px;
     padding: 24px;
@@ -160,12 +152,16 @@ a {
 }
 
 /* Form */
+form {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
 .form-group {
     margin-bottom: 14px;
 }
 
 label {
-    display: block;
     margin: 0 0 6px;
     font-size: 13px;
     color: var(--muted);
@@ -174,15 +170,15 @@ label {
 /* Inputs */
 .form-control,
 input.form-control {
-    width: 100%;
+    width: 90%;
     padding: 12px 12px;
     border-radius: 12px;
     border: 1px solid var(--border);
-    background: var(--card2);
-    color: var(--text);
+    background: #FFA5AB;
+    backdrop-filter: blur(20px);
+    color: white;
     outline: none;
 }
-
     .form-control:focus {
         border-color: rgba(108,99,255,0.75);
     }
@@ -202,7 +198,6 @@ input.form-control {
     background: rgba(255,77,109,0.12);
     border: 1px solid rgba(255,77,109,0.35);
 }
-
     .validation-summary-errors ul {
         margin: 0;
         padding-left: 16px;
@@ -216,13 +211,14 @@ input.form-control {
     padding: 12px;
     border: none;
     border-radius: 12px;
-    background: var(--accent);
-    color: white;
-    font-weight: 800;
+    background: #FFA5AB;
+    color: var(--text);
+    font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
+    box-shadow: var(--shadow);
+    justify-self: center;
 }
-
     .btn-login:hover {
         filter: brightness(1.05);
     }
@@ -234,7 +230,6 @@ input.form-control {
     border-radius: 12px;
     font-size: 13px;
 }
-
     .message.error {
         background: rgba(255,77,109,0.12);
         border: 1px solid rgba(255,77,109,0.35);
@@ -253,14 +248,13 @@ input.form-control {
     font-size: 14px;
     color: var(--muted);
     text-align: center;
-}
 
+}
     .register-link a {
         color: var(--text);
         text-decoration: none;
         border-bottom: 1px dashed rgba(255,255,255,0.4);
     }
-
         .register-link a:hover {
             border-bottom-color: transparent;
         }
