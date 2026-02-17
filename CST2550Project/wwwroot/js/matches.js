@@ -267,6 +267,10 @@ async function handleSendMessage(event) {
     const content = input.value.trim();
     
     if (!content) return;
+    if (content.length > 500) {
+        showToast('Message is too long (max 500 characters)', 'error');
+        return;
+    }
     
     sendBtn.disabled = true;
     sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';

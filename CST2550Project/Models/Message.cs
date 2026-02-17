@@ -1,3 +1,4 @@
+// single chat message within a match
 namespace CST2550Project.Models
 {
     public class Message

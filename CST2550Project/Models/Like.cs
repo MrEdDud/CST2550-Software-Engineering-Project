@@ -1,3 +1,4 @@
+// tracks when a user likes/super-likes another user
 namespace CST2550Project.Models
 {
     public class Like

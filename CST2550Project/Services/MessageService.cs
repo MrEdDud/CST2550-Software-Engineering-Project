@@ -24,6 +24,10 @@ namespace CST2550Project.Services
 
             if (match == null) return null;
 
+            // trim and validate message content
+            var content = dto.Content?.Trim();
+            if (string.IsNullOrEmpty(content) || content.Length > 500) return null;
+
             var senderProfile = await _context.Profiles
                 .FirstOrDefaultAsync(p => p.UserId == senderId);
 
@@ -31,7 +35,7 @@ namespace CST2550Project.Services
             {
                 MatchId = dto.MatchId,
                 SenderId = senderId,
-                Content = dto.Content
+                Content = content
             };
 
             _context.Messages.Add(message);

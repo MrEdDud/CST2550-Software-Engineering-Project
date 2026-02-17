@@ -1,3 +1,4 @@
+// mutual match between two users
 namespace CST2550Project.Models
 {
     public class Match

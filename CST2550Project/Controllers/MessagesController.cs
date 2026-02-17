@@ -1,3 +1,4 @@
+// message endpoints - send, get chat history, unread count, delete
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;

@@ -1,3 +1,4 @@
+// user account - login credentials and timestamps
 using System.ComponentModel.DataAnnotations;
 
 namespace CST2550Project.Models

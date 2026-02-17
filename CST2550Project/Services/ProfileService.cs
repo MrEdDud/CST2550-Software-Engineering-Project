@@ -47,17 +47,18 @@ namespace CST2550Project.Services
 
             if (dto.Username != null && profile.User != null)
             {
+                var trimmed = dto.Username.Trim();
                 var exists = await _context.Users
-                    .AnyAsync(u => u.Username == dto.Username && u.Id != userId);
+                    .AnyAsync(u => u.Username == trimmed && u.Id != userId);
                 if (exists)
                     throw new InvalidOperationException("Username already taken");
-                profile.User.Username = dto.Username;
+                profile.User.Username = trimmed;
             }
 
-            if (dto.Name != null) profile.Name = dto.Name;
+            if (dto.Name != null) profile.Name = dto.Name.Trim();
             if (dto.Age.HasValue) profile.Age = dto.Age.Value;
-            if (dto.Bio != null) profile.Bio = dto.Bio;
-            if (dto.Location != null) profile.Location = dto.Location;
+            if (dto.Bio != null) profile.Bio = dto.Bio.Trim();
+            if (dto.Location != null) profile.Location = dto.Location.Trim();
             if (dto.ProfilePhotoUrl != null) profile.ProfilePhotoUrl = dto.ProfilePhotoUrl;
             if (dto.Photos != null) profile.Photos = dto.Photos;
             if (dto.Interests != null) profile.Interests = dto.Interests;

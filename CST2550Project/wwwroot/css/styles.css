@@ -1,4 +1,6 @@
+/* styles.css - main stylesheet for Zelove dating app */
 
+/* colour palette and spacing variables */
 :root {
     --primary: #e098af;
     --primary-dark: #c67b92;
@@ -503,6 +505,7 @@ body.app-body {
     box-shadow: var(--shadow-md);
 }
 
+/* navigation bar */
 .nav-brand {
     display: flex;
     align-items: center;
@@ -624,9 +627,8 @@ body.auth-page {
     padding: 0;
 }
 
+/* login and register pages */
 .auth-container {
-    display: flex;
-    min-height: 100vh;
     height: 100vh;
     overflow: hidden !important;
 }
@@ -1069,6 +1071,7 @@ body.register-page .auth-container {
     padding: var(--space-4) 0;
 }
 
+/* swipe cards */
 .card-stack {
     position: relative;
     height: 560px;
@@ -1557,6 +1560,7 @@ body.register-page .auth-container {
     padding: var(--space-2);
 }
 
+/* matches list and chat */
 .match-item {
     display: flex;
     align-items: center;
@@ -1812,6 +1816,7 @@ body.register-page .auth-container {
     color: var(--danger);
 }
 
+/* chat messages and bubbles */
 .chat-messages {
     flex: 1;
     padding: var(--space-6);
@@ -2021,6 +2026,7 @@ body.register-page .auth-container {
     margin: 0 auto;
 }
 
+/* profile editing page */
 .profile-header {
     background: var(--white);
     border-radius: var(--radius-2xl);

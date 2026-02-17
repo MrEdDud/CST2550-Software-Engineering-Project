@@ -1088,6 +1088,7 @@ function showHelp() {
 
 // settings tab click handlers for gender/filter buttons
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.gender-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');

@@ -1,3 +1,4 @@
+// user profile - personal info, appearance, preferences
 using System.ComponentModel.DataAnnotations;
 
 namespace CST2550Project.Models
