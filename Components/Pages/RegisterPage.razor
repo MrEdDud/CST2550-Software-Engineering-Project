@@ -8,98 +8,130 @@
     - Shows both error and success messages
 -->
 
-<div class="login-container">
-    <div class="login-card">
 
-        <!-- Branding -->
-        <h2 class="app-title"> Pairly</h2>
-        <p class="subtitle">Create your account</p>
+                <div class="login-container">
+                    <div class="login-card">
 
-        <EditForm Model="@registerData" OnValidSubmit="@HandleRegister">
+                        <!-- Branding -->
+                        <h2 class="app-title"> Pairly</h2>
+                        <p class="subtitle">Create your account</p>
 
-            <!-- Enables DataAnnotations validation -->
-            <DataAnnotationsValidator />
+                        <EditForm Model="@registerData" OnValidSubmit="@HandleRegister">
 
-            <!-- Shows validation summary (top-level errors) -->
-            <ValidationSummary />
+                            <!-- Enables DataAnnotations validation -->
+                            <DataAnnotationsValidator />
 
-            <!-- FIRST NAME -->
-            <div class="form-group">
-                <label>First Name</label>
-                <InputText class="form-control"
-                           @bind-Value="registerData.FirstName"
-                           placeholder="e.g., Al" />
-                <ValidationMessage For="@(() => registerData.FirstName)" />
-            </div>
+                            <!-- Shows validation summary (top-level errors) -->
+                            <ValidationSummary />
 
-            <!-- LAST NAME -->
-            <div class="form-group">
-                <label>Last Name</label>
-                <InputText class="form-control"
-                           @bind-Value="registerData.LastName"
-                           placeholder="e.g., Saiyed" />
-                <ValidationMessage For="@(() => registerData.LastName)" />
-            </div>
+                            <div class="all-inputs">
 
-            <!-- EMAIL -->
-            <div class="form-group">
-                <label>Email</label>
-                <InputText class="form-control"
-                           @bind-Value="registerData.Email"
-                           placeholder="you@university.ac.uk" />
-                <ValidationMessage For="@(() => registerData.Email)" />
-            </div>
+                                <!-- FIRST NAME -->
+                                <div class="form-group">
+                                    <label>First Name *</label>
+                                    <InputText class="form-control"
+                                                @bind-Value="registerData.FirstName"
+                                                placeholder="Al" />
+                                    <ValidationMessage For="@(() => registerData.FirstName)" />
+                                </div>
 
-            <!-- PASSWORD -->
-            <div class="form-group">
-                <label>Password</label>
-                <InputText type="password"
-                           class="form-control"
-                           @bind-Value="registerData.Password"
-                           placeholder="Minimum 6 characters" />
-                <ValidationMessage For="@(() => registerData.Password)" />
-            </div>
+                                <!-- LAST NAME -->
+                                <div class="form-group">
+                                    <label>Last Name (optional)</label>
+                                    <InputText class="form-control"
+                                                @bind-Value="registerData.LastName"
+                                                placeholder="Saiyed" />
+                                    <ValidationMessage For="@(() => registerData.LastName)" />
+                                </div>
 
-            <!-- CONFIRM PASSWORD -->
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <InputText type="password"
-                           class="form-control"
-                           @bind-Value="registerData.ConfirmPassword"
-                           placeholder="Re-enter password" />
-                <ValidationMessage For="@(() => registerData.ConfirmPassword)" />
-            </div>
+                                <!-- EMAIL -->
+                                <div class="form-group">
+                                    <label>Email *</label>
+                                    <InputText class="form-control"
+                                                @bind-Value="registerData.Email"
+                                                placeholder="you@email.com" />
+                                    <ValidationMessage For="@(() => registerData.Email)" />
+                                </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn-login">
-                Register
-            </button>
+                                <!-- AGE -->
+                                <div class="form-group">
+                                    <label>Age *</label>
+                                    <InputText class="form-control"
+                                                @bind-Value="registerData.Age"
+                                                placeholder="DD/MM/YYYY" />
+                                    <ValidationMessage For="@(() => registerData.Age)" />
+                                </div>
 
-        </EditForm>
+                                <!-- PASSWORD -->
+                                <div class="form-group">
+                                    <label>Password *</label>
+                                    <InputText type="password"
+                                                class="form-control"
+                                                @bind-Value="registerData.Password"
+                                                placeholder="Minimum 6 characters" />
+                                    <ValidationMessage For="@(() => registerData.Password)" />
+                                </div>
 
-        <!-- Custom Error Message (for password mismatch) -->
-        @if (!string.IsNullOrWhiteSpace(errorMessage))
-        {
-            <div class="message error">
-                @errorMessage
-            </div>
-        }
+                                <!-- CONFIRM PASSWORD -->
+                                <div class="form-group">
+                                    <label>Confirm Password *</label>
+                                    <InputText type="password"
+                                                class="form-control"
+                                                @bind-Value="registerData.ConfirmPassword"
+                                                placeholder="Re-enter password" />
+                                    <ValidationMessage For="@(() => registerData.ConfirmPassword)" />
+                                </div>
 
-        <!-- Success Message -->
-        @if (!string.IsNullOrWhiteSpace(successMessage))
-        {
-            <div class="message success">
-                @successMessage
-            </div>
-        }
+                                <!-- PHONE NUMBER -->
+                                <div class="form-group">
+                                    <label>Phone (optional)</label>
+                                    <InputText class="form-control"
+                                                @bind-Value="registerData.Phone"
+                                                placeholder="07123456789" />
+                                    <ValidationMessage For="@(() => registerData.Phone)" />
+                                </div>
 
-        <!-- Link back to login -->
-        <div class="register-link">
-            Already have an account?
-            <a href="/login">Log in</a>
-        </div>
+                                <!-- ADDRESS -->
+                                <div class="form-group">
+                                    <label>Address (optional)</label>
+                                    <InputText class="form-control"
+                                                @bind-Value="registerData.Address"
+                                                placeholder="123 Street Lane" />
+                                    <ValidationMessage For="@(() => registerData.Address)" />
+                                </div>
 
+                                <!-- Submit Button (inside grid so it can span columns and be centered) -->
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-login">Register</button>
+                                </div>
+
+                            </div>
+
+                        </EditForm>
+
+                    </div>
+                </div>
+
+<!-- Custom Error Message (for password mismatch) -->
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="message error">
+        @errorMessage
     </div>
+}
+
+<!-- Success Message -->
+@if (!string.IsNullOrWhiteSpace(successMessage))
+{
+    <div class="message success">
+        @successMessage
+    </div>
+}
+
+<!-- Link back to login -->
+<div class="register-link">
+    Already have an account?
+    <a href="/login">Log in</a>
 </div>
 
 @code {
@@ -115,7 +147,6 @@
         [MinLength(2, ErrorMessage = "First name must be at least 2 characters.")]
         public string FirstName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Last name is required.")]
         [MinLength(2, ErrorMessage = "Last name must be at least 2 characters.")]
         public string LastName { get; set; } = string.Empty;
 
@@ -129,6 +160,15 @@
 
         [Required(ErrorMessage = "Confirm password is required.")]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        // FIX: Add Phone and Address properties so bindings compile
+        [Phone(ErrorMessage = "Enter a valid phone number.")]
+        public string Phone { get; set; } = string.Empty;
+
+        public string Address { get; set; } = string.Empty;
+
+		[Required(ErrorMessage = "Age is required.")]
+		public string Age { get; set; } = string.Empty;
     }
 
     // Instance of form model

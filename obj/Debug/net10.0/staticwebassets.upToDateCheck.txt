@@ -1,4 +1,3 @@
-wwwroot\app.css
 wwwroot\css\site.css
 wwwroot\favicon.ico
 wwwroot\favicon.png
@@ -63,10 +62,10 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\app.css
 Components\Layout\ReconnectModal.razor.js
 C:\Users\eduard\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\build\..\_framework\blazor.web.js
 C:\Users\eduard\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\build\..\_framework\blazor.server.js
-C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\app.css
 C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\css\site.css
 C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\favicon.ico
 C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\js\site.js
@@ -132,3 +131,4 @@ C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\lib\jquery\LICENSE.txt
 C:\Users\eduard\source\repos\CST2550\CST2550\Components\Layout\ReconnectModal.razor.js
 C:\Users\eduard\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\_framework\blazor.web.js
 C:\Users\eduard\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\_framework\blazor.server.js
+C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\app.css
