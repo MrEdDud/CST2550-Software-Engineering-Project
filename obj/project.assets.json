@@ -51,11 +51,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\CST2550.csproj",
-      "projectName": "CST2550",
-      "projectPath": "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\CST2550.csproj",
+      "projectUniqueName": "C:\\Users\\eduard\\source\\repos\\CST2550Project\\CST2550Project\\CST2550Project.csproj",
+      "projectName": "CST2550Project",
+      "projectPath": "C:\\Users\\eduard\\source\\repos\\CST2550Project\\CST2550Project\\CST2550Project.csproj",
       "packagesPath": "C:\\Users\\eduard\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\obj\\",
+      "outputPath": "C:\\Users\\eduard\\source\\repos\\CST2550Project\\CST2550Project\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

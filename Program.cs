@@ -1,27 +1,98 @@
-using CST2550.Components;
+// Program.cs - app startup, DI setup, middleware pipeline
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using CST2550Project.Data;
+using CST2550Project.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+// sqlite database
+builder.Services.AddDbContext<DatingAppContext>(options =>
+    options.UseSqlite("Data Source=datingapp.db"));
+
+// register services for dependency injection
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<MatchService>();
+builder.Services.AddScoped<MessageService>();
+
+// jwt auth config
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "SuperSecretKeyForDatingApp2024!@#$%^&*()";
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "DatingApp",
+            ValidAudience = builder.Configuration["Jwt:Audience"] ?? "DatingApp",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// create db and seed test data on first run
+using (var scope = app.Services.CreateScope())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    var db = scope.ServiceProvider.GetRequiredService<DatingAppContext>();
+    db.Database.EnsureCreated();
+    await db.SeedDataAsync();
 }
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseHttpsRedirection();
 
-app.UseAntiforgery();
+// serve static frontend files from wwwroot
+var defaultFileOptions = new DefaultFilesOptions();
+defaultFileOptions.DefaultFileNames.Clear();
+defaultFileOptions.DefaultFileNames.Add("index.html");
+defaultFileOptions.DefaultFileNames.Add("login.html");
+app.UseDefaultFiles(defaultFileOptions);
+app.UseStaticFiles();
 
-app.MapStaticAssets();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+app.UseCors("AllowFrontend");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.MapFallbackToFile("index.html");
+
+Console.WriteLine("🚀 Dating App API is running!");
+Console.WriteLine("📖 API Documentation: https://localhost:5001/swagger");
+Console.WriteLine("💝 Frontend: https://localhost:5001");
 
 app.Run();
