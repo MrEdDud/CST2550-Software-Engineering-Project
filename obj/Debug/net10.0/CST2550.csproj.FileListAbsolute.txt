@@ -23,9 +23,7 @@ C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\scopedcss\Compone
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\scopedcss\Components\Layout\ReconnectModal.razor.rz.scp.css
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\scopedcss\bundle\CST2550.styles.css
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\scopedcss\projectbundle\CST2550.bundle.scp.css
-C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\056x00e925-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\lee3qe06af-{0}-61n19gt1b8-61n19gt1b8.gz
-C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\5epzuzod19-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\agtot1kpy5-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\9jd2et94uh-{0}-aexeepp0ev-aexeepp0ev.gz
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\3w55n7voiv-{0}-ausgxo2sd3-ausgxo2sd3.gz
@@ -63,7 +61,6 @@ C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\staticwebassets.b
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\staticwebassets.development.json
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\swae.build.ex.cache
-C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\CST2550.dll
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\refint\CST2550.dll
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\CST2550.pdb
@@ -102,4 +99,6 @@ C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\d883yx
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\r1sadivyqy-{0}-9vr69e8ynj-9vr69e8ynj.gz
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\25fqeol2g6-{0}-75fpbljebv-75fpbljebv.gz
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\0yxiv8ucw0-{0}-75fpbljebv-75fpbljebv.gz
-C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\kenmdum0ly-{0}-zudjw1i9nf-zudjw1i9nf.gz
+c:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\fsassykwc3-{0}-6782e1jtl0-6782e1jtl0.gz
+c:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\5epzuzod19-{0}-3r8b2a0bt1-3r8b2a0bt1.gz
+c:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\056x00e925-{0}-29e5e6fdk1-29e5e6fdk1.gz

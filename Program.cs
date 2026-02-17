@@ -1,4 +1,5 @@
 using CST2550.Components;
+// using CST2550.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+// app.UseStaticFiles(); // New line of code from lecture
 
 app.UseAntiforgery();
 
