@@ -1,3 +1,4 @@
+// swipe processing, mutual match detection, likes tracking
 using Microsoft.EntityFrameworkCore;
 using CST2550Project.Models;
 using CST2550Project.DTOs;
@@ -173,10 +174,6 @@ namespace CST2550Project.Services
                 Occupation = p.Occupation,
                 Hobbies = p.Hobbies
             };
-        }
-    }
-}
-            }).ToList();
         }
     }
 }

@@ -1,3 +1,4 @@
+// DatingAppContext - EF Core database context and seed data
 using Microsoft.EntityFrameworkCore;
 using CST2550Project.Models;
 
@@ -76,10 +77,12 @@ namespace CST2550Project.Data
 
         }
 
+        // seed demo users and profiles on first run
         public async Task SeedDataAsync()
         {
             if (await Users.AnyAsync()) return;
 
+            // uses same pbkdf2 hashing as AuthService
             string HashPassword(string password)
             {
                 byte[] salt = new byte[16];

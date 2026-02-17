@@ -1,4 +1,6 @@
+// app.js - main discovery page (swiping, explore, matches preview, settings)
 
+// global state
 let profiles = [];
 let currentIndex = 0;
 let currentProfile = null;
@@ -16,6 +18,7 @@ let currentFilters = {
     chips: []
 };
 
+// page init - load profile data and set up the UI
 document.addEventListener('DOMContentLoaded', async () => {
     if (!requireAuth()) return;
     
@@ -46,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// fetch profiles from the api with current filters
 async function loadProfiles() {
     const cardStack = document.getElementById('cardStack');
     const emptyState = document.getElementById('emptyState');
@@ -89,6 +93,7 @@ async function loadProfiles() {
     }
 }
 
+// builds the tinder-style card stack
 function renderCards() {
     const cardStack = document.getElementById('cardStack');
     cardStack.innerHTML = '';
@@ -107,6 +112,7 @@ function renderCards() {
     }
 }
 
+// generates html for a single profile card
 function createProfileCard(profile, stackIndex) {
     const card = document.createElement('div');
     card.className = 'profile-card';
@@ -185,6 +191,7 @@ function createProfileCard(profile, stackIndex) {
     return card;
 }
 
+// photo gallery navigation on cards
 function nextPhoto(event) {
     event.stopPropagation();
     const card = event.target.closest('.profile-card');
@@ -225,6 +232,7 @@ function navigatePhoto(card, direction) {
     });
 }
 
+// touch/mouse drag for swiping cards left or right
 function setupSwipeGestures(card) {
     if (!card) return;
     
@@ -308,6 +316,7 @@ function setupSwipeGestures(card) {
     document.addEventListener('touchend', onEnd);
 }
 
+// process a like/dislike/superlike action
 async function swipe(isLike, isSuperLike = false) {
     if (!currentProfile || isAnimating) return;
     
@@ -381,6 +390,7 @@ async function swipe(isLike, isSuperLike = false) {
     }, 400);
 }
 
+// popup when two users like each other
 function showMatchModal(profile) {
     const modal = document.getElementById('matchModal');
     const matchName = document.getElementById('matchName');
@@ -415,6 +425,7 @@ function keepSwiping() {
     closeMatchModal();
 }
 
+// expanded profile view with all details
 async function showProfileDetail(profileId) {
     const profile = profiles.find(p => p.id === profileId);
     if (!profile) return;
@@ -662,6 +673,7 @@ function reportProfile() {
     }
 }
 
+// switches between home/search/matches/profile/settings tabs
 function switchTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
@@ -696,6 +708,7 @@ function switchTab(tabName) {
     vibrate([10]);
 }
 
+// loads the explore/search tab with profile grid
 async function loadExploreContent() {
     try {
         const topPicksGrid = document.getElementById('topPicksGrid');
@@ -790,14 +803,7 @@ function filterProfiles(list) {
     });
 }
 
-function debounce(fn, wait = 200) {
-    let t = null;
-    return function(...args) {
-        clearTimeout(t);
-        t = setTimeout(() => fn.apply(this, args), wait);
-    };
-}
-
+// shows recent matches and message previews
 async function loadMatchesPreview() {
     try {
         const matches = await getMatches();
@@ -852,17 +858,7 @@ async function loadMatchesPreview() {
     }
 }
 
-function formatTime(dateString) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now - date;
-    
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}m`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
-    return `${Math.floor(diff / 86400000)}d`;
-}
-
+// profile card preview in the profile tab
 async function loadProfilePreview() {
     try {
         const profile = myProfile || await getMyProfile();
@@ -971,6 +967,7 @@ function closePremiumModal() {
     }
 }
 
+// builds the filter modal with all the filter options
 function openFilters() {
     const modal = document.getElementById('filterModal');
     if (modal) {
@@ -1033,6 +1030,7 @@ function resetFilters() {
     loadExploreContent();
 }
 
+// reads filter values and reloads cards
 function applyFilters() {
     const modal = document.getElementById('filterModal');
     if (modal) {
@@ -1088,8 +1086,8 @@ function showHelp() {
     showToast('Help & Support - Contact: support@zelove.app', 'info');
 }
 
+// settings tab click handlers for gender/filter buttons
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.gender-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');

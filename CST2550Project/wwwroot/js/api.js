@@ -1,6 +1,7 @@
-
+// api service layer - handles all backend communication
 const API_BASE_URL = '/api';
 
+// token & user data helpers
 function getToken() {
     return localStorage.getItem('token');
 }
@@ -35,6 +36,7 @@ function isAuthenticated() {
     return !!getToken();
 }
 
+// redirect to login if not authenticated
 function requireAuth() {
     if (!isAuthenticated()) {
         window.location.href = '/login.html';
@@ -43,6 +45,7 @@ function requireAuth() {
     return true;
 }
 
+// main fetch wrapper - attaches jwt, handles errors and 401 redirects
 async function apiRequest(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     
@@ -63,6 +66,7 @@ async function apiRequest(endpoint, options = {}) {
         });
 
         if (response.status === 401) {
+            // don't redirect if we're on the login/register page
             const isAuthEndpoint = endpoint.startsWith('/auth/');
             if (!isAuthEndpoint) {
                 removeToken();
@@ -106,7 +110,7 @@ async function apiRequest(endpoint, options = {}) {
     }
 }
 
-
+// auth endpoints
 async function login(username, password) {
     const data = await apiRequest('/auth/login', {
         method: 'POST',
@@ -138,7 +142,7 @@ function logout() {
     window.location.href = '/login.html';
 }
 
-
+// profile endpoints
 async function getMyProfile() {
     return await apiRequest('/profiles/me');
 }
@@ -154,6 +158,7 @@ async function updateProfile(profileData) {
     });
 }
 
+// discovery - build query string from filter options
 async function getDiscoveryProfiles(count = 10, filters = {}) {
     const params = new URLSearchParams({ count: count.toString() });
     if (filters.gender) params.set('gender', filters.gender);
@@ -171,7 +176,7 @@ async function getDiscoveryProfiles(count = 10, filters = {}) {
     return await apiRequest(`/profiles/discover?${params.toString()}`);
 }
 
-
+// match & swipe endpoints
 async function swipeProfile(targetUserId, isLike, isSuperLike = false) {
     return await apiRequest('/matches/swipe', {
         method: 'POST',
@@ -193,7 +198,7 @@ async function unmatch(matchId) {
     });
 }
 
-
+// messaging endpoints
 async function sendMessage(matchId, content) {
     return await apiRequest('/messages', {
         method: 'POST',
@@ -216,7 +221,7 @@ async function deleteMessage(messageId) {
     });
 }
 
-
+// time formatting helpers
 function formatTime(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -244,16 +249,19 @@ function formatTime(dateString) {
     return date.toLocaleDateString();
 }
 
+// format time as hh:mm for chat messages
 function formatMessageTime(dateString) {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+// nav toggle for mobile
 function toggleNav() {
     const navLinks = document.getElementById('navLinks');
     navLinks.classList.toggle('active');
 }
 
+// updates the unread messages badge on the matches tab
 async function updateUnreadBadge() {
     try {
         const count = await getUnreadCount();
@@ -267,6 +275,7 @@ async function updateUnreadBadge() {
     }
 }
 
+// toast notification popup
 function showToast(message, type = 'info') {
     document.querySelectorAll('.toast').forEach(t => t.remove());
     
@@ -287,8 +296,8 @@ function showToast(message, type = 'info') {
     
     document.body.appendChild(toast);
     
-    toast.offsetHeight;
-    
+    toast.offsetHeight; // force reflow so the animation plays
+
     setTimeout(() => {
         toast.classList.add('show');
     }, 10);
@@ -299,6 +308,7 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
+// confetti effect for when users match
 function createConfetti() {
     const colors = ['#FF4B6E', '#FF7B94', '#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E'];
     
@@ -322,12 +332,14 @@ function createConfetti() {
     }
 }
 
+// haptic feedback on supported devices
 function vibrate(pattern = [50]) {
     if ('vibrate' in navigator) {
         navigator.vibrate(pattern);
     }
 }
 
+// simple audio feedback using web audio api
 function playSound(type) {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -363,6 +375,7 @@ function playSound(type) {
     }
 }
 
+// relative time like "2h ago", "Yesterday" etc
 function formatRelativeTime(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -384,10 +397,12 @@ function formatRelativeTime(dateString) {
     });
 }
 
+// check if user is on a phone
 function isMobile() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
+// delays function execution until user stops typing
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {

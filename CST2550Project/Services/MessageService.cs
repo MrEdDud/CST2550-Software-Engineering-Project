@@ -1,3 +1,4 @@
+// chat messaging - send, receive, read receipts, unread counts
 using Microsoft.EntityFrameworkCore;
 using CST2550Project.Models;
 using CST2550Project.DTOs;

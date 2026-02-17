@@ -1,3 +1,4 @@
+// profile endpoints - get, update, discover
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;

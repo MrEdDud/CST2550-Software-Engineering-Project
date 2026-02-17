@@ -1,3 +1,4 @@
+// matches.js - chat page with match list, messaging and polling
 
 let matches = [];
 let currentMatch = null;
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// fetch matches list from api
 async function loadMatches() {
     const matchesList = document.getElementById('matchesList');
     const noMatches = document.getElementById('noMatches');
@@ -74,6 +76,7 @@ async function loadMatches() {
     }
 }
 
+// display matches sorted by most recent activity
 function renderMatches() {
     const matchesList = document.getElementById('matchesList');
     
@@ -117,6 +120,7 @@ function renderMatches() {
     }).join('');
 }
 
+// opens a chat when clicking on a match
 async function selectMatch(matchId) {
     currentMatch = matches.find(m => m.id === matchId);
     if (!currentMatch) return;
@@ -186,6 +190,7 @@ async function loadMessages() {
     }
 }
 
+// render chat bubbles for the current conversation
 function renderMessages() {
     const messagesContainer = document.getElementById('chatMessages');
     const userId = getUserId();
@@ -251,6 +256,7 @@ function renderMessages() {
     messagesContainer.innerHTML = html;
 }
 
+// send message with optimistic UI update
 async function handleSendMessage(event) {
     event.preventDefault();
     
@@ -350,6 +356,7 @@ function showTypingIndicator() {
     }
 }
 
+// opens a modal showing the matched user's profile
 function viewProfile() {
     if (!currentMatch) return;
     
@@ -395,6 +402,7 @@ function viewProfile() {
     document.body.appendChild(modal);
 }
 
+// unmatch confirmation dialog
 async function handleUnmatch() {
     if (!currentMatch) return;
     
@@ -455,6 +463,7 @@ async function confirmUnmatch() {
     }
 }
 
+// polls for new messages every 3 seconds
 function startMessagePolling() {
     messagePollingInterval = setInterval(async () => {
         if (currentMatch) {
@@ -504,12 +513,14 @@ function truncateText(text, maxLength) {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 }
 
+// sanitise user text before rendering
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
+// format message text - linkify urls and convert text emoticons
 function formatMessageContent(text) {
     let escaped = escapeHtml(text);
     
@@ -544,6 +555,7 @@ function formatDateSeparator(dateString) {
     }
 }
 
+// keyboard shortcuts - enter to send, esc to go back
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'messageInput') {
         e.preventDefault();

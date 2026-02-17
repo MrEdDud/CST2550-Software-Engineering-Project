@@ -1,3 +1,4 @@
+// profile crud and discovery with server-side filtering
 using Microsoft.EntityFrameworkCore;
 using CST2550Project.Models;
 using CST2550Project.DTOs;
@@ -91,6 +92,7 @@ namespace CST2550Project.Services
 
             if (userProfile == null) return new List<ProfileDto>();
 
+            // don't show profiles the user already swiped on
             var swipedUserIds = await _context.Likes
                 .Where(l => l.FromUserId == userId)
                 .Select(l => l.ToUserId)

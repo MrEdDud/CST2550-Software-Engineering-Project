@@ -1,3 +1,4 @@
+// handles user registration, login and jwt token generation
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -92,6 +93,7 @@ namespace CST2550Project.Services
             };
         }
 
+        // create a jwt with user id, username and email claims
         private string GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
@@ -117,6 +119,7 @@ namespace CST2550Project.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        // pbkdf2 hash with random salt, stores salt+hash together
         private string HashPassword(string password)
         {
             byte[] salt = new byte[16];
@@ -135,6 +138,7 @@ namespace CST2550Project.Services
             return Convert.ToBase64String(hashBytes);
         }
 
+        // extracts salt from stored hash and compares
         private bool VerifyPassword(string password, string storedHash)
         {
             try

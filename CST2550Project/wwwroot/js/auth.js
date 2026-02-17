@@ -1,4 +1,6 @@
+// auth.js - handles login, registration and password validation
 
+// if already logged in, skip auth pages
 document.addEventListener('DOMContentLoaded', () => {
     if (isAuthenticated()) {
         const currentPage = window.location.pathname;
@@ -8,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// show/hide password toggle
 function togglePassword(inputId) {
     const input = document.getElementById(inputId);
     const icon = input.parentElement.querySelector('.toggle-password i');
@@ -23,6 +26,7 @@ function togglePassword(inputId) {
     }
 }
 
+// login form submission
 async function handleLogin(event) {
     event.preventDefault();
     
@@ -63,6 +67,7 @@ async function handleLogin(event) {
     }
 }
 
+// fills in demo credentials and submits
 function useDemoAccount() {
     const demoUser = 'alex_adventure';
     const demoPass = 'Password123!';
@@ -79,8 +84,8 @@ function useDemoAccount() {
     }
 }
 
+// wire up demo button
 document.addEventListener('DOMContentLoaded', () => {
-    const demoBtn = document.getElementById('demoBtn');
     if (demoBtn) {
         demoBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -89,43 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-let currentStep = 1;
-
-function nextStep() {
-    const username = document.getElementById('reg-username').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('reg-password').value;
-    
-    if (!username || username.length < 3) {
-        showError('Username must be at least 3 characters');
-        return;
-    }
-    
-    if (!email || !isValidEmail(email)) {
-        showError('Please enter a valid email address');
-        return;
-    }
-    
-    if (!password || password.length < 6) {
-        showError('Password must be at least 6 characters');
-        return;
-    }
-    
-    currentStep = 2;
-    document.getElementById('step1').classList.remove('active');
-    document.getElementById('step2').classList.add('active');
-    document.querySelector('.step[data-step="1"]').classList.remove('active');
-    document.querySelector('.step[data-step="2"]').classList.add('active');
-}
-
-function prevStep() {
-    currentStep = 1;
-    document.getElementById('step2').classList.remove('active');
-    document.getElementById('step1').classList.add('active');
-    document.querySelector('.step[data-step="2"]').classList.remove('active');
-    document.querySelector('.step[data-step="1"]').classList.add('active');
-}
-
+// shows error message on the form
 function showError(message) {
     const errorDiv = document.getElementById('registerError') || document.getElementById('loginError');
     const errorText = document.getElementById('registerErrorText') || document.getElementById('loginErrorText');
@@ -140,6 +109,7 @@ function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+// registration form with validation
 async function handleRegister(event) {
     event.preventDefault();
     
@@ -202,6 +172,7 @@ async function handleRegister(event) {
     }
 }
 
+// password strength meter
 const passwordInput = document.getElementById('reg-password');
 if (passwordInput) {
     passwordInput.addEventListener('input', updatePasswordStrength);

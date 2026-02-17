@@ -1,3 +1,4 @@
+// profile.js - profile editing page (photos, bio, interests, preferences)
 
 let profile = null;
 let originalProfile = null;
@@ -35,6 +36,7 @@ window.addEventListener('beforeunload', (e) => {
     }
 });
 
+// fetch and display user profile data
 async function loadProfile() {
     document.getElementById('profileAvatar').classList.add('skeleton');
     
@@ -54,6 +56,7 @@ async function loadProfile() {
     }
 }
 
+// fill all form fields with the loaded profile data
 function populateForm() {
     if (!profile) return;
     
@@ -150,6 +153,7 @@ function animateCounter(elementId, target) {
     }, 50);
 }
 
+// wire up form inputs, photo buttons, save/discard etc
 function setupEventListeners() {
     const bioEl = document.getElementById('editBio');
     if (bioEl) {
@@ -225,6 +229,7 @@ function updateBioCount() {
     }
 }
 
+// render interest tags with remove buttons
 function renderInterests() {
     const container = document.getElementById('interestsTags');
     
@@ -282,7 +287,6 @@ function addInterest() {
 }
 
 function removeInterest(index) {
-    const removed = interests[index];
     const chips = document.querySelectorAll('#interestsTags .interest-chip');
     
     if (chips[index]) {
@@ -299,6 +303,7 @@ function removeInterest(index) {
     }
 }
 
+// render hobby chips with remove buttons
 function renderHobbies() {
     const container = document.getElementById('hobbiesTags');
     if (!container) return;
@@ -371,6 +376,7 @@ function removeHobby(index) {
     }
 }
 
+// photo gallery management
 function renderPhotos() {
     const container = document.getElementById('photoGrid');
     const photos = profile.photos || [];
@@ -603,6 +609,7 @@ function setMainPhoto(index) {
     showToast('Main photo updated!', 'success');
 }
 
+// collects all form data and sends it to the api
 async function saveProfile(event) {
     event.preventDefault();
     

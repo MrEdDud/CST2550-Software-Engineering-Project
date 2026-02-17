@@ -1,3 +1,4 @@
+// data transfer objects for api requests/responses
 using System.ComponentModel.DataAnnotations;
 
 namespace CST2550Project.DTOs

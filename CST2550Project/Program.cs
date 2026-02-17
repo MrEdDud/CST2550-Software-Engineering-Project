@@ -1,3 +1,4 @@
+// Program.cs - app startup, DI setup, middleware pipeline
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -7,14 +8,17 @@ using CST2550Project.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// sqlite database
 builder.Services.AddDbContext<DatingAppContext>(options =>
     options.UseSqlite("Data Source=datingapp.db"));
 
+// register services for dependency injection
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<MatchService>();
 builder.Services.AddScoped<MessageService>();
 
+// jwt auth config
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "SuperSecretKeyForDatingApp2024!@#$%^&*()";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -54,6 +58,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// create db and seed test data on first run
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DatingAppContext>();
@@ -69,6 +74,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// serve static frontend files from wwwroot
 var defaultFileOptions = new DefaultFilesOptions();
 defaultFileOptions.DefaultFileNames.Clear();
 defaultFileOptions.DefaultFileNames.Add("index.html");

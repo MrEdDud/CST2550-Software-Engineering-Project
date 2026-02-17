@@ -1,3 +1,4 @@
+// auth endpoints - login, register, token validation
 using Microsoft.AspNetCore.Mvc;
 using CST2550Project.DTOs;
 using CST2550Project.Services;
