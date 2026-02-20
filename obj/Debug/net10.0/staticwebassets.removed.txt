@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\eduard\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\_framework\blazor.web.js
 C:\Users\eduard\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\_framework\blazor.server.js
 C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\app.css
@@ -64,3 +65,6 @@ C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\lib\jquery\dist\jquery.slim
 C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\lib\jquery\dist\jquery.slim.min.map
 C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\lib\jquery\LICENSE.txt
 C:\Users\eduard\source\repos\CST2550\CST2550\Components\Layout\ReconnectModal.razor.js
+=======
+C:\Users\eduard\source\repos\CST2550\CST2550\wwwroot\app.css
+>>>>>>> 9f5ec05ee4f1e84392ec7d6fcae42065b5762684
