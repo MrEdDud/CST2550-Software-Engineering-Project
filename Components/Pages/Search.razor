@@ -1,0 +1,98 @@
+﻿@page "/"
+@page "/home"
+
+<div class="page">
+
+    <h1 class="page-title">Discover</h1>
+    <p class="page-subtitle">People near you (demo data)</p>
+
+    <div class="card-grid">
+        <!--For every card in the demo profiles-->
+        @foreach (var p in demoProfiles)
+        {
+            <div class="profile-card">
+
+                <div class="profile-photo">
+                    <span class="profile-initial">@p.Initial</span>
+                </div>
+
+                <div class="profile-info">
+                    <div class="profile-name">
+                        @p.Name
+                        <span class="profile-age">@p.Age</span>
+                    </div>
+                    <div class="profile-bio">@p.Bio</div>
+                </div>
+
+                <div class="profile-actions">
+
+                    <!-- SAFE onclick syntax (no quote conflict) -->
+                    <button class="icon-btn nope"
+                            @onclick='() => HandleAction("Nope", p.Name)'>
+                        ✕
+                    </button>
+
+                    <button class="icon-btn like"
+                            @onclick='() => HandleAction("Like", p.Name)'>
+                        ❤
+                    </button>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(lastAction))
+    {
+        <div class="toast">@lastAction</div>
+    }
+
+</div>
+
+@code {
+
+    // Stores the last action message (shown as toast)
+    private string lastAction = string.Empty;
+
+    /*
+        HandleAction
+        Runs when user clicks Like or Nope.
+        Updates the toast message.
+    */
+    private void HandleAction(string action, string name)
+    {
+        if (action == "Like")
+        {
+            lastAction = $"❤️ You liked {name}";
+        }
+        else
+        {
+            lastAction = $"❌ You skipped {name}";
+        }
+    }
+
+    /*
+        Demo profile data.
+        Later this will come from your database / API.
+    */
+    private readonly List<Profile> demoProfiles = new()
+    {
+        new Profile("A", "Amelia", 21, "Coffee, movies, and city walks."),
+        new Profile("J", "James", 23, "Gym + playlists + late-night food."),
+        new Profile("S", "Sofia", 22, "Museums, sunsets, and good chats."),
+        new Profile("M", "Maya", 24, "Bookworm. Brunch lover. Meme dealer.")
+    };
+
+    /*
+        Profile record:
+        Simple data structure for demo users.
+    */
+    private sealed record Profile(
+        string Initial,
+        string Name,
+        int Age,
+        string Bio
+    );
+}
