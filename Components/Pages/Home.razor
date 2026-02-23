@@ -1,98 +1,70 @@
 ﻿@page "/"
 @page "/home"
 
-<div class="page">
-
-    <h1 class="page-title">Discover</h1>
-    <p class="page-subtitle">People near you (demo data)</p>
-
-    <div class="card-grid">
-
-        @foreach (var p in demoProfiles)
-        {
-            <div class="profile-card">
-
-                <div class="profile-photo">
-                    <span class="profile-initial">@p.Initial</span>
-                </div>
-
-                <div class="profile-info">
-                    <div class="profile-name">
-                        @p.Name
-                        <span class="profile-age">@p.Age</span>
-                    </div>
-                    <div class="profile-bio">@p.Bio</div>
-                </div>
-
-                <div class="profile-actions">
-
-                    <!-- SAFE onclick syntax (no quote conflict) -->
-                    <button class="icon-btn nope"
-                            @onclick='() => HandleAction("Nope", p.Name)'>
-                        ✕
-                    </button>
-
-                    <button class="icon-btn like"
-                            @onclick='() => HandleAction("Like", p.Name)'>
-                        ❤
-                    </button>
-
-                </div>
-
-            </div>
-        }
-
+@* Sidebar *@
+<aside class="app-sidebar">
+    <div class="sidebar-profile">
+        <i class="fa-regular fa-circle-user sidebar-avatar"></i>
+        <strong id="sidebarName">You</strong> <span id="sidebarHandle">@@<span id="sidebarUsername">user</span></span>
     </div>
+    <nav class="sidebar-nav">
+        @foreach (var item in SidebarItems)
+        {
+            <button class="sidebar-link @(currentTab == item.Id ? "active" : "")" @onclick="() => SwitchTab(item.Id)">
+                <i class="@item.Icon"></i>
+                <span>@item.Text</span>
+            </button>
+        }
+    </nav>
+    @* Needs fixing ↓↓↓↓↓ *@
 
-    @if (!string.IsNullOrWhiteSpace(lastAction))
+    @* <div class="sidebar-bottom">
+        <button class="btn" onclick="logout()">Logout</button>
+    </div> *@
+</aside>
+
+<main>
+    @* Switches to different pages depending on which button has been pressed *@
+    @switch (currentTab)
     {
-        <div class="toast">@lastAction</div>
-    }
+        case "home":
+            @* Switches to HomeTab.razor which is a child of Home.razor *@
+            <HomeTab />
+            break;
 
-</div>
+        case "matches":
+            <MatchesTab />
+            break;
+
+        case "profile":
+            <ProfileTab />
+            break;
+
+        case "settings":
+            <SettingsTab />
+            break;
+
+        @* You can add another case for searching aswell and make search a child of Home.razor -Ed *@
+    }
+</main>
 
 @code {
+    private record NavItem(string Id, string Icon, string Text, bool Active = false);
 
-    // Stores the last action message (shown as toast)
-    private string lastAction = string.Empty;
-
-    /*
-        HandleAction
-        Runs when user clicks Like or Nope.
-        Updates the toast message.
-    */
-    private void HandleAction(string action, string name)
+    private readonly List<NavItem> SidebarItems = new()
     {
-        if (action == "Like")
-        {
-            lastAction = $"❤️ You liked {name}";
-        }
-        else
-        {
-            lastAction = $"❌ You skipped {name}";
-        }
-    }
-
-    /*
-        Demo profile data.
-        Later this will come from your database / API.
-    */
-    private readonly List<Profile> demoProfiles = new()
-    {
-        new Profile("A", "Amelia", 21, "Coffee, movies, and city walks."),
-        new Profile("J", "James", 23, "Gym + playlists + late-night food."),
-        new Profile("S", "Sofia", 22, "Museums, sunsets, and good chats."),
-        new Profile("M", "Maya", 24, "Bookworm. Brunch lover. Meme dealer.")
+        new("home", "fas fa-fire", "Home", true),
+        new("matches", "fas fa-heart", "Matches"),
+        new("profile", "fas fa-user", "Profile"),
+        new("settings", "fas fa-cog", "Settings")
     };
 
-    /*
-        Profile record:
-        Simple data structure for demo users.
-    */
-    private sealed record Profile(
-        string Initial,
-        string Name,
-        int Age,
-        string Bio
-    );
+    // UI state
+    private string currentTab = "home";
+
+    private void SwitchTab(string id)
+    {
+        currentTab = id;
+        // update BottomTabs/SidebarItems active flags if you need them elsewhere
+    }
 }

@@ -1,0 +1,88 @@
+﻿<section class="tab-content active">
+    <div class="discovery-container">
+        <div class="card-stack" id="cardStack">
+            @if (noMoreProfiles)
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-heart-broken"></i>
+                    </div>
+                    <h2>No more profiles</h2>
+                    <p>You've seen everyone for now. Check back later for new people!</p>
+                    <button class="btn btn-primary" @onclick="LoadProfiles">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="loading-card">
+                    <div class="loader"></div>
+                    <p>Finding people near you...</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+
+@* /// May be useful later ↓↓↓↓↓ *@
+
+@* <div class="modal" id="matchModal" @(showMatchModal ? "class=\"modal active\"" : null)>
+    <div class="modal-content match-modal">
+        <div class="match-animation">
+            <div class="hearts">
+                <i class="fas fa-heart"></i>
+                <i class="fas fa-heart"></i>
+                <i class="fas fa-heart"></i>
+            </div>
+        </div>
+        <h2>It's a Match! 💕</h2>
+        <p>You and <span id="matchName"></span> liked each other!</p>
+        <div class="match-photos">
+            <img src="" id="myPhoto" alt="Your photo" class="match-photo">
+            <div class="match-heart"><i class="fas fa-heart"></i></div>
+            <img src="" id="theirPhoto" alt="Their photo" class="match-photo">
+        </div>
+        <div class="match-actions">
+            <button class="btn btn-outline" @onclick="CloseMatchModal">Keep Swiping</button>
+            <button class="btn btn-primary" @onclick="GoToChat">Send Message</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="profileModal" @(showProfileModal ? "class=\"modal active\"" : null)>
+    <div class="modal-content profile-detail-modal">
+        <button class="modal-close" @onclick="CloseProfileModal">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="profile-detail-content" id="profileDetailContent">
+        </div>
+    </div>
+</div> *@
+
+<div class="toast-container" id="toastContainer"></div>
+
+@code {
+    // UI state
+    private bool noMoreProfiles = false;
+
+    private void LoadProfiles()
+    {
+        // placeholder - replace with service call
+        noMoreProfiles = false;
+    }
+
+    private void Swipe(bool liked, bool superLike = false)
+    {
+        // placeholder
+    }
+
+    private void NavigateToProfile()
+    {
+        NavigationManager.NavigateTo("/profile");
+    }
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+}
