@@ -19,8 +19,6 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
-// app.UseStaticFiles(); // New line of code from lecture
-
 app.UseAntiforgery();
 
 app.MapStaticAssets();
