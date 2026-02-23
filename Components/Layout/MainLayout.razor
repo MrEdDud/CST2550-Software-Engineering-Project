@@ -3,20 +3,24 @@
 <div class="app-shell">
     <!-- Top bar -->
     <header class="topbar">
+        @* App logo and name *@
         <div class="brand">
-            <span class="brand-dot"></span>
+            <i class="fa-solid fa-heart"></i>
             <span class="brand-name">Pairly</span>
         </div>
 
         <nav class="topnav">
-            <a href="/home" class="topnav-link">Discover</a>
-            <a href="/matches" class="topnav-link">Matches</a>
-            <a href="/messages" class="topnav-link">Messages</a>
-            <a href="/profile" class="topnav-link">Profile</a>
+            @* /// Future code for search icon *@
+            <span>Future search bar</span>
+            @* /// Future code for filters button *@
         </nav>
 
+        @* Notification button *@
         <div class="topbar-actions">
-            <a class="ghost-btn" href="/login">Logout</a>
+            <button class="header-btn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-dot" id="notificationDot"></span>
+            </button>
         </div>
     </header>
 
