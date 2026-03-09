@@ -1,102 +1,151 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
 
-<!--
-    REGISTER PAGE (Frontend Only)
-    - Uses EditForm with DataAnnotations validation
-    - Includes manual password match validation
-    - Shows both error and success messages
--->
+<div class="auth-page register-page">
+    <div class="auth-container">
 
-<div class="login-container">
-    <div class="login-card">
+        <div class="auth-brand">
+            <div class="brand-content">
 
-        <!-- Branding -->
-        <h2 class="app-title"> Pairly</h2>
-        <p class="subtitle">Create your account</p>
+                <div class="brand-logo">
+                    <i class="fas fa-heart"></i>
+                </div>
 
-        <EditForm Model="@registerData" OnValidSubmit="@HandleRegister">
+                <h1>Pairly</h1>
+                <p>Join thousands of singles finding love and meaningful connections every day. (18+)</p>
 
-            <!-- Enables DataAnnotations validation -->
-            <DataAnnotationsValidator />
+                <div class="brand-stats">
+                    <div class="stat">
+                        <span class="stat-number">Since 2024</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Active Today</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Verified</span>
+                    </div>
+                </div>
 
-            <!-- Shows validation summary (top-level errors) -->
-            <ValidationSummary />
-
-            <!-- FIRST NAME -->
-            <div class="form-group">
-                <label>First Name</label>
-                <InputText class="form-control"
-                           @bind-Value="registerData.FirstName"
-                           placeholder="e.g., Al" />
-                <ValidationMessage For="@(() => registerData.FirstName)" />
             </div>
+        </div>
 
-            <!-- LAST NAME -->
-            <div class="form-group">
-                <label>Last Name</label>
-                <InputText class="form-control"
-                           @bind-Value="registerData.LastName"
-                           placeholder="e.g., Saiyed" />
-                <ValidationMessage For="@(() => registerData.LastName)" />
+        <div class="auth-form-container">
+            <div class="auth-form-wrapper">
+
+                <div class="auth-header">
+                    <h2>Create Account</h2>
+                    <p>Start your journey to find love on Pairly</p>
+                </div>
+
+                <EditForm Model="@registerData"
+                          OnValidSubmit="@HandleRegister"
+                          class="auth-form">
+
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Username</label>
+
+                        <InputText class="form-control"
+                                   @bind-Value="registerData.Username"
+                                   placeholder="Choose a unique username" />
+
+                        <ValidationMessage For="@(() => registerData.Username)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+
+                        <InputText class="form-control"
+                                   @bind-Value="registerData.Email"
+                                   placeholder="your@email.com" />
+
+                        <ValidationMessage For="@(() => registerData.Email)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+
+                        <InputText type="password"
+                                   class="form-control"
+                                   @bind-Value="registerData.Password"
+                                   placeholder="Create a strong password" />
+
+                        <ValidationMessage For="@(() => registerData.Password)" />
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> Your Name</label>
+
+                        <InputText class="form-control"
+                                   @bind-Value="registerData.Name"
+                                   placeholder="What should we call you?" />
+
+                        <ValidationMessage For="@(() => registerData.Name)" />
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label><i class="fas fa-birthday-cake"></i> Age</label>
+
+                            <InputNumber class="form-control"
+                                         @bind-Value="registerData.Age" />
+
+                            <ValidationMessage For="@(() => registerData.Age)" />
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-venus-mars"></i> Gender</label>
+
+                            <InputSelect class="form-control"
+                                         @bind-Value="registerData.Gender">
+                                <option value="">Select...</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </InputSelect>
+
+                            <ValidationMessage For="@(() => registerData.Gender)" />
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-heart"></i> Interested In</label>
+
+                        <InputSelect class="form-control"
+                                     @bind-Value="registerData.LookingFor">
+                            <option value="">Select...</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Everyone</option>
+                        </InputSelect>
+
+                        <ValidationMessage For="@(() => registerData.LookingFor)" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span>Create Account</span>
+                        <i class="fas fa-check"></i>
+                    </button>
+
+                </EditForm>
+
+                @if (!string.IsNullOrWhiteSpace(successMessage))
+                {
+                    <div class="message success">@successMessage</div>
+                }
+
+                <div class="auth-footer">
+                    <p>
+                        Already have an account?
+                        <a href="/login">Sign In</a>
+                    </p>
+                </div>
+
             </div>
-
-            <!-- EMAIL -->
-            <div class="form-group">
-                <label>Email</label>
-                <InputText class="form-control"
-                           @bind-Value="registerData.Email"
-                           placeholder="you@university.ac.uk" />
-                <ValidationMessage For="@(() => registerData.Email)" />
-            </div>
-
-            <!-- PASSWORD -->
-            <div class="form-group">
-                <label>Password</label>
-                <InputText type="password"
-                           class="form-control"
-                           @bind-Value="registerData.Password"
-                           placeholder="Minimum 6 characters" />
-                <ValidationMessage For="@(() => registerData.Password)" />
-            </div>
-
-            <!-- CONFIRM PASSWORD -->
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <InputText type="password"
-                           class="form-control"
-                           @bind-Value="registerData.ConfirmPassword"
-                           placeholder="Re-enter password" />
-                <ValidationMessage For="@(() => registerData.ConfirmPassword)" />
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="btn-login">
-                Register
-            </button>
-
-        </EditForm>
-
-        <!-- Custom Error Message (for password mismatch) -->
-        @if (!string.IsNullOrWhiteSpace(errorMessage))
-        {
-            <div class="message error">
-                @errorMessage
-            </div>
-        }
-
-        <!-- Success Message -->
-        @if (!string.IsNullOrWhiteSpace(successMessage))
-        {
-            <div class="message success">
-                @successMessage
-            </div>
-        }
-
-        <!-- Link back to login -->
-        <div class="register-link">
-            Already have an account?
-            <a href="/login">Log in</a>
         </div>
 
     </div>
@@ -104,65 +153,39 @@
 
 @code {
 
-    /*
-        RegisterModel:
-        Defines the structure of registration data.
-        Uses DataAnnotations for frontend validation rules.
-    */
     private sealed class RegisterModel
     {
-        [Required(ErrorMessage = "First name is required.")]
-        [MinLength(2, ErrorMessage = "First name must be at least 2 characters.")]
-        public string FirstName { get; set; } = string.Empty;
+        [Required]
+        [MinLength(3)]
+        public string Username { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Last name is required.")]
-        [MinLength(2, ErrorMessage = "Last name must be at least 2 characters.")]
-        public string LastName { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
+        [Required]
+        [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Password is required.")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
+        [Required]
+        [MinLength(6)]
         public string Password { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Confirm password is required.")]
-        public string ConfirmPassword { get; set; } = string.Empty;
+        [Required]
+        public string Name { get; set; } = string.Empty;
+
+        [Range(18, 120)]
+        public int Age { get; set; }
+
+        [Required]
+        public string Gender { get; set; } = string.Empty;
+
+        [Required]
+        public string LookingFor { get; set; } = string.Empty;
     }
 
-    // Instance of form model
     private RegisterModel registerData = new();
 
-    // Custom error message (for password mismatch)
-    private string errorMessage = string.Empty;
-
-    // Success message
     private string successMessage = string.Empty;
 
-    /*
-        HandleRegister()
-        Runs ONLY when DataAnnotations validation passes.
-        We add extra logic to check password match.
-    */
     private void HandleRegister()
     {
-        // Clear previous messages
-        errorMessage = string.Empty;
-        successMessage = string.Empty;
-
-        // Manual validation: Password must match ConfirmPassword
-        if (!string.Equals(registerData.Password, registerData.ConfirmPassword))
-        {
-            errorMessage = "Passwords do not match.";
-            return;
-        }
-
-        // If everything is valid (frontend demo only)
-        successMessage = "Account created successfully (front-end demo).";
-
-        // Later:
-        // Send registerData to backend API
-        // await Http.PostAsJsonAsync("api/auth/register", registerData);
+        successMessage = "Account created (front-end demo)";
     }
 }

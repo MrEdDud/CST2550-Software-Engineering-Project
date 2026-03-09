@@ -593,3 +593,55 @@ input.form-control {
         padding: 16px;
     }
 }
+
+/* PAGE WRAPPER */
+.auth-page {
+    height: 100vh;
+    background: var(--white);
+}
+
+/* MAIN SPLIT CONTAINER */
+.auth-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* LEFT SIDE (branding) */
+.auth-brand {
+    flex: 1;
+    background: linear-gradient(135deg, #DBA0B2, #FFA5AB);
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+}
+
+/* RIGHT SIDE (form) */
+.auth-form-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: var(--white);
+}
+
+/* FORM WRAPPER */
+.auth-form-wrapper {
+    width: 100%;
+    max-width: 440px;
+}
+
+/* HEADER */
+.auth-header {
+    margin-bottom: 24px;
+}
+
+    .auth-header h2 {
+        margin: 0;
+    }
+
+    .auth-header p {
+        color: var(--muted);
+    }
