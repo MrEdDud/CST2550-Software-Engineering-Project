@@ -1,5 +1,4 @@
-// api service layer - handles all backend communication
-const API_BASE_URL = '/api';
+// api service layer - uses localStorage via localdb.js instead of a server
 
 // token & user data helpers
 function getToken() {
@@ -45,95 +44,20 @@ function requireAuth() {
     return true;
 }
 
-// main fetch wrapper - attaches jwt, handles errors and 401 redirects
-async function apiRequest(endpoint, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
-    
-    const headers = {
-        'Content-Type': 'application/json',
-        ...options.headers
-    };
-
-    const token = getToken();
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    try {
-        const response = await fetch(url, {
-            ...options,
-            headers
-        });
-
-        if (response.status === 401) {
-            // don't redirect if we're on the login/register page
-            const isAuthEndpoint = endpoint.startsWith('/auth/');
-            if (!isAuthEndpoint) {
-                removeToken();
-                window.location.href = '/login.html';
-                return null;
-            }
-        }
-
-        if (response.status === 204) {
-            return null;
-        }
-
-        const contentType = response.headers.get('content-type') || '';
-        let data = null;
-
-        if (contentType.includes('application/json')) {
-            try {
-                data = await response.json();
-            } catch (e) {
-                console.warn('apiRequest: failed to parse JSON response for', url, e);
-                data = null;
-            }
-        } else {
-            try {
-                const text = await response.text();
-                data = text || null;
-            } catch (e) {
-                data = null;
-            }
-        }
-
-        if (!response.ok) {
-            const message = (data && data.message) ? data.message : (typeof data === 'string' ? data : 'Request failed');
-            throw new Error(message);
-        }
-
-        return data;
-    } catch (error) {
-        console.error('API Error:', error);
-        throw error;
-    }
-}
-
-// auth endpoints
+// auth - powered by localdb
 async function login(username, password) {
-    const data = await apiRequest('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ username, password })
-    });
-    
+    const data = dbLogin(username, password);
     if (data) {
         setUserData(data);
     }
-    
     return data;
 }
 
 async function register(userData) {
-    const data = await apiRequest('/auth/register', {
-        method: 'POST',
-        body: JSON.stringify(userData)
-    });
-    
+    const data = dbRegister(userData);
     if (data) {
         setUserData(data);
     }
-    
     return data;
 }
 
@@ -142,83 +66,57 @@ function logout() {
     window.location.href = '/login.html';
 }
 
-// profile endpoints
+// profile - reads from localStorage
 async function getMyProfile() {
-    return await apiRequest('/profiles/me');
+    return dbGetMyProfile(getUserId());
 }
 
 async function getProfile(profileId) {
-    return await apiRequest(`/profiles/${profileId}`);
+    return dbGetProfileById(profileId);
 }
 
 async function updateProfile(profileData) {
-    return await apiRequest('/profiles/me', {
-        method: 'PUT',
-        body: JSON.stringify(profileData)
-    });
+    return dbUpdateProfile(getUserId(), profileData);
 }
 
-// discovery - build query string from filter options
+// discovery - filters handled by localdb
 async function getDiscoveryProfiles(count = 10, filters = {}) {
-    const params = new URLSearchParams({ count: count.toString() });
-    if (filters.gender) params.set('gender', filters.gender);
-    if (filters.minAge) params.set('minAge', filters.minAge.toString());
-    if (filters.maxAge) params.set('maxAge', filters.maxAge.toString());
-    if (filters.hairColor) params.set('hairColor', filters.hairColor);
-    if (filters.skinTone) params.set('skinTone', filters.skinTone);
-    if (filters.eyeColor) params.set('eyeColor', filters.eyeColor);
-    if (filters.bodyType) params.set('bodyType', filters.bodyType);
-    if (filters.ethnicity) params.set('ethnicity', filters.ethnicity);
-    if (filters.smoking) params.set('smoking', filters.smoking);
-    if (filters.drinking) params.set('drinking', filters.drinking);
-    if (filters.hobby) params.set('hobby', filters.hobby);
-    if (filters.interest) params.set('interest', filters.interest);
-    return await apiRequest(`/profiles/discover?${params.toString()}`);
+    filters.count = count;
+    return dbGetDiscoveryProfiles(getUserId(), filters);
 }
 
-// match & swipe endpoints
+// match & swipe
 async function swipeProfile(targetUserId, isLike, isSuperLike = false) {
-    return await apiRequest('/matches/swipe', {
-        method: 'POST',
-        body: JSON.stringify({ targetUserId, isLike, isSuperLike })
-    });
+    return dbSwipe(getUserId(), targetUserId, isLike, isSuperLike);
 }
 
 async function getMatches() {
-    return await apiRequest('/matches');
+    return dbGetMatches(getUserId());
 }
 
 async function getLikesReceived() {
-    return await apiRequest('/matches/likes');
+    return dbGetLikesReceived(getUserId());
 }
 
 async function unmatch(matchId) {
-    return await apiRequest(`/matches/${matchId}`, {
-        method: 'DELETE'
-    });
+    return dbUnmatch(getUserId(), matchId);
 }
 
-// messaging endpoints
+// messaging
 async function sendMessage(matchId, content) {
-    return await apiRequest('/messages', {
-        method: 'POST',
-        body: JSON.stringify({ matchId, content })
-    });
+    return dbSendMessage(getUserId(), matchId, content);
 }
 
 async function getMessages(matchId) {
-    return await apiRequest(`/messages/match/${matchId}`);
+    return dbGetMessages(getUserId(), matchId);
 }
 
 async function getUnreadCount() {
-    const data = await apiRequest('/messages/unread-count');
-    return data?.count || 0;
+    return dbGetUnreadCount(getUserId());
 }
 
 async function deleteMessage(messageId) {
-    return await apiRequest(`/messages/${messageId}`, {
-        method: 'DELETE'
-    });
+    return dbDeleteMessage(getUserId(), messageId);
 }
 
 // time formatting helpers
@@ -275,12 +173,88 @@ async function updateUnreadBadge() {
     }
 }
 
-// toast notification popup
+// toast notification popup - slides in from top-right, smooth exit
+// notifications store to power the notifications panel and dot
+const _notifications = [];
+
+// Add a notification and update UI (dot, panel list)
+function _pushNotification(message, type = 'info') {
+    const item = { id: Date.now(), message, type, ts: new Date().toISOString(), read: false };
+    _notifications.unshift(item);
+    // keep small history
+    if (_notifications.length > 50) _notifications.pop();
+    _updateNotificationDot();
+    renderNotifications();
+}
+
+// update the small red dot on the notification button
+function _updateNotificationDot() {
+    const dot = document.getElementById('notificationDot');
+    if (!dot) return;
+    const unread = _notifications.filter(n => !n.read).length;
+    if (unread > 0) {
+        dot.classList.add('show');
+        dot.setAttribute('data-count', unread);
+    } else {
+        dot.classList.remove('show');
+        dot.removeAttribute('data-count');
+    }
+}
+
+// show notifications in panel
+function renderNotifications() {
+    const list = document.getElementById('notificationsList');
+    if (!list) return;
+    list.innerHTML = '';
+    
+    // show empty message if no notifications
+    if (_notifications.length === 0) {
+        list.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i><p>No notifications yet</p></div>';
+        return;
+    }
+    
+    // add each notification to the list
+    for (const n of _notifications) {
+        const el = document.createElement('div');
+        el.className = 'notification-item';
+        const iconName = n.type === 'success' ? 'check-circle' : n.type === 'error' ? 'exclamation-circle' : n.type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+        el.innerHTML = `
+            <i class="fas fa-${iconName}"></i>
+            <div class="n-content">
+                <div class="n-title">${n.message}</div>
+                <div class="n-meta">${formatRelativeTime(n.ts)}</div>
+            </div>
+        `;
+        list.appendChild(el);
+    }
+}
+
+// open/close notifications panel
+function toggleNotificationsPanel() {
+    const panel = document.getElementById('notificationsPanel');
+    if (!panel) return;
+    panel.classList.toggle('hidden');
+    // mark as read when opened
+    if (!panel.classList.contains('hidden')) {
+        for (const n of _notifications) n.read = true;
+        _updateNotificationDot();
+    }
+}
+
+// show toast popup
 function showToast(message, type = 'info') {
-    document.querySelectorAll('.toast').forEach(t => t.remove());
+    // save to notifications
+    try { _pushNotification(message, type); } catch (e) { }
+
+    // remove old toast
+    document.querySelectorAll('.toast').forEach(t => {
+        t.classList.add('hide');
+        t.classList.remove('show');
+        setTimeout(() => t.remove(), 300);
+    });
     
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
+    toast.className = `toast ${type}`;
     
     const icons = {
         success: 'check-circle',
@@ -296,19 +270,22 @@ function showToast(message, type = 'info') {
     
     document.body.appendChild(toast);
     
-    toast.offsetHeight; // force reflow so the animation plays
-
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
+    // small delay for animation to work
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+    });
     
+    // hide after 3 seconds
     setTimeout(() => {
+        toast.classList.add('hide');
         toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(() => toast.remove(), 400);
     }, 3000);
 }
 
-// confetti effect for when users match
+// confetti for matches
 function createConfetti() {
     const colors = ['#FF4B6E', '#FF7B94', '#6C5CE7', '#A29BFE', '#FD79A8', '#FDCB6E'];
     
@@ -414,3 +391,14 @@ function debounce(func, wait) {
         timeout = setTimeout(later, wait);
     };
 }
+
+// Wire notification button and close button after DOM loads
+document.addEventListener('DOMContentLoaded', () => {
+    const notifBtn = document.getElementById('notificationBtn');
+    const closeBtn = document.getElementById('closeNotifsBtn');
+    if (notifBtn) notifBtn.addEventListener('click', toggleNotificationsPanel);
+    if (closeBtn) closeBtn.addEventListener('click', toggleNotificationsPanel);
+    // initial render and dot state
+    _updateNotificationDot();
+    renderNotifications();
+});

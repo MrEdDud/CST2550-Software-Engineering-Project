@@ -22,6 +22,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         setupTypingIndicator();
         
+        // auto-open a match if linked from another page via ?match=id
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchIdParam = urlParams.get('match');
+        if (matchIdParam) {
+            const targetId = parseInt(matchIdParam);
+            if (targetId && matches.find(m => m.id === targetId)) {
+                await selectMatch(targetId);
+            }
+        }
+        
         document.body.style.opacity = '1';
         
     } catch (error) {

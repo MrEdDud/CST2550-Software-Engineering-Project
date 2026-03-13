@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Zelove</title>
+    <title>Register</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,10 +20,10 @@
                 <p>Join thousands of singles finding love and meaningful connections every day. (18+)</p>
                 <div class="brand-stats">
                     <div class="stat">
-                        <span class="stat-number">Since 2024</span>
+                        <span class="stat-number">Since 2026</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-number">Active Today</span>
+                        <span class="stat-number">Secure</span>
                     </div>
                     <div class="stat">
                         <span class="stat-number">Verified</span>
@@ -90,16 +90,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="lookingFor"><i class="fas fa-heart"></i> Interested In</label>
-                        <select id="lookingFor" name="lookingFor" required>
-                            <option value="">Select...</option>
-                            <option value="Male">Men</option>
-                            <option value="Female">Women</option>
-                            <option value="Everyone">Everyone</option>
-                        </select>
-                    </div>
-
                     <div class="form-error hidden" id="registerError">
                         <i class="fas fa-exclamation-circle"></i>
                         <span id="registerErrorText"></span>
@@ -120,6 +110,7 @@
         </div>
     </div>
 
+    <script src="data/localdb.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 </body>

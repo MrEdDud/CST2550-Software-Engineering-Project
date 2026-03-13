@@ -427,7 +427,19 @@ function keepSwiping() {
 
 // expanded profile view with all details
 async function showProfileDetail(profileId) {
-    const profile = profiles.find(p => p.id === profileId);
+    // check discovery, explore, and own profile
+    let profile = profiles.find(p => p.id === profileId) 
+        || exploreProfiles.find(p => p.id === profileId);
+    
+    if (!profile && myProfile && myProfile.id === profileId) {
+        profile = myProfile;
+    }
+    
+    // last resort — fetch by id from localdb
+    if (!profile) {
+        profile = await getProfile(profileId);
+    }
+    
     if (!profile) return;
     
     const modal = document.getElementById('profileModal');
@@ -630,16 +642,10 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// overrides api.js version to also handle the notification dot
 async function updateUnreadBadge() {
     try {
-        const matches = await getMatches();
-        let unreadCount = 0;
-        
-        for (const match of matches) {
-            const messages = await getMessages(match.id);
-            const unread = messages.filter(m => !m.isRead && m.senderId !== myProfile?.userId).length;
-            unreadCount += unread;
-        }
+        const unreadCount = await getUnreadCount();
         
         const badge = document.getElementById('matchBadge');
         if (badge) {
@@ -648,6 +654,7 @@ async function updateUnreadBadge() {
                 badge.style.display = 'flex';
             } else {
                 badge.textContent = '';
+                badge.style.display = 'none';
             }
         }
         
@@ -814,8 +821,8 @@ async function loadMatchesPreview() {
             if (matches.length > 0) {
                 newMatchesScroll.innerHTML = matches.slice(0, 8).map(match => `
                     <div class="new-match-item" onclick="window.location.href='matches.html?match=${match.id}'">
-                        <img src="${match.profilePhotoUrl || 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150'}" alt="${match.name}" class="new-match-avatar">
-                        <span class="new-match-name">${match.name}</span>
+                        <img src="${match.matchedUser?.profilePhotoUrl || 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150'}" alt="${match.matchedUser?.name || 'Match'}" class="new-match-avatar">
+                        <span class="new-match-name">${match.matchedUser?.name || 'Match'}</span>
                     </div>
                 `).join('');
             } else {
@@ -830,15 +837,14 @@ async function loadMatchesPreview() {
             
             if (matches.length > 0) {
                 for (const match of matches.slice(0, 5)) {
-                    const messages = await getMessages(match.id);
-                    const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
-                    const unreadCount = messages.filter(m => !m.isRead && m.senderId !== myProfile?.userId).length;
+                    const lastMessage = match.lastMessage;
+                    const unreadCount = match.unreadCount || 0;
                     
                     const itemHtml = `
                         <div class="message-preview-item" onclick="window.location.href='matches.html?match=${match.id}'">
-                            <img src="${match.profilePhotoUrl || 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150'}" alt="${match.name}" class="message-avatar">
+                            <img src="${match.matchedUser?.profilePhotoUrl || 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150'}" alt="${match.matchedUser?.name || 'Match'}" class="message-avatar">
                             <div class="message-info">
-                                <div class="message-name">${match.name}</div>
+                                <div class="message-name">${match.matchedUser?.name || 'Match'}</div>
                                 <div class="message-text">${lastMessage ? lastMessage.content.substring(0, 40) + '...' : 'Say hello! 👋'}</div>
                             </div>
                             <div class="message-time-badge">

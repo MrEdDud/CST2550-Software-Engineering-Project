@@ -1,6 +1,6 @@
-// auth.js - handles login, registration and password validation
+// auth.js - login and registration
 
-// if already logged in, skip auth pages
+// redirect if already logged in
 document.addEventListener('DOMContentLoaded', () => {
     if (isAuthenticated()) {
         const currentPage = window.location.pathname;
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// show/hide password toggle
+// toggle password visibility
 function togglePassword(inputId) {
     const input = document.getElementById(inputId);
     const icon = input.parentElement.querySelector('.toggle-password i');
@@ -26,6 +26,123 @@ function togglePassword(inputId) {
     }
 }
 
+// check username is valid
+function validateUsername(username) {
+    if (!username || username.length == 0) {
+        return { valid: false, message: 'Username is required' };
+    }
+    // only allow letters, numbers, underscore, dot
+    for (var i = 0; i < username.length; i++) {
+        var char = username[i];
+        var isLetter = (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z');
+        var isNumber = char >= '0' && char <= '9';
+        var isUnderscore = char == '_';
+        var isDot = char == '.';
+        
+        if (!isLetter && !isNumber && !isUnderscore && !isDot) {
+            return { valid: false, message: 'Username can only have letters, numbers, underscores and dots' };
+        }
+    }
+    return { valid: true, message: '' };
+}
+
+// check password meets requirements
+function validatePassword(password) {
+    if (!password || password.length < 6) {
+        return { valid: false, message: 'Password must be at least 6 characters' };
+    }
+    
+    var hasLetter = false;
+    var hasNumber = false;
+    
+    for (var i = 0; i < password.length; i++) {
+        var char = password[i];
+        var isLetter = (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z');
+        var isNumber = char >= '0' && char <= '9';
+        var isAllowedSymbol = char == '!' || char == '$' || char == '@';
+        
+        if (isLetter) hasLetter = true;
+        if (isNumber) hasNumber = true;
+        
+        // no quotes allowed
+        if (char == '"' || char == "'") {
+            return { valid: false, message: 'Password cannot contain " or \' characters' };
+        }
+        
+        if (!isLetter && !isNumber && !isAllowedSymbol) {
+            return { valid: false, message: 'Password can only use letters, numbers and symbols !, $, @' };
+        }
+    }
+    
+    if (!hasLetter) {
+        return { valid: false, message: 'Password must contain at least one letter' };
+    }
+    if (!hasNumber) {
+        return { valid: false, message: 'Password must contain at least one number' };
+    }
+    
+    return { valid: true, message: '' };
+}
+
+// check name only has letters
+function validateName(name) {
+    if (!name || name.length == 0) {
+        return { valid: false, message: 'Name is required' };
+    }
+    for (var i = 0; i < name.length; i++) {
+        var char = name[i];
+        var isLetter = (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z');
+        var isSpace = char == ' ';
+        
+        if (!isLetter && !isSpace) {
+            return { valid: false, message: 'Name can only contain letters' };
+        }
+    }
+    return { valid: true, message: '' };
+}
+
+// check email format
+function validateEmail(email) {
+    if (!email || email.length == 0) {
+        return { valid: false, message: 'Email is required' };
+    }
+    if (email.indexOf('@') == -1) {
+        return { valid: false, message: 'Email must contain @' };
+    }
+    var parts = email.split('@');
+    if (parts.length != 2) {
+        return { valid: false, message: 'Email format is invalid' };
+    }
+    var beforeAt = parts[0];
+    var afterAt = parts[1];
+    
+    if (beforeAt.length == 0) {
+        return { valid: false, message: 'Email must have text before @' };
+    }
+    if (afterAt.length == 0) {
+        return { valid: false, message: 'Email must have domain after @' };
+    }
+    if (afterAt.indexOf('.') == -1) {
+        return { valid: false, message: 'Email domain must have a dot (like .com)' };
+    }
+    return { valid: true, message: '' };
+}
+
+// check age is 18+
+function validateAge(age) {
+    if (!age || isNaN(age)) {
+        return { valid: false, message: 'Please enter your age' };
+    }
+    var ageNum = parseInt(age);
+    if (ageNum < 18) {
+        return { valid: false, message: 'You must be 18 or older to register' };
+    }
+    if (ageNum > 120) {
+        return { valid: false, message: 'Please enter a valid age' };
+    }
+    return { valid: true, message: '' };
+}
+
 // login form submission
 async function handleLogin(event) {
     event.preventDefault();
@@ -35,6 +152,20 @@ async function handleLogin(event) {
     const loginBtn = document.getElementById('loginBtn');
     const errorDiv = document.getElementById('loginError');
     const errorText = document.getElementById('loginErrorText');
+    
+    // validate username
+    var usernameCheck = validateUsername(username);
+    if (!usernameCheck.valid) {
+        showError(usernameCheck.message);
+        return;
+    }
+    
+    // validate password
+    var passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+        showError(passwordCheck.message);
+        return;
+    }
     
     loginBtn.disabled = true;
     loginBtn.innerHTML = '<span>Signing in...</span> <i class="fas fa-spinner fa-spin"></i>';
@@ -53,14 +184,8 @@ async function handleLogin(event) {
         } else if (msg === 'Request failed') {
             msg = 'Invalid username or password';
         }
-        errorText.textContent = msg;
-        errorDiv.classList.remove('hidden');
 
         if (typeof showToast === 'function') showToast(msg, 'error');
-
-        setTimeout(() => {
-            try { errorDiv.classList.add('hidden'); } catch (e) {}
-        }, 4000);
 
         loginBtn.disabled = false;
         loginBtn.innerHTML = '<span>Sign In</span> <i class="fas fa-arrow-right"></i>';
@@ -86,6 +211,7 @@ function useDemoAccount() {
 
 // wire up demo button
 document.addEventListener('DOMContentLoaded', () => {
+    const demoBtn = document.getElementById('demoBtn');
     if (demoBtn) {
         demoBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -94,19 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// shows error message on the form
+// shows error via toast notification
 function showError(message) {
-    const errorDiv = document.getElementById('registerError') || document.getElementById('loginError');
-    const errorText = document.getElementById('registerErrorText') || document.getElementById('loginErrorText');
-    
-    if (errorDiv && errorText) {
-        errorText.textContent = message;
-        errorDiv.classList.remove('hidden');
-    }
-}
-
-function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (typeof showToast === 'function') showToast(message, 'error');
 }
 
 // registration form with validation
@@ -117,31 +233,50 @@ async function handleRegister(event) {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('reg-password').value;
     const name = document.getElementById('name').value.trim();
-    const age = parseInt(document.getElementById('age').value);
+    const age = document.getElementById('age').value;
     const gender = document.getElementById('gender').value;
-    const lookingFor = document.getElementById('lookingFor').value;
     
     const registerBtn = document.getElementById('registerBtn');
     const errorDiv = document.getElementById('registerError');
     const errorText = document.getElementById('registerErrorText');
     
-    if (!name) {
-        showError('Please enter your name');
+    // validate username first
+    var usernameCheck = validateUsername(username);
+    if (!usernameCheck.valid) {
+        showError(usernameCheck.message);
         return;
     }
     
-    if (!age || age < 18 || age > 120) {
-        showError('Please enter a valid age (18+)');
+    // validate email
+    var emailCheck = validateEmail(email);
+    if (!emailCheck.valid) {
+        showError(emailCheck.message);
+        return;
+    }
+    
+    // validate password
+    var passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+        showError(passwordCheck.message);
+        return;
+    }
+    
+    // validate name (only letters)
+    var nameCheck = validateName(name);
+    if (!nameCheck.valid) {
+        showError(nameCheck.message);
+        return;
+    }
+    
+    // validate age (18+)
+    var ageCheck = validateAge(age);
+    if (!ageCheck.valid) {
+        showError(ageCheck.message);
         return;
     }
     
     if (!gender) {
         showError('Please select your gender');
-        return;
-    }
-    
-    if (!lookingFor) {
-        showError('Please select who you\'re interested in');
         return;
     }
     
@@ -155,17 +290,15 @@ async function handleRegister(event) {
             email,
             password,
             name,
-            age,
-            gender,
-            lookingFor
+            age: parseInt(age),
+            gender
         });
         
         if (result) {
             window.location.href = '/index.html';
         }
     } catch (error) {
-        errorText.textContent = error.message || 'Registration failed. Please try again.';
-        errorDiv.classList.remove('hidden');
+        showError(error.message || 'Registration failed. Please try again.');
         
         registerBtn.disabled = false;
         registerBtn.innerHTML = '<span>Create Account</span> <i class="fas fa-check"></i>';
