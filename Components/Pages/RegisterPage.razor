@@ -2,164 +2,120 @@
 @using System.ComponentModel.DataAnnotations
 @layout AuthLayout
 
-<div class="auth-page register-page">
-    <div class="auth-container">
+<div class="auth-header">
+    <h2>Create Account</h2>
+    <p>Start your journey to find love on Pairly</p>
+</div>
 
-        <div class="auth-brand">
-            <div class="brand-content">
+<EditForm Model="@registerData"
+            OnValidSubmit="@HandleRegister"
+            class="auth-form">
 
-                <div class="brand-logo">
-                    <i class="fas fa-heart"></i>
-                </div>
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-                <h1>Pairly</h1>
-                <p>Find meaningful connections with people who share your interests and values. (18+)</p>
+    <div class="form-group">
+        <label><i class="fas fa-id-card"></i> Your Name</label>
 
-                <div class="brand-features">
-                    <div class="feature"><i class="fas fa-shield-alt"></i><span>Safe & Secure</span></div>
-                    <div class="feature"><i class="fas fa-users"></i><span>Verified Profiles</span></div>
-                    <div class="feature"><i class="fas fa-heart"></i><span>Real Connections</span></div>
-                </div>
+        <InputText class="form-control"
+                    @bind-Value="registerData.Name"
+                    placeholder="What should we call you?" />
 
-            </div>
-
-            <div class="brand-decoration">
-                <div class="floating-heart"></div>
-                <div class="floating-heart"></div>
-                <div class="floating-heart"></div>
-            </div>
-        </div>
-
-        <div class="auth-form-container">
-            <div class="auth-form-wrapper">
-
-                <div class="auth-header">
-                    <h2>Create Account</h2>
-                    <p>Start your journey to find love on Pairly</p>
-                </div>
-
-                <EditForm Model="@registerData"
-                          OnValidSubmit="@HandleRegister"
-                          class="auth-form">
-
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-
-                    <div class="form-group">
-                        <label><i class="fas fa-id-card"></i> Your Name</label>
-
-                        <InputText class="form-control"
-                                   @bind-Value="registerData.Name"
-                                   placeholder="What should we call you?" />
-
-                        <ValidationMessage For="@(() => registerData.Name)" />
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-envelope"></i> Email</label>
-
-                        <InputText class="form-control"
-                                   @bind-Value="registerData.Email"
-                                   placeholder="your@email.com" />
-
-                        <ValidationMessage For="@(() => registerData.Email)" />
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-lock"></i> Password</label>
-
-                        <InputText type="password"
-                                   class="form-control"
-                                   @bind-Value="registerData.Password"
-                                   placeholder="Create a strong password" />
-
-                        <ValidationMessage For="@(() => registerData.Password)" />
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-lock"></i> Confirm Password</label>
-
-                        <InputText type="password"
-                                   class="form-control"
-                                   @bind-Value="registerData.ConfPassword"
-                                   placeholder="Write your password again" />
-
-                        <ValidationMessage For="@(() => registerData.ConfPassword)" />
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-birthday-cake"></i> Age</label>
-
-                        <InputNumber class="form-control"
-                                     @bind-Value="registerData.Age" />
-
-                        <ValidationMessage For="@(() => registerData.Age)" />
-                    </div>
-
-                    
-
-
-                    @* <div class="form-group">
-                        <label><i class="fas fa-venus-mars"></i> Gender</label>
-
-                        <InputSelect class="form-control"
-                                        @bind-Value="registerData.Gender">
-                            <option value="">Select...</option>
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Other</option>
-                        </InputSelect>
-
-                        <ValidationMessage For="@(() => registerData.Gender)" />
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-heart"></i> Interested In</label>
-
-                        <InputSelect class="form-control"
-                                     @bind-Value="registerData.LookingFor">
-                            <option value="">Select...</option>
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Everyone</option>
-                        </InputSelect>
-
-                        <ValidationMessage For="@(() => registerData.LookingFor)" />
-                    </div> *@
-
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <span>Create Account</span>
-                        <i class="fas fa-check"></i>
-                    </button>
-
-                </EditForm>
-
-                @if (!string.IsNullOrWhiteSpace(successMessage))
-                {
-                    <div class="message success">@successMessage</div>
-                }
-
-                <div class="auth-footer">
-                    <p>
-                        Already have an account?
-                        <a href="/login">Sign In</a>
-                    </p>
-                </div>
-
-            </div>
-        </div>
-
+        <ValidationMessage For="@(() => registerData.Name)" />
     </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Email</label>
+
+        <InputText class="form-control"
+                    @bind-Value="registerData.Email"
+                    placeholder="your@email.com" />
+
+        <ValidationMessage For="@(() => registerData.Email)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+
+        <InputText type="password"
+                    class="form-control"
+                    @bind-Value="registerData.Password"
+                    placeholder="Create a strong password" />
+
+        <ValidationMessage For="@(() => registerData.Password)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-lock"></i> Confirm Password</label>
+
+        <InputText type="password"
+                    class="form-control"
+                    @bind-Value="registerData.ConfPassword"
+                    placeholder="Write your password again" />
+
+        <ValidationMessage For="@(() => registerData.ConfPassword)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-birthday-cake"></i> Age</label>
+
+        <InputNumber class="form-control"
+                        @bind-Value="registerData.Age" />
+
+        <ValidationMessage For="@(() => registerData.Age)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">
+        <span>Create Account</span>
+        <i class="fas fa-check"></i>
+    </button>
+
+</EditForm>
+
+@* <div class="form-group">
+        <label><i class="fas fa-venus-mars"></i> Gender</label>
+
+        <InputSelect class="form-control"
+                        @bind-Value="registerData.Gender">
+            <option value="">Select...</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Gender)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-heart"></i> Interested In</label>
+
+        <InputSelect class="form-control"
+                        @bind-Value="registerData.LookingFor">
+            <option value="">Select...</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Everyone</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.LookingFor)" />
+    </div> *@
+
+@if (!string.IsNullOrWhiteSpace(successMessage))
+{
+    <div class="message success">@successMessage</div>
+}
+
+<div class="auth-footer">
+    <p>
+        Already have an account?
+        <NavLink href="/login">Sign In</NavLink>
+    </p>
 </div>
 
 @code {
 
     private sealed class RegisterModel
     {
-        [Required]
-        [MinLength(3)]
-        public string Username { get; set; } = string.Empty;
-
         [Required]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
@@ -168,6 +124,7 @@
         [MinLength(6)]
         public string Password { get; set; } = string.Empty;
 
+        [Compare("Password")]
         public string ConfPassword { get; set; } = string.Empty;
 
         [Required]
@@ -175,12 +132,6 @@
 
         [Range(18, 120)]
         public int Age { get; set; }
-
-        [Required]
-        public string Gender { get; set; } = string.Empty;
-
-        [Required]
-        public string LookingFor { get; set; } = string.Empty;
     }
 
     private RegisterModel registerData = new();

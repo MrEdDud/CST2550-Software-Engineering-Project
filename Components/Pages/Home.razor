@@ -1,28 +1,6 @@
 ﻿@page "/"
 @page "/home"
 
-@* Sidebar *@
-<aside class="app-sidebar">
-    <div class="sidebar-profile">
-        <i class="fa-regular fa-circle-user sidebar-avatar"></i>
-        <strong id="sidebarName">You</strong> <span id="sidebarHandle">@@<span id="sidebarUsername">user</span></span>
-    </div>
-    <nav class="sidebar-nav">
-        @foreach (var item in SidebarItems)
-        {
-            <button class="sidebar-link @(currentTab == item.Id ? "active" : "")" @onclick="() => SwitchTab(item.Id)">
-                <i class="@item.Icon"></i>
-                <span>@item.Text</span>
-            </button>
-        }
-    </nav>
-    @* Needs fixing ↓↓↓↓↓ *@
-
-    @* <div class="sidebar-bottom">
-        <button class="btn" onclick="logout()">Logout</button>
-    </div> *@
-</aside>
-
 <main>
     @* Switches to different pages depending on which button has been pressed *@
     @switch (currentTab)

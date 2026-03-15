@@ -312,39 +312,6 @@ i { color: var(--pink); }
    AUTH PAGES (Login + Register)
 ========================================================= 
 */
-/* Full-screen centered layout */
-.login-container {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 24px;
-}
-
-/* Card */
-.login-card {
-    width: 100%;
-    max-width: 500px;
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border2);
-    border-radius: 18px;
-    padding: 24px;
-    box-shadow: var(--shadow);
-}
-
-/* Titles */
-.app-title {
-    margin: 0 0 6px;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 0.2px;
-}
-
-.subtitle {
-    margin: 0 0 16px;
-    color: var(--muted);
-    font-size: 14px;
-}
 
 /* Form */
 form {
@@ -414,24 +381,6 @@ input.form-control {
         font-size: 13px;
     }
 
-/* Primary button */
-.btn-login {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    background: #FFA5AB;
-    color: var(--text);
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
-    box-shadow: var(--shadow);
-    justify-self: center;
-}
-    .btn-login:hover {
-        filter: brightness(1.05);
-    }
-
 /* Messages */
 .message {
     margin-top: 14px;
@@ -450,23 +399,6 @@ input.form-control {
         border: 1px solid rgba(46,229,157,0.35);
         color: var(--ok);
     }
-
-/* Bottom link */
-.register-link {
-    margin-top: 18px;
-    font-size: 14px;
-    color: var(--muted);
-    text-align: center;
-
-}
-    .register-link a {
-        color: var(--text);
-        text-decoration: none;
-        border-bottom: 1px dashed rgba(255,255,255,0.4);
-    }
-        .register-link a:hover {
-            border-bottom-color: transparent;
-        }
 
 /* 
 =========================================================
@@ -617,7 +549,6 @@ input.form-control {
 /* PAGE WRAPPER */
 .auth-page {
     height: 100vh;
-    background: var(--white);
 }
 
 /* MAIN SPLIT CONTAINER */
