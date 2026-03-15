@@ -34,28 +34,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/Home.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/HomeTab.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lVGFiLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/LoginPage.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpblBhZ2UucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/MatchesTab.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNYXRjaGVzVGFiLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/NotFound.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xOb3RGb3VuZC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/ProfileTab.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQcm9maWxlVGFiLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/RegisterPage.razor]
@@ -66,12 +50,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZWFyY2gucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/SettingsTab.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZXR0aW5nc1RhYi5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXEhvbWUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/Matches.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXE1hdGNoZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/Profile.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXFByb2ZpbGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/Settings.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXFNldHRpbmdzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/_Imports.razor]
