@@ -1,4 +1,3 @@
-wwwroot\css\app.css
 wwwroot\favicon.ico
 wwwroot\favicon.png
 wwwroot\js\site.js
@@ -62,10 +61,10 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\css\app.css
 Components\Layout\ReconnectModal.razor.js
-C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\build\..\_framework\blazor.web.js
-C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\build\..\_framework\blazor.server.js
-C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\css\app.css
+C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.4\build\..\_framework\blazor.web.js
+C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.4\build\..\_framework\blazor.server.js
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\favicon.ico
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\js\site.js
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
@@ -128,5 +127,6 @@ C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\jquery\dist\jquery.slim.min.map
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\jquery\LICENSE.txt
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\Components\Layout\ReconnectModal.razor.js
-C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\_framework\blazor.web.js
-C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.2\_framework\blazor.server.js
+C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.4\_framework\blazor.web.js
+C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.4\_framework\blazor.server.js
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\css\app.css
