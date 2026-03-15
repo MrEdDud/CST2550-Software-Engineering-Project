@@ -13,20 +13,20 @@
                 </div>
 
                 <h1>Pairly</h1>
-                <p>Join thousands of singles finding love and meaningful connections every day. (18+)</p>
+                <p>Find meaningful connections with people who share your interests and values. (18+)</p>
 
-                <div class="brand-stats">
-                    <div class="stat">
-                        <span class="stat-number">Since 2024</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">Active Today</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">Verified</span>
-                    </div>
+                <div class="brand-features">
+                    <div class="feature"><i class="fas fa-shield-alt"></i><span>Safe & Secure</span></div>
+                    <div class="feature"><i class="fas fa-users"></i><span>Verified Profiles</span></div>
+                    <div class="feature"><i class="fas fa-heart"></i><span>Real Connections</span></div>
                 </div>
 
+            </div>
+
+            <div class="brand-decoration">
+                <div class="floating-heart"></div>
+                <div class="floating-heart"></div>
+                <div class="floating-heart"></div>
             </div>
         </div>
 
@@ -46,13 +46,13 @@
                     <ValidationSummary />
 
                     <div class="form-group">
-                        <label><i class="fas fa-user"></i> Username</label>
+                        <label><i class="fas fa-id-card"></i> Your Name</label>
 
                         <InputText class="form-control"
-                                   @bind-Value="registerData.Username"
-                                   placeholder="Choose a unique username" />
+                                   @bind-Value="registerData.Name"
+                                   placeholder="What should we call you?" />
 
-                        <ValidationMessage For="@(() => registerData.Username)" />
+                        <ValidationMessage For="@(() => registerData.Name)" />
                     </div>
 
                     <div class="form-group">
@@ -77,40 +77,40 @@
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-id-card"></i> Your Name</label>
+                        <label><i class="fas fa-lock"></i> Confirm Password</label>
 
-                        <InputText class="form-control"
-                                   @bind-Value="registerData.Name"
-                                   placeholder="What should we call you?" />
+                        <InputText type="password"
+                                   class="form-control"
+                                   @bind-Value="registerData.ConfPassword"
+                                   placeholder="Write your password again" />
 
-                        <ValidationMessage For="@(() => registerData.Name)" />
+                        <ValidationMessage For="@(() => registerData.ConfPassword)" />
                     </div>
 
-                    <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-birthday-cake"></i> Age</label>
 
-                        <div class="form-group">
-                            <label><i class="fas fa-birthday-cake"></i> Age</label>
+                        <InputNumber class="form-control"
+                                     @bind-Value="registerData.Age" />
 
-                            <InputNumber class="form-control"
-                                         @bind-Value="registerData.Age" />
+                        <ValidationMessage For="@(() => registerData.Age)" />
+                    </div>
 
-                            <ValidationMessage For="@(() => registerData.Age)" />
-                        </div>
+                    
 
-                        <div class="form-group">
-                            <label><i class="fas fa-venus-mars"></i> Gender</label>
 
-                            <InputSelect class="form-control"
-                                         @bind-Value="registerData.Gender">
-                                <option value="">Select...</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>Other</option>
-                            </InputSelect>
+                    @* <div class="form-group">
+                        <label><i class="fas fa-venus-mars"></i> Gender</label>
 
-                            <ValidationMessage For="@(() => registerData.Gender)" />
-                        </div>
+                        <InputSelect class="form-control"
+                                        @bind-Value="registerData.Gender">
+                            <option value="">Select...</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </InputSelect>
 
+                        <ValidationMessage For="@(() => registerData.Gender)" />
                     </div>
 
                     <div class="form-group">
@@ -125,7 +125,7 @@
                         </InputSelect>
 
                         <ValidationMessage For="@(() => registerData.LookingFor)" />
-                    </div>
+                    </div> *@
 
                     <button type="submit" class="btn btn-primary btn-block">
                         <span>Create Account</span>
@@ -167,6 +167,8 @@
         [Required]
         [MinLength(6)]
         public string Password { get; set; } = string.Empty;
+
+        public string ConfPassword { get; set; } = string.Empty;
 
         [Required]
         public string Name { get; set; } = string.Empty;
