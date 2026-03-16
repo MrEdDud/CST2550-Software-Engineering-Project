@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "R2Mly84qlSY=",
+  "dgSpecHash": "IJcoO4SZR/M=",
   "success": true,
-  "projectFilePath": "C:\\Users\\eduar\\source\\repos\\CST2550Project\\CST2550-Software-Engineering-Project\\CST2550.csproj",
+  "projectFilePath": "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\CST2550.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\eduar\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.4\\microsoft.aspnetcore.app.internal.assets.10.0.4.nupkg.sha512"
+    "C:\\Users\\eduard\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.2\\microsoft.aspnetcore.app.internal.assets.10.0.2.nupkg.sha512"
   ],
   "logs": []
 }
