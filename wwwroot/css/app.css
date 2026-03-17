@@ -44,9 +44,8 @@ i { color: var(--pink); }
 }
 
 .app-content {
-    margin-left: 20vw; /* sidebar width + spacing */
+    margin-left: 20vw;
     margin-right: 20vw;
-    padding: 20px;
     display: flex;
     justify-content: center;
     z-index: 1;
@@ -146,10 +145,9 @@ i { color: var(--pink); }
     position: fixed;
     left: 20px;
     top: 80px;
-    width: 20vw;
+    width: 18vw;
     bottom: 20px;
     border-radius: 20px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
     box-shadow: 0 10px 30px rgba(10,10,10,0.06);
     display: flex;
     flex-direction: column;
@@ -232,6 +230,8 @@ i { color: var(--pink); }
 .discovery-container {
     display: flex;
     justify-content: center;
+    align-content: center;
+    align-items: center;
     position: relative;
 }
 
@@ -302,6 +302,7 @@ i { color: var(--pink); }
     color: black;
     border: none;
     box-shadow: 0 4px 20px rgba(255, 75, 110, 0.35);
+    text-align: center;
 }
     .btn-primary:hover {
         transform: translateY(-2px);
@@ -762,6 +763,7 @@ input.form-control {
     justify-content: center;
     gap: 20px;
     padding: 20px;
+    background: rgba(0,0,0,0.7);
 }
 
 .action-btn {
@@ -771,4 +773,17 @@ input.form-control {
     border: none;
     font-size: 24px;
     cursor: pointer;
+    background: rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+} 
+    .action-btn:hover {
+        background: rgba(0,0,0,0.5);
+    }
+
+.empty-state .btn i {
+    color: black;
+    transition: 0.2s;
 }
+    .empty-state .btn:hover i {
+        color: white;
+    }
