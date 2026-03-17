@@ -1,0 +1,92 @@
+﻿@page "/"
+@page "/home"
+
+<section>
+    <div class="discovery-container">
+        <div class="card-stack">
+
+            @if (IsLoading)
+            {
+                <div class="loading-card">
+                    <div class="loader"></div>
+                    <p>Finding people near you...</p>
+                </div>
+            }
+            else if (noMoreProfiles)
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-heart-broken"></i>
+                    </div>
+                    <h2>No more profiles</h2>
+                    <p>You've seen everyone for now. Check back later for new people!</p>
+                    <button class="btn btn-primary" @onclick="LoadProfiles">
+                        <i class="fas fa-sync-alt" style="color: black;"></i> Refresh
+                    </button>
+                </div>
+            }
+            else
+            {
+                <SwipeCard Profiles="Profiles"
+                           OnSwipe="HandleSwipe" />
+            }
+
+        </div>
+    </div>
+</section>
+
+<div class="toast-container"></div>
+
+@code {
+    private List<ProfileModel> Profiles = new();
+
+    private bool noMoreProfiles = false;
+    private bool IsLoading = true;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfiles();
+    }
+
+    private async Task LoadProfiles()
+    {
+        IsLoading = true;
+        noMoreProfiles = false;
+
+        // 🔌 Replace with your API later
+        await Task.Delay(1000);
+
+        // TEMP MOCK DATA (remove when API ready)
+        Profiles = new List<ProfileModel>
+        {
+            new ProfileModel { UserId = 1, Name = "Anna", Age = 21, Bio = "Loves coffee ☕", ProfilePhotoUrl = "https://media.gettyimages.com/id/2063799507/photo/business-portrait-and-black-man-in-city-outdoor-for-career-or-job-of-businessman-face.jpg?s=612x612&w=gi&k=20&c=aV_6jGmVEE5WQR6F__JPMwAxJZiPBBIg-a0pdzKgL6A=" },
+            new ProfileModel { UserId = 2, Name = "Sophie", Age = 23, Bio = "Gym & travel", ProfilePhotoUrl = "https://plus.unsplash.com/premium_photo-1689530775582-83b8abdb5020?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww" }
+        };
+
+        IsLoading = false;
+        noMoreProfiles = Profiles.Count == 0;
+    }
+
+    private async Task HandleSwipe((ProfileModel profile, bool isLike) data)
+    {
+        // 🔌 Send to API later
+        // await Api.Swipe(...)
+
+        Profiles.Remove(data.profile);
+
+        if (Profiles.Count == 0)
+        {
+            noMoreProfiles = true;
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private void NavigateToProfile()
+    {
+        NavigationManager.NavigateTo("/profile");
+    }
+}

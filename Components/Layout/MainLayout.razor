@@ -1,27 +1,68 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="app-shell">
+
     <!-- Top bar -->
     <header class="topbar">
         <div class="brand">
-            <span class="brand-dot"></span>
+            <i class="fa-solid fa-heart"></i>
             <span class="brand-name">Pairly</span>
         </div>
 
-        <nav class="topnav">
-            <a href="/home" class="topnav-link">Discover</a>
-            <a href="/matches" class="topnav-link">Matches</a>
-            <a href="/messages" class="topnav-link">Messages</a>
-            <a href="/profile" class="topnav-link">Profile</a>
-        </nav>
-
         <div class="topbar-actions">
-            <a class="ghost-btn" href="/login">Logout</a>
+            <button class="header-btn">
+                <i class="fas fa-bell"></i>
+            </button>
         </div>
     </header>
 
-    <!-- Page content -->
-    <main class="app-content">
-        @Body
-    </main>
+    <div class="app-content">
+
+        <!-- Sidebar -->
+        <aside class="app-sidebar">
+
+            <div class="sidebar-profile">
+                <i class="fa-regular fa-circle-user sidebar-avatar"></i>
+                <strong>You</strong>
+                <span>@@user</span>
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <NavLink href="/home" class="sidebar-link">
+                    <i class="fas fa-fire"></i>
+                    <span>Home</span>
+                </NavLink>
+
+                <NavLink href="/matches" class="sidebar-link">
+                    <i class="fas fa-heart"></i>
+                    <span>Matches</span>
+                </NavLink>
+
+                <NavLink href="/profile" class="sidebar-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </NavLink>
+
+                <NavLink href="/settings" class="sidebar-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </NavLink>
+
+                <NavLink href="/search" class="sidebar-link">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </NavLink>
+
+            </nav>
+
+        </aside>
+
+        <!-- Page content -->
+        <main class="app-main">
+            @Body
+        </main>
+
+    </div>
+
 </div>
