@@ -21,7 +21,7 @@
                     <h2>No more profiles</h2>
                     <p>You've seen everyone for now. Check back later for new people!</p>
                     <button class="btn btn-primary" @onclick="LoadProfiles">
-                        <i class="fas fa-sync-alt" style="color: black;"></i> Refresh
+                        <i class="fas fa-sync-alt"></i> Refresh
                     </button>
                 </div>
             }
@@ -89,4 +89,11 @@
     {
         NavigationManager.NavigateTo("/profile");
     }
+
+    private string SearchTerm = "";
+    private bool ShowFilters = false;
+
+    private int MinAge = 18;
+    private int MaxAge = 35;
+    private string SelectedGender = "";
 }

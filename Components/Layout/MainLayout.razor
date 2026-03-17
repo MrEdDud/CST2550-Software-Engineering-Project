@@ -49,10 +49,21 @@
                     <span>Settings</span>
                 </NavLink>
 
-                <NavLink href="/search" class="sidebar-link">
+                <div class="sidebar-search">
+
                     <i class="fas fa-search"></i>
-                    <span>Search</span>
-                </NavLink>
+
+                    <input type="text"
+                           placeholder="Search..."
+                           @bind="SearchTerm"
+                           @bind:event="oninput" />
+
+                    <button class="filter-btn"
+                            @onclick="ToggleFilters">
+                        <i class="fas fa-sliders-h"></i>
+                    </button>
+
+                </div>
 
             </nav>
 
@@ -63,6 +74,57 @@
             @Body
         </main>
 
+        <div class="filter-panel @(ShowFilters ? "open" : "")">
+
+            <div class="filter-header">
+                <h3>Filters</h3>
+                <button @onclick="ToggleFilters">✖</button>
+            </div>
+
+            <div class="filter-content">
+
+                <!-- Age -->
+                <label>Age: @MinAge - @MaxAge</label>
+                <input type="range" min="18" max="65" @bind="MinAge" />
+                <input type="range" min="18" max="65" @bind="MaxAge" />
+
+                <!-- Gender -->
+                <label>Show Me</label>
+                <select @bind="SelectedGender">
+                    <option value="">Everyone</option>
+                    <option value="Female">Women</option>
+                    <option value="Male">Men</option>
+                </select>
+
+            </div>
+
+            <div class="filter-actions">
+                <button @onclick="ResetFilters">Reset</button>
+                <button @onclick="ApplyFilters">Apply</button>
+            </div>
+
+        </div>
+
     </div>
 
 </div>
+
+@code {
+    void ToggleFilters()
+    {
+        ShowFilters = !ShowFilters;
+    }
+
+    void ResetFilters()
+    {
+        MinAge = 18;
+        MaxAge = 35;
+        SelectedGender = "";
+    }
+
+    void ApplyFilters()
+    {
+        // later: filter profiles here
+        ShowFilters = false;
+    }
+}
