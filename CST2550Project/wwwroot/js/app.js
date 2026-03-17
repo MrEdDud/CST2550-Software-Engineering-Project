@@ -32,12 +32,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         await updateUnreadBadge();
         
-        const sidebarNameEl = document.getElementById('sidebarName');
-        const sidebarUsernameEl = document.getElementById('sidebarUsername');
-        const sidebarAvatar = document.querySelector('.sidebar-avatar');
-        if (sidebarNameEl && myProfile) sidebarNameEl.textContent = myProfile.name || 'You';
-        if (sidebarUsernameEl && myProfile) sidebarUsernameEl.textContent = myProfile.username || getUsername();
-        if (sidebarAvatar && myProfile?.profilePhotoUrl) sidebarAvatar.src = myProfile.profilePhotoUrl;
+    const sidebarNameEl = document.getElementById('sidebarName');
+    const sidebarAvatar = document.querySelector('.sidebar-avatar');
+    if (sidebarNameEl && myProfile) sidebarNameEl.textContent = myProfile.name || 'You';
+    if (sidebarAvatar && myProfile && myProfile.profilePhotoUrl) sidebarAvatar.src = myProfile.profilePhotoUrl;
         
         document.body.style.opacity = '1';
         

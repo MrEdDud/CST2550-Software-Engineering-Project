@@ -19,13 +19,9 @@
     </div>
 
     <aside class="app-sidebar" id="appSidebar" aria-label="Main navigation">
-        <div class="sidebar-profile">
-            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=200" alt="You" class="sidebar-avatar">
-            <div class="sidebar-name"> <strong id="sidebarName">You</strong> <span id="sidebarHandle">@<span id="sidebarUsername">user</span></span></div>
-        </div>
         <nav class="sidebar-nav">
             <button class="sidebar-link active" onclick="switchTab('home')">
-                <i class="fas fa-fire"></i>
+                <i class="fas fa-home"></i>
                 <span>Home</span>
             </button>
             <button class="sidebar-link" onclick="switchTab('search')">
@@ -47,6 +43,11 @@
         </nav>
         <div class="sidebar-bottom">
             <button class="btn btn-ghost" onclick="logout()">Logout</button>
+            <!-- profile placed at bottom, only show name and avatar -->
+            <div class="sidebar-profile sidebar-profile-bottom">
+                <img src="https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=200" alt="You" class="sidebar-avatar">
+                <div class="sidebar-name"> <strong id="sidebarName">You</strong></div>
+            </div>
         </div>
     </aside>
 
