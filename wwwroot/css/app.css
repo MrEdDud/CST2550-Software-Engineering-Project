@@ -1,41 +1,64 @@
-/* 
-=========================================================
+/* =========================================================
    GLOBAL BASE
-========================================================= 
-*/
+========================================================= */
 
 :root {
-    --bg: #F1DEDC;
+    --bg: #f7f4f6;
+    --bg-soft: #fffafb;
     --card: #121a33;
+    --card-soft: #1b2342;
     --text: #e9ecff;
-    --text-dark: black;
-    --muted: #a9b0d9;
+    --text-dark: #111111;
+    --muted: #8f96ba;
     --accent: #6c63ff;
     --accent2: #ff4d6d;
     --ok: #2ee59d;
+    --danger: #ff5c7a;
+    --pink: #dba0b2;
+    --white: #ffffff;
+    --primary: #dba0b2;
     --border: rgba(255,255,255,0.10);
     --border2: rgba(255,255,255,0.08);
-    --shadow: 0 18px 40px rgba(0,0,0,0.35);
-    --pink: #DBA0B2;
+    --border-light: rgba(17, 24, 39, 0.08);
+    --shadow: 0 18px 40px rgba(0,0,0,0.18);
+    --shadow-soft: 0 10px 30px rgba(17,24,39,0.08);
+    --radius-full: 9999px;
+    --space-2: 8px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --z-fixed: 999;
+    --gray-100: #ececf3;
+    --gradient-primary: linear-gradient(135deg, #e098af 0%, #d0b0ba 100%);
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
 
 body {
     margin: 0;
     color: var(--text-dark);
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,245,247,0.98));
 }
 
-a { color: inherit; }
-i { color: var(--pink); }
+a {
+    color: inherit;
+    text-decoration: none;
+}
 
-/* 
-=========================================================
+i {
+    color: var(--pink);
+}
+
+/* =========================================================
    APP SHELL
-========================================================= 
-*/
+========================================================= */
 
 .app-shell {
     min-height: 100vh;
@@ -44,18 +67,19 @@ i { color: var(--pink); }
 }
 
 .app-content {
-    margin-left: 20vw;
-    margin-right: 20vw;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
     display: flex;
     justify-content: center;
+    position: relative;
     z-index: 1;
 }
 
-/* 
-=========================================================
+/* =========================================================
    HEADER CONTENT
-========================================================= 
-*/
+========================================================= */
 
 .topbar {
     color: var(--text);
@@ -63,9 +87,10 @@ i { color: var(--pink); }
     top: 0;
     display: flex;
     align-items: center;
-    padding: 1.2vh 1.7vw;
-    background: #191A2E;
+    padding: 14px 24px;
+    background: #191a2e;
     z-index: 9999;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .brand {
@@ -75,18 +100,37 @@ i { color: var(--pink); }
 }
 
 .brand-name {
-    font-weight: bold;
+    font-weight: 700;
     letter-spacing: 0.2px;
 }
 
 .topnav {
     display: flex;
     justify-content: center;
+    align-items: center;
     flex: 1;
+    gap: 10px;
 }
+
+    .topnav a,
+    .topnav-link {
+        color: rgba(233,236,255,0.78);
+        padding: 10px 14px;
+        border-radius: 12px;
+        transition: all 0.2s ease-in-out;
+        font-weight: 500;
+    }
+
+        .topnav a:hover,
+        .topnav-link:hover {
+            color: var(--white);
+            background: rgba(255,255,255,0.08);
+        }
 
 .topbar-actions {
     margin-left: auto;
+    display: flex;
+    align-items: center;
 }
 
 .header-btn {
@@ -97,13 +141,17 @@ i { color: var(--pink); }
     color: var(--text);
     display: flex;
     align-items: center;
+    justify-content: center;
     font-size: 1.1rem;
     transition: all 0.2s ease-in;
     position: relative;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
     .header-btn:hover {
         color: var(--bg);
+        background: rgba(255,255,255,0.08);
     }
 
 .notification-dot {
@@ -126,7 +174,7 @@ i { color: var(--pink); }
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--text-xl);
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary);
 }
@@ -135,41 +183,63 @@ i { color: var(--pink); }
         font-size: 1.5rem;
     }
 
-/* 
-=========================================================
+/* =========================================================
+   MAIN APP LAYOUT
+========================================================= */
+
+.main-layout {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 28px;
+    align-items: start;
+}
+
+/* =========================================================
    SIDEBAR
-========================================================= 
-*/
+========================================================= */
 
 .app-sidebar {
-    position: fixed;
-    left: 20px;
-    top: 80px;
-    width: 18vw;
-    bottom: 20px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(10,10,10,0.06);
+    position: sticky;
+    top: 92px;
+    width: 100%;
+    min-height: calc(100vh - 120px);
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    border: 1px solid rgba(17,24,39,0.05);
+    box-shadow: var(--shadow-soft);
     display: flex;
     flex-direction: column;
-    z-index: 9999;
+    z-index: 10;
     text-decoration: none;
+    padding: 14px;
 }
 
 .sidebar-profile {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 12px;
+    padding: 12px 10px 18px;
     font-size: 0.95rem;
+    border-bottom: 1px solid rgba(17,24,39,0.06);
 }
 
-.sidebar-avatar { font-size: 3.5vh; }
+.sidebar-avatar {
+    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #fff4f7;
+}
 
 .sidebar-nav {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 30px;
+    margin-top: 24px;
 }
 
 .sidebar-link {
@@ -181,33 +251,35 @@ i { color: var(--pink); }
     font-weight: 600;
     background: none;
     border: none;
-    padding: 20px 12px;
+    padding: 16px 12px;
     width: 100%;
     position: relative;
     color: var(--muted);
     transition: all 0.2s ease;
     text-decoration: none;
+    border-radius: 16px;
 }
+
     .sidebar-link i {
         width: 20px;
         text-align: center;
     }
 
-    .sidebar-link.active, .sidebar-link:hover {
-        background: linear-gradient(90deg, rgba(224,150,166,0.06), rgba(208,176,186,0.04));
+    .sidebar-link.active,
+    .sidebar-link:hover {
+        background: linear-gradient(90deg, rgba(224,150,166,0.08), rgba(208,176,186,0.05));
         color: var(--text-dark);
     }
 
-/* 
-=========================================================
+/* =========================================================
    HOME PAGE
-========================================================= 
-*/
+========================================================= */
 
 .app-main {
     flex: 1;
-    margin-top: 60px;
-    margin-bottom: 80px;
+    min-width: 0;
+    margin-top: 8px;
+    margin-bottom: 40px;
 }
 
 .bottom-tabs {
@@ -230,19 +302,20 @@ i { color: var(--pink); }
 .discovery-container {
     display: flex;
     justify-content: center;
-    align-content: center;
     align-items: center;
     position: relative;
 }
 
-.hidden{ display: none; }
+.hidden {
+    display: none;
+}
 
 .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 500px;
+    min-height: 500px;
     text-align: center;
     padding: var(--space-8);
 }
@@ -253,12 +326,14 @@ i { color: var(--pink); }
     align-items: center;
     justify-content: center;
     background: var(--card);
-    border-radius: 20px;
+    border-radius: 24px;
     gap: 20px;
-    width: 30vw;
-    height: 80vh;
+    width: min(420px, 100%);
+    min-height: 520px;
     z-index: 1;
+    box-shadow: var(--shadow);
 }
+
     .loading-card p {
         color: var(--text);
     }
@@ -270,6 +345,12 @@ i { color: var(--pink); }
     border-top-color: var(--primary);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .empty-icon {
@@ -286,6 +367,16 @@ i { color: var(--pink); }
     animation: pulse 2s infinite;
 }
 
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.04);
+    }
+}
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -295,34 +386,35 @@ i { color: var(--pink); }
     line-height: 1;
     gap: 8px;
     transition: all 0.2s ease;
+    cursor: pointer;
+    font-weight: 600;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #E098AF 0%, #D0B0BA 100%);
+    background: linear-gradient(135deg, #e098af 0%, #d0b0ba 100%);
     color: black;
     border: none;
-    box-shadow: 0 4px 20px rgba(255, 75, 110, 0.35);
+    box-shadow: 0 4px 20px rgba(255, 75, 110, 0.18);
     text-align: center;
 }
+
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 30px rgba(255, 75, 110, 0.4);
+        box-shadow: 0 8px 30px rgba(255, 75, 110, 0.24);
     }
 
 .btn-block {
     width: 100%;
 }
 
-/*
-=========================================================
+/* =========================================================
    AUTH PAGES (Login + Register)
-========================================================= 
-*/
+========================================================= */
 
-/* Form */
 form {
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
 .form-group {
@@ -330,12 +422,12 @@ form {
 }
 
 label {
+    display: block;
     margin: 0 0 6px;
     font-size: 13px;
     color: var(--muted);
 }
 
-/* Inputs */
 .form-control,
 input.form-control {
     color: white;
@@ -343,35 +435,34 @@ input.form-control {
     padding: 14px 18px;
     border: 2px solid #404060;
     border-radius: 12px;
-    background: #2D2D4A;
+    background: #2d2d4a;
     backdrop-filter: blur(20px);
     outline: none;
     transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
     font-size: 1rem;
 }
+
     .form-control:focus {
         border-color: rgba(108,99,255,0.75);
-        background: #2D2D4A;
+        background: #2d2d4a;
     }
 
     .form-control::placeholder {
-        color: #EAEAEA;
+        color: #eaeaea;
         opacity: 0.5;
     }
 
     .form-control.valid {
-        color: #EAEAEA;
+        color: #eaeaea;
     }
 
-
-    /* Blazor validation text */
-    .validation-message {
-        display: block;
-        margin-top: 6px;
-        font-size: 12px;
-        color: var(--accent2);
-    }
+.validation-message {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--accent2);
+}
 
 .validation-summary-errors {
     margin: 12px 0;
@@ -380,6 +471,7 @@ input.form-control {
     background: rgba(255,77,109,0.12);
     border: 1px solid rgba(255,77,109,0.35);
 }
+
     .validation-summary-errors ul {
         margin: 0;
         padding-left: 16px;
@@ -387,13 +479,13 @@ input.form-control {
         font-size: 13px;
     }
 
-/* Messages */
 .message {
     margin-top: 14px;
     padding: 10px 12px;
     border-radius: 12px;
     font-size: 13px;
 }
+
     .message.error {
         background: rgba(255,77,109,0.12);
         border: 1px solid rgba(255,77,109,0.35);
@@ -406,11 +498,9 @@ input.form-control {
         color: var(--ok);
     }
 
-/* 
-=========================================================
-   SEARCH PAGE
-========================================================= 
-*/
+/* =========================================================
+   SEARCH PAGE / GRID CARDS
+========================================================= */
 
 .page {
     padding: 8px 0;
@@ -418,62 +508,85 @@ input.form-control {
 
 .page-title {
     margin: 8px 0 4px;
-    font-size: 28px;
+    font-size: 42px;
     font-weight: 900;
-    letter-spacing: 0.2px;
+    letter-spacing: -0.5px;
 }
 
 .page-subtitle {
-    margin: 0 0 18px;
+    margin: 0 0 22px;
     color: var(--muted);
+    font-size: 16px;
 }
 
-/* Grid of profile cards */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
 }
 
-/* Profile card */
 .profile-card {
-    background: rgba(18, 26, 51, 0.92);
+    background: rgba(18, 26, 51, 0.96);
     border: 1px solid var(--border2);
-    border-radius: 18px;
+    border-radius: 24px;
     overflow: hidden;
     box-shadow: var(--shadow);
 }
 
-/* Top "photo" area */
+/* regular grid profile cards only */
+.card-grid .profile-card {
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .card-grid .profile-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 50px rgba(0,0,0,0.22);
+    }
+
 .profile-photo {
-    height: 160px;
+    height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient( 135deg, rgba(108,99,255,0.35), rgba(255,77,109,0.22) );
+    background: linear-gradient(135deg, rgba(108,99,255,0.45), rgba(255,77,109,0.25));
+    position: relative;
 }
 
-/* Initial badge */
+    .profile-photo::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.18), transparent 55%);
+    }
+
 .profile-initial {
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
     display: grid;
     place-items: center;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 900;
-    background: rgba(13, 20, 48, 0.75);
+    background: rgba(13, 20, 48, 0.8);
     border: 1px solid rgba(255,255,255,0.12);
+    color: var(--white);
+    position: relative;
+    z-index: 1;
 }
 
-/* Info */
 .profile-info {
-    padding: 14px 14px 0;
+    padding: 18px 18px 0;
+    color: var(--text);
+    flex-grow: 1;
 }
 
 .profile-name {
     font-weight: 900;
-    font-size: 18px;
+    font-size: 22px;
+    color: var(--white);
 }
 
 .profile-age {
@@ -483,35 +596,36 @@ input.form-control {
 }
 
 .profile-bio {
-    margin-top: 6px;
+    margin-top: 10px;
     color: var(--muted);
     font-size: 14px;
-    line-height: 1.4;
-    min-height: 44px;
+    line-height: 1.5;
+    min-height: 50px;
 }
 
-/* Action buttons */
 .profile-actions {
     display: flex;
-    gap: 10px;
-    padding: 14px;
+    gap: 12px;
+    padding: 18px;
 }
 
 .icon-btn {
     flex: 1;
     border: none;
     cursor: pointer;
-    padding: 10px 12px;
-    border-radius: 14px;
+    padding: 12px 14px;
+    border-radius: 16px;
     font-weight: 900;
     font-size: 16px;
     color: var(--text);
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.10);
+    transition: 0.2s ease;
 }
 
     .icon-btn:hover {
-        background: rgba(255,255,255,0.10);
+        background: rgba(255,255,255,0.12);
+        transform: translateY(-2px);
     }
 
     .icon-btn.nope {
@@ -522,7 +636,6 @@ input.form-control {
         border-color: rgba(46,229,157,0.35);
     }
 
-/* Toast */
 .toast {
     position: fixed;
     bottom: 18px;
@@ -533,40 +646,25 @@ input.form-control {
     padding: 10px 14px;
     border-radius: 14px;
     color: var(--text);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
-/*
-=========================================================
-   RESPONSIVE TWEAKS
-=========================================================
-*/
+/* =========================================================
+   AUTH PAGE WRAPPER
+========================================================= */
 
-@media (max-width: 720px) {
-    .topnav {
-        display: none; /* keeps topbar clean on mobile */
-    }
-
-    .app-content {
-        padding: 16px;
-    }
-}
-
-/* PAGE WRAPPER */
 .auth-page {
     min-height: 100vh;
 }
 
-/* MAIN SPLIT CONTAINER */
 .auth-container {
     display: flex;
     min-height: 100vh;
 }
 
-/* LEFT SIDE (branding) */
 .auth-brand {
     flex: 1;
-    background: linear-gradient(135deg, #DBA0B2, #FFA5AB);
+    background: linear-gradient(135deg, #dba0b2, #ffa5ab);
     padding: 60px;
     display: flex;
     flex-direction: column;
@@ -583,24 +681,21 @@ input.form-control {
     gap: 20px;
 }
 
-/* RIGHT SIDE (form) */
 .auth-form-container {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 40px;
-    background: #191A2E;
+    background: #191a2e;
     min-height: 100vh;
 }
 
-/* FORM WRAPPER */
 .auth-form-wrapper {
     width: 100%;
     max-width: 440px;
 }
 
-/* HEADER */
 .auth-header {
     margin-bottom: 24px;
     text-align: center;
@@ -609,7 +704,7 @@ input.form-control {
     .auth-header h2 {
         margin: 0;
         font-size: 1.875rem;
-        color: #EAEAEA;
+        color: #eaeaea;
         font-weight: 700;
     }
 
@@ -622,9 +717,6 @@ input.form-control {
     color: var(--muted);
     text-align: center;
 }
-
-
-
 
 .feature {
     display: flex;
@@ -649,11 +741,12 @@ input.form-control {
 .brand-content {
     position: relative;
     z-index: 2;
-    color: #1A1A2E;
+    color: #1a1a2e;
     max-width: 500px;
 }
+
     .brand-content i {
-        color: #1A1A2E;
+        color: #1a1a2e;
     }
 
 .brand-logo {
@@ -699,7 +792,6 @@ input.form-control {
     overflow: hidden;
 }
 
-
 .auth-brand::before {
     content: '';
     position: absolute;
@@ -707,29 +799,22 @@ input.form-control {
     opacity: 0.5;
 }
 
-.profile-card {
-    cursor: grab;
-    user-select: none;
-    width: 30vw;
-    height: 80vh;
-}
-
-    .profile-card:active {
-        cursor: grabbing;
-    }
+/* =========================================================
+   SWIPE CARD (TINDER STYLE)
+========================================================= */
 
 .card-stack {
     position: relative;
-    width: 30vw;
-    height: 80vh;
+    width: min(380px, 90vw);
+    height: min(680px, 78vh);
 }
 
-    /* SWIPE CARD (TINDER STYLE) */
     .card-stack .profile-card {
         position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
-        border-radius: 20px;
+        border-radius: 24px;
         overflow: hidden;
         background: #121a33;
         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -737,7 +822,13 @@ input.form-control {
         flex-direction: column;
         justify-content: flex-end;
         touch-action: none;
+        cursor: grab;
+        user-select: none;
     }
+
+        .card-stack .profile-card:active {
+            cursor: grabbing;
+        }
 
 .card-photo {
     position: absolute;
@@ -751,9 +842,9 @@ input.form-control {
 .card-info {
     position: relative;
     z-index: 2;
-    padding: 20px;
+    padding: 22px;
     color: white;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    background: linear-gradient(to top, rgba(0,0,0,0.82), transparent);
 }
 
 .action-buttons {
@@ -773,17 +864,83 @@ input.form-control {
     border: none;
     font-size: 24px;
     cursor: pointer;
-    background: rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.12);
+    color: white;
     transition: all 0.2s ease;
-} 
+}
+
     .action-btn:hover {
-        background: rgba(0,0,0,0.5);
+        background: rgba(255,255,255,0.2);
+        transform: translateY(-2px);
     }
 
 .empty-state .btn i {
     color: black;
     transition: 0.2s;
 }
-    .empty-state .btn:hover i {
-        color: white;
+
+.empty-state .btn:hover i {
+    color: white;
+}
+
+/* =========================================================
+   RESPONSIVE TWEAKS
+========================================================= */
+
+@media (max-width: 1100px) {
+    .main-layout {
+        grid-template-columns: 1fr;
     }
+
+    .app-sidebar {
+        position: static;
+        min-height: auto;
+    }
+
+    .app-content {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 900px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-container {
+        flex-direction: column;
+    }
+
+    .auth-brand {
+        position: relative;
+        height: auto;
+        min-height: 320px;
+    }
+}
+
+@media (max-width: 720px) {
+    .topnav {
+        display: none;
+    }
+
+    .app-content {
+        padding: 16px;
+    }
+
+    .page-title {
+        font-size: 32px;
+    }
+
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-photo {
+        height: 240px;
+    }
+
+    .card-stack {
+        width: 92vw;
+        height: 72vh;
+    }
+}

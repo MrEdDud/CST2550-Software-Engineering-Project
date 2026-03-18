@@ -1,13 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="app-shell">
-
-    <!-- Top bar -->
     <header class="topbar">
         <div class="brand">
             <i class="fa-solid fa-heart"></i>
             <span class="brand-name">Pairly</span>
         </div>
+
+        <nav class="topnav">
+            <a href="/home" class="topnav-link">Home</a>
+            <a href="/matches" class="topnav-link">Matches</a>
+            <a href="/profile" class="topnav-link">Profile</a>
+            <a href="/settings" class="topnav-link">Settings</a>
+        </nav>
 
         <div class="topbar-actions">
             <button class="header-btn">
@@ -17,52 +22,42 @@
     </header>
 
     <div class="app-content">
+        <div class="main-layout">
+            <aside class="app-sidebar">
+                <div class="sidebar-profile">
+                    <i class="fa-regular fa-circle-user sidebar-avatar"></i>
+                    <div>
+                        <strong>You</strong><br />
+                        <span>@@user</span>
+                    </div>
+                </div>
 
-        <!-- Sidebar -->
-        <aside class="app-sidebar">
+                <nav class="sidebar-nav">
+                    <a href="/home" class="sidebar-link">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Home</span>
+                    </a>
 
-            <div class="sidebar-profile">
-                <i class="fa-regular fa-circle-user sidebar-avatar"></i>
-                <strong>You</strong>
-                <span>@@user</span>
-            </div>
+                    <a href="/matches" class="sidebar-link">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>Matches</span>
+                    </a>
 
-            <nav class="sidebar-nav">
+                    <a href="/profile" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Profile</span>
+                    </a>
 
-                <NavLink href="/home" class="sidebar-link">
-                    <i class="fas fa-fire"></i>
-                    <span>Home</span>
-                </NavLink>
+                    <a href="/settings" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </nav>
+            </aside>
 
-                <NavLink href="/matches" class="sidebar-link">
-                    <i class="fas fa-heart"></i>
-                    <span>Matches</span>
-                </NavLink>
-
-                <NavLink href="/profile" class="sidebar-link">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </NavLink>
-
-                <NavLink href="/settings" class="sidebar-link">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </NavLink>
-
-                <NavLink href="/search" class="sidebar-link">
-                    <i class="fas fa-search"></i>
-                    <span>Search</span>
-                </NavLink>
-
-            </nav>
-
-        </aside>
-
-        <!-- Page content -->
-        <main class="app-main">
-            @Body
-        </main>
-
+            <main class="app-main">
+                @Body
+            </main>
+        </div>
     </div>
-
 </div>
