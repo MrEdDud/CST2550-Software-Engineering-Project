@@ -1,6 +1,6 @@
 ﻿@using CST2550Project.Models
 
-<div class="ProfileModel-card"
+<div class="profile-card"
      @onmousedown="StartDrag"
      @onmousemove="OnDrag"
      @onmouseup="EndDrag"
@@ -9,13 +9,14 @@
 
     @if (Profiles?.Any() == true)
     {
-        var ProfileModel = Profiles.First();
+        var profile = Profiles.First();
+        var mainPhoto = profile.Photos.FirstOrDefault() ?? profile.ProfilePhotoUrl;
 
-        <img src="@ProfileModel.ProfilePhotoUrl" class="card-photo" draggable="false" />
+        <img src="@mainPhoto" class="card-photo" draggable="false" />
 
         <div class="card-info">
-            <h2>@ProfileModel.Name, @ProfileModel.Age</h2>
-            <p>@ProfileModel.Bio</p>
+            <h2>@profile.Name, @profile.Age</h2>
+            <p>@profile.Bio</p>
         </div>
 
         <div class="action-buttons">
@@ -91,7 +92,7 @@
     {
         if (Profiles.Count == 0) return;
 
-        var ProfileModel = Profiles.First();
-        await OnSwipe.InvokeAsync((ProfileModel, isLike));
+        var profile = Profiles.First();
+        await OnSwipe.InvokeAsync((profile, isLike));
     }
 }

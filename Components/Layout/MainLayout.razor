@@ -50,19 +50,16 @@
                 </NavLink>
 
                 <div class="sidebar-search">
-
-                    <i class="fas fa-search"></i>
-
                     <input type="text"
                            placeholder="Search..."
                            @bind="SearchTerm"
                            @bind:event="oninput" />
 
-                    <button class="filter-btn"
-                            @onclick="ToggleFilters">
+                    <i class="fas fa-search search-icon"></i>
+
+                    <button class="filter-btn">
                         <i class="fas fa-sliders-h"></i>
                     </button>
-
                 </div>
 
             </nav>

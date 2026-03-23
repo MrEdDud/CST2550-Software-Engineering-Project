@@ -198,6 +198,41 @@ i { color: var(--pink); }
         color: var(--text-dark);
     }
 
+.sidebar-search {
+    position: relative;
+    width: 100%;
+    padding: 20px 12px;
+    color: var(--muted);
+}
+
+    .sidebar-search input {
+        width: 100%;
+        padding: 8px 40px 8px 30px; /* space for icons inside the input */
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    .sidebar-search .search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        pointer-events: none;
+        padding: 20px 12px;
+    }
+
+    .sidebar-search .filter-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 20px 20px;
+    }
+
 /* 
 =========================================================
    HOME PAGE
@@ -803,3 +838,4 @@ input.form-control {
     .filter-panel.open {
         right: 0; /* slides in */
     }
+
