@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\CST2550.csproj": {}
+    "C:\\Users\\eduar\\source\\repos\\CST2550Project\\CST2550-Software-Engineering-Project\\CST2550.csproj": {}
   },
   "projects": {
-    "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\CST2550.csproj": {
+    "C:\\Users\\eduar\\source\\repos\\CST2550Project\\CST2550-Software-Engineering-Project\\CST2550.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\CST2550.csproj",
+        "projectUniqueName": "C:\\Users\\eduar\\source\\repos\\CST2550Project\\CST2550-Software-Engineering-Project\\CST2550.csproj",
         "projectName": "CST2550",
-        "projectPath": "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\CST2550.csproj",
-        "packagesPath": "C:\\Users\\eduard\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\eduard\\source\\repos\\CST2550\\CST2550\\obj\\",
+        "projectPath": "C:\\Users\\eduar\\source\\repos\\CST2550Project\\CST2550-Software-Engineering-Project\\CST2550.csproj",
+        "packagesPath": "C:\\Users\\eduar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\eduar\\source\\repos\\CST2550Project\\CST2550-Software-Engineering-Project\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\eduard\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\eduar\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -31,6 +31,7 @@
         },
         "frameworks": {
           "net10.0": {
+            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -49,12 +50,13 @@
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
             "Microsoft.AspNetCore.App.Internal.Assets": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[10.0.2, )",
+              "version": "[10.0.5, )",
               "autoReferenced": true
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
@@ -107,7 +109,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.200-preview.0.26103.119/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

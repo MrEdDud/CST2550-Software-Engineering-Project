@@ -1,5 +1,5 @@
 .vs
-bin
-obj
+bin/
+obj/
 CST2550.csproj.user
 appsettings.Development.json

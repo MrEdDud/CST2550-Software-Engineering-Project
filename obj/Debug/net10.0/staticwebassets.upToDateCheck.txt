@@ -66,11 +66,11 @@ wwwroot\lib\jquery\LICENSE.txt
 Components\Layout\ReconnectModal.razor.js
 C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.5\build\..\_framework\blazor.web.js
 C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.5\build\..\_framework\blazor.server.js
-C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.5\_framework\blazor.server.js
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\data\localdb.js
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\favicon.ico
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\js\site.js
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css
@@ -130,5 +130,5 @@ C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\jquery\LICENSE.txt
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\Components\Layout\ReconnectModal.razor.js
 C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.5\_framework\blazor.web.js
+C:\Users\eduar\.nuget\packages\microsoft.aspnetcore.app.internal.assets\10.0.5\_framework\blazor.server.js
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\css\app.css
-C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
