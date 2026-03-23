@@ -83,7 +83,7 @@
         noMoreProfiles = Profiles.Count == 0;
     }
 
-    private async Task HandleSwipe((Profile profile, bool isLike) data)
+    private async Task HandleSwipe((ProfileModel profile, bool isLike) data)
     {
         // 🔌 Send to API later
         // await Api.Swipe(...)

@@ -208,3 +208,4 @@ C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\bzbfyxrark-{0}-2tj1sjhksk-2tj1sjhksk.gz
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\fsassykwc3-{0}-qaxdpdwjt0-qaxdpdwjt0.gz
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\CST2550.csproj.AssemblyReference.cache
+C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\CST2550.csproj.AssemblyReference.cache
