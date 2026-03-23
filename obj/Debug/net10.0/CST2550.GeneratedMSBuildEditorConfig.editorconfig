@@ -1,95 +1,103 @@
 is_global = true
 build_property.TargetFramework = net10.0
-build_property.TargetFrameworkIdentifier = .NETCoreApp
-build_property.TargetFrameworkVersion = v10.0
+build_property.TargetFramework = net10.0
+build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
+build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v10.0
 build_property.RootNamespace = CST2550
 build_property.RootNamespace = CST2550
-build_property.ProjectDir = C:\Users\eduard\source\repos\CST2550\CST2550\
+build_property.ProjectDir = C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\eduard\source\repos\CST2550\CST2550
+build_property.MSBuildProjectDirectory = C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/App.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/App.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Layout/AuthLayout.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Layout/AuthLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcQXV0aExheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Pages/Error.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Pages/Login.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/Login.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xMb2dpbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Pages/NotFound.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/NotFound.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xOb3RGb3VuZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Pages/Register.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/Register.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWdpc3Rlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Pages/Search.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/Search.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTZWFyY2gucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Pages/UserDetails.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Pages/UserDetails.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xVc2VyRGV0YWlscy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Routes.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Tabs/Home.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXEhvbWUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Tabs/Matches.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/Matches.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXE1hdGNoZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Tabs/Profile.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/Profile.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXFByb2ZpbGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Tabs/Settings.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/Settings.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXFNldHRpbmdzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Tabs/SwipeCard.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Tabs/SwipeCard.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xUYWJzXFN3aXBlQ2FyZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/_Imports.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Layout/MainLayout.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-a1z0791gng
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Layout/NavMenu.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-5nwbypbdut
 
-[C:/Users/eduard/source/repos/CST2550/CST2550/Components/Layout/ReconnectModal.razor]
+[C:/Users/eduar/source/repos/CST2550Project/CST2550-Software-Engineering-Project/Components/Layout/ReconnectModal.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcUmVjb25uZWN0TW9kYWwucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-g6r3i4hbpw

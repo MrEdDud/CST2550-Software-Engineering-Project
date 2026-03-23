@@ -27,8 +27,7 @@
             }
             else
             {
-                <SwipeCard Profiles="Profiles"
-                           OnSwipe="HandleSwipe" />
+                <SwipeCard Profiles="Profiles" OnSwipe="@HandleSwipe" />
             }
 
         </div>
@@ -62,20 +61,34 @@
         // TEMP MOCK DATA (remove when API ready)
         Profiles = new List<ProfileModel>
         {
-            new ProfileModel { UserId = 1, Name = "Anna", Age = 21, Bio = "Loves coffee ☕", ProfilePhotoUrl = "https://media.gettyimages.com/id/2063799507/photo/business-portrait-and-black-man-in-city-outdoor-for-career-or-job-of-businessman-face.jpg?s=612x612&w=gi&k=20&c=aV_6jGmVEE5WQR6F__JPMwAxJZiPBBIg-a0pdzKgL6A=" },
-            new ProfileModel { UserId = 2, Name = "Sophie", Age = 23, Bio = "Gym & travel", ProfilePhotoUrl = "https://plus.unsplash.com/premium_photo-1689530775582-83b8abdb5020?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww" }
+            new ProfileModel
+            {
+                UserId = 1,
+                Name = "Anna",
+                Age = 21,
+                Bio = "Loves coffee ☕",
+                ProfilePhotoUrl = "https://media.gettyimages.com/id/2063799507/photo/business-portrait-and-black-man-in-city-outdoor-for-career-or-job-of-businessman-face.jpg?s=612x612&w=gi&k=20&c=aV_6jGmVEE5WQR6F__JPMwAxJZiPBBIg-a0pdzKgL6A="
+            },
+            new ProfileModel
+            {
+                UserId = 2,
+                Name = "Sophie",
+                Age = 23,
+                Bio = "Gym & travel",
+                ProfilePhotoUrl = "https://plus.unsplash.com/premium_photo-1689530775582-83b8abdb5020?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww"
+            }
         };
 
         IsLoading = false;
         noMoreProfiles = Profiles.Count == 0;
     }
 
-    private async Task HandleSwipe((ProfileModel profile, bool isLike) data)
+    private async Task HandleSwipe((Profile profile, bool isLike) data)
     {
         // 🔌 Send to API later
         // await Api.Swipe(...)
 
-        Profiles.Remove(data.profile);
+        Profiles.RemoveAll(p => p.UserId == data.profile.UserId);
 
         if (Profiles.Count == 0)
         {
