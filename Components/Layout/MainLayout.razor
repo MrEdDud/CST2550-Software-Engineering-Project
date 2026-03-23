@@ -110,6 +110,16 @@
 </div>
 
 @code {
+
+    string SearchTerm = "";
+
+    bool ShowFilters = false;
+
+    int MinAge = 18;
+    int MaxAge = 35;
+
+    string SelectedGender = "";
+
     void ToggleFilters()
     {
         ShowFilters = !ShowFilters;
