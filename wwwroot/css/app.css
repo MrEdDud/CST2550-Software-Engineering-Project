@@ -22,7 +22,6 @@
 * { box-sizing: border-box; }
 
 body {
-    height: 100%;
     margin: 0;
     color: var(--text-dark);
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -45,9 +44,10 @@ i { color: var(--pink); }
 }
 
 .app-content {
+    margin-left: 20vw;
+    margin-right: 20vw;
     display: flex;
     justify-content: center;
-    padding: 2vw;
     z-index: 1;
 }
 
@@ -65,6 +65,7 @@ i { color: var(--pink); }
     align-items: center;
     padding: 1.2vh 1.7vw;
     background: #191A2E;
+    z-index: 9999;
 }
 
 .brand {
@@ -85,15 +86,8 @@ i { color: var(--pink); }
 }
 
 .topbar-actions {
-    display: flex;
-    gap: 10px;
+    margin-left: auto;
 }
-
-/* 
-=========================================================
-   HOME PAGE
-========================================================= 
-*/
 
 .header-btn {
     width: 40px;
@@ -103,11 +97,11 @@ i { color: var(--pink); }
     color: var(--text);
     display: flex;
     align-items: center;
-    justify-content: center;
     font-size: 1.1rem;
     transition: all 0.2s ease-in;
     position: relative;
 }
+
     .header-btn:hover {
         color: var(--bg);
     }
@@ -123,7 +117,10 @@ i { color: var(--pink); }
     border: 2px solid var(--white);
     display: none;
 }
-    .notification-dot.active { display:block; }
+
+    .notification-dot.active {
+        display: block;
+    }
 
 .app-logo {
     display: flex;
@@ -133,16 +130,24 @@ i { color: var(--pink); }
     font-weight: 700;
     color: var(--primary);
 }
-    .app-logo i { font-size: 1.5rem; }
+
+    .app-logo i {
+        font-size: 1.5rem;
+    }
+
+/* 
+=========================================================
+   SIDEBAR
+========================================================= 
+*/
 
 .app-sidebar {
     position: fixed;
     left: 20px;
     top: 80px;
-    width: 20vw;
+    width: 18vw;
     bottom: 20px;
     border-radius: 20px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.85));
     box-shadow: 0 10px 30px rgba(10,10,10,0.06);
     display: flex;
     flex-direction: column;
@@ -193,14 +198,17 @@ i { color: var(--pink); }
         color: var(--text-dark);
     }
 
+/* 
+=========================================================
+   HOME PAGE
+========================================================= 
+*/
+
 .app-main {
     flex: 1;
     margin-top: 60px;
     margin-bottom: 80px;
 }
-
-.tab-content { display: none; }
-.tab-content.active { display: block; }
 
 .bottom-tabs {
     position: fixed;
@@ -222,6 +230,8 @@ i { color: var(--pink); }
 .discovery-container {
     display: flex;
     justify-content: center;
+    align-content: center;
+    align-items: center;
     position: relative;
 }
 
@@ -235,12 +245,6 @@ i { color: var(--pink); }
     height: 500px;
     text-align: center;
     padding: var(--space-8);
-}
-
-.card-stack {
-    position: relative;
-    height: 560px;
-    perspective: 1000px;
 }
 
 .loading-card {
@@ -298,6 +302,7 @@ i { color: var(--pink); }
     color: black;
     border: none;
     box-shadow: 0 4px 20px rgba(255, 75, 110, 0.35);
+    text-align: center;
 }
     .btn-primary:hover {
         transform: translateY(-2px);
@@ -549,13 +554,13 @@ input.form-control {
 
 /* PAGE WRAPPER */
 .auth-page {
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* MAIN SPLIT CONTAINER */
 .auth-container {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* LEFT SIDE (branding) */
@@ -566,8 +571,10 @@ input.form-control {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    position: relative;
+    position: sticky;
+    top: 0;
     overflow: hidden;
+    height: 100vh;
 }
 
 .auth-form {
@@ -584,6 +591,7 @@ input.form-control {
     justify-content: center;
     padding: 40px;
     background: #191A2E;
+    min-height: 100vh;
 }
 
 /* FORM WRAPPER */
@@ -698,3 +706,84 @@ input.form-control {
     inset: 0;
     opacity: 0.5;
 }
+
+.profile-card {
+    cursor: grab;
+    user-select: none;
+    width: 30vw;
+    height: 80vh;
+}
+
+    .profile-card:active {
+        cursor: grabbing;
+    }
+
+.card-stack {
+    position: relative;
+    width: 30vw;
+    height: 80vh;
+}
+
+    /* SWIPE CARD (TINDER STYLE) */
+    .card-stack .profile-card {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #121a33;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        touch-action: none;
+    }
+
+.card-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.card-info {
+    position: relative;
+    z-index: 2;
+    padding: 20px;
+    color: white;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+
+.action-buttons {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(0,0,0,0.7);
+}
+
+.action-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    background: rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+} 
+    .action-btn:hover {
+        background: rgba(0,0,0,0.5);
+    }
+
+.empty-state .btn i {
+    color: black;
+    transition: 0.2s;
+}
+    .empty-state .btn:hover i {
+        color: white;
+    }

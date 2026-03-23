@@ -1,5 +1,6 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
+@inject NavigationManager Navigation
 @layout AuthLayout
 
 <div class="auth-header">
@@ -12,7 +13,6 @@
             class="auth-form">
 
     <DataAnnotationsValidator />
-    <ValidationSummary />
 
     <div class="form-group">
         <label><i class="fas fa-id-card"></i> Your Name</label>
@@ -66,39 +66,11 @@
     </div>
 
     <button type="submit" class="btn btn-primary btn-block">
-        <span>Create Account</span>
+        <span>Next</span>
         <i class="fas fa-check"></i>
     </button>
 
 </EditForm>
-
-@* <div class="form-group">
-        <label><i class="fas fa-venus-mars"></i> Gender</label>
-
-        <InputSelect class="form-control"
-                        @bind-Value="registerData.Gender">
-            <option value="">Select...</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => registerData.Gender)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fas fa-heart"></i> Interested In</label>
-
-        <InputSelect class="form-control"
-                        @bind-Value="registerData.LookingFor">
-            <option value="">Select...</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Everyone</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => registerData.LookingFor)" />
-    </div> *@
 
 @if (!string.IsNullOrWhiteSpace(successMessage))
 {
@@ -113,24 +85,25 @@
 </div>
 
 @code {
-
     private sealed class RegisterModel
     {
-        [Required]
+        [Required(ErrorMessage = "Your username is required")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Your email is required")]
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "You must create a password")]
         [MinLength(6)]
         public string Password { get; set; } = string.Empty;
 
+		[Required(ErrorMessage = "You must confirm your password")]
         [Compare("Password")]
         public string ConfPassword { get; set; } = string.Empty;
 
-        [Required]
-        public string Name { get; set; } = string.Empty;
-
-        [Range(18, 120)]
+		[Required]
+        [Range(18, 120, ErrorMessage = "You must be at least 18 years old")]
         public int Age { get; set; }
     }
 
@@ -140,6 +113,7 @@
 
     private void HandleRegister()
     {
-        successMessage = "Account created (front-end demo)";
+        successMessage = "Success!";
+        Navigation.NavigateTo("/details", true);
     }
 }
