@@ -206,4 +206,5 @@ C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\fsassy
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\ryfjl4oguw-{0}-0p2oizk2yx-0p2oizk2yx.gz
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\lh2nea2ock-{0}-b9228eflpl-b9228eflpl.gz
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\bzbfyxrark-{0}-2tj1sjhksk-2tj1sjhksk.gz
-C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\fsassykwc3-{0}-hb089iuj2m-hb089iuj2m.gz
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\fsassykwc3-{0}-qaxdpdwjt0-qaxdpdwjt0.gz
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\CST2550.csproj.AssemblyReference.cache
