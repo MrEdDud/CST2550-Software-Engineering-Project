@@ -99,9 +99,6 @@ C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\CST2550.genruntimeconfig.cache
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\ref\CST2550.dll
 C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
-C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\lh2nea2ock-{0}-mgww215af1-mgww215af1.gz
-C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\bzbfyxrark-{0}-dy8h75y8gn-dy8h75y8gn.gz
-C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\fsassykwc3-{0}-mb0eh2okun-mb0eh2okun.gz
 C:\Users\eduard\source\repos\CST2550\CST2550\bin\Debug\net10.0\appsettings.Development.json
 C:\Users\eduard\source\repos\CST2550\CST2550\bin\Debug\net10.0\appsettings.json
 C:\Users\eduard\source\repos\CST2550\CST2550\bin\Debug\net10.0\CST2550.staticwebassets.runtime.json
@@ -206,3 +203,8 @@ C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\CST2550.pdb
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\CST2550.genruntimeconfig.cache
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\ref\CST2550.dll
 C:\Users\eduard\source\repos\CST2550\CST2550\obj\Debug\net10.0\compressed\fsassykwc3-{0}-neh2s0cpbs-neh2s0cpbs.gz
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\ryfjl4oguw-{0}-0p2oizk2yx-0p2oizk2yx.gz
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\lh2nea2ock-{0}-b9228eflpl-b9228eflpl.gz
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\bzbfyxrark-{0}-2tj1sjhksk-2tj1sjhksk.gz
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\compressed\fsassykwc3-{0}-qaxdpdwjt0-qaxdpdwjt0.gz
+C:\Users\eduar\source\repos\CST2550Project\CST2550-Software-Engineering-Project\obj\Debug\net10.0\CST2550.csproj.AssemblyReference.cache

@@ -41,10 +41,10 @@
 @code {
     class LoginModel
     {
-        [Required]
+        [Required(ErrorMessage = "Please enter your username")]
         public string Username { get; set; } = string.Empty;
 
-        [Required, MinLength(6)]
+        [Required(ErrorMessage = "Please enter your password"), MinLength(6)]
         public string Password { get; set; } = string.Empty;
     }
 
@@ -54,6 +54,6 @@
 
     private void HandleLogin()
     {
-        successMessage = "Login successful (front-end demo)";
+        successMessage = "Login successful";
     }
 }
