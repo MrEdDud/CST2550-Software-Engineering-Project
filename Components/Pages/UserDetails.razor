@@ -1,0 +1,82 @@
+﻿@page "/details"
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager Navigation
+@layout AuthLayout
+
+<div class="auth-header">
+    <h2>Lets get to know you...</h2>
+    <p>Let us know more about you and what you like. This is all optional.</p>
+</div>
+
+<EditForm Model="@registerData"
+          OnValidSubmit="@HandleRegister"
+          class="auth-form">
+
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label><i class="fas fa-venus-mars"></i> Gender</label>
+
+        <InputSelect class="form-control"
+                        @bind-Value="registerData.Gender">
+            <option value="">Select...</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Gender)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-heart"></i> Interested In</label>
+
+        <InputSelect class="form-control"
+                        @bind-Value="registerData.LookingFor">
+            <option value="">Select...</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Everyone</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.LookingFor)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">
+        <span>Create Account</span>
+        <i class="fas fa-check"></i>
+    </button>
+
+</EditForm>
+
+@if (!string.IsNullOrWhiteSpace(successMessage))
+{
+    <div class="message success">@successMessage</div>
+}
+
+<div class="auth-footer">
+    <p>
+        Already have an account?
+        <NavLink href="/login">Sign In</NavLink>
+    </p>
+</div>
+
+@code {
+
+    private sealed class RegisterModel
+    {
+		public string Gender { get; set; } = string.Empty;
+	
+		public string LookingFor { get; set; } = string.Empty;
+    }
+
+    private RegisterModel registerData = new();
+
+    private string successMessage = string.Empty;
+
+    private void HandleRegister()
+    {
+        successMessage = "Account created";
+        Navigation.NavigateTo("/home", true);
+    }
+}
