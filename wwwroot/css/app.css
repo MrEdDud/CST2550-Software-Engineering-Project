@@ -825,17 +825,189 @@ input.form-control {
 
 .filter-panel {
     position: fixed;
-    top: 0;
-    right: -350px; /* hidden */
+    top: 55px;
+    right: -350px;
     width: 350px;
     height: 100%;
     background: white;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    box-shadow: -2px 0 10px rgba(0,0,0,0.3);
     transition: right 0.3s ease;
+    padding: 16px;
     z-index: 1000;
 }
 
     .filter-panel.open {
-        right: 0; /* slides in */
+        right: 0;
     }
 
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--gray-100);
+    background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.75));
+}
+
+    .filter-header h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+.filter-content {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+
+.filter-actions {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-top: 1px solid var(--gray-100);
+}
+
+    .filter-actions .btn {
+        flex: 1;
+    }
+
+/* container */
+.dual-range {
+    position: relative;
+    width: 100%;
+    height: 30px;
+}
+
+/* the grey base line */
+.range-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: #ddd;
+    border-radius: 999px;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* both sliders stacked */
+.dual-range input[type="range"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    margin: 0;
+    pointer-events: none;
+    background: none;
+    appearance: none;
+    z-index: 2;
+}
+
+    /* enable dragging only on thumbs */
+    .dual-range input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        pointer-events: all;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #DBA0B2;
+        cursor: pointer;
+        border: none;
+        margin-top: -6px; /* aligns with track */
+    }
+
+    .dual-range input[type="range"]::-moz-range-thumb {
+        pointer-events: all;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #DBA0B2;
+        cursor: pointer;
+        border: none;
+    }
+
+.filter-group {
+    flex: 1 1 220px;
+    min-width: 200px;
+}
+
+    .filter-group label {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 10px;
+    }
+
+.filter-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.filter-option {
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid rgba(12,19,49,0.04);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+    .filter-option.active {
+        background: linear-gradient(90deg, rgba(224,150,166,0.12), rgba(208,176,186,0.06));
+        color: var(--secondary);
+    }
+
+.filter-select {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    background: var(--white);
+    font-size: var(--text-sm);
+    font-family: 'Poppins', sans-serif;
+    color: var(--dark);
+    cursor: pointer;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237a8196'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+
+    .filter-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(224, 152, 175, 0.15);
+        outline: none;
+    }
+
+.modal-close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    width: 40px;
+    height: 40px;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    z-index: 10;
+    transition: all var(--transition-fast);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #7a8196;
+}
