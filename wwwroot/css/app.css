@@ -148,7 +148,7 @@ i { color: var(--pink); }
     width: 18vw;
     bottom: 20px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(10,10,10,0.06);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
     z-index: 9999;
