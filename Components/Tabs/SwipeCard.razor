@@ -1,0 +1,98 @@
+﻿@using CST2550Project.Models
+
+<div class="profile-card"
+     @onmousedown="StartDrag"
+     @onmousemove="OnDrag"
+     @onmouseup="EndDrag"
+     @onmouseleave="EndDrag"
+     style="transform: translateX(@Xpx) rotate(@RotationDeg); transition:@Transition;">
+
+    @if (Profiles?.Any() == true)
+    {
+        var profile = Profiles.First();
+        var mainPhoto = profile.Photos.FirstOrDefault() ?? profile.ProfilePhotoUrl;
+
+        <img src="@mainPhoto" class="card-photo" draggable="false" />
+
+        <div class="card-info">
+            <h2>@profile.Name, @profile.Age</h2>
+            <p>@profile.Bio</p>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn dislike"
+                    @onclick="() => Swipe(false)">
+                ❌
+            </button>
+
+            <button class="action-btn like"
+                    @onclick="() => Swipe(true)">
+                ❤️
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <h2>No more profiles</h2>
+        </div>
+    }
+
+</div>
+
+@code {
+    [Parameter] public List<ProfileModel> Profiles { get; set; } = new();
+    [Parameter] public EventCallback<(ProfileModel, bool)> OnSwipe { get; set; }
+
+    private bool IsDragging = false;
+    private double StartX;
+    private double CurrentX;
+
+    private double X => CurrentX - StartX;
+    private double Rotation => X * 0.05;
+
+    private string Xpx => $"{X}px";
+    private string RotationDeg => $"{Rotation}deg";
+    private string Transition => IsDragging ? "none" : "0.3s ease";
+
+
+    void StartDrag(MouseEventArgs e)
+    {
+        IsDragging = true;
+        StartX = e.ClientX;
+        CurrentX = e.ClientX;
+    }
+
+    void OnDrag(MouseEventArgs e)
+    {
+        if (!IsDragging) return;
+        CurrentX = e.ClientX;
+        StateHasChanged();
+    }
+
+    async Task EndDrag()
+    {
+        IsDragging = false;
+
+        if (X > 120)
+        {
+            await Swipe(true);   // like
+        }
+        else if (X < -120)
+        {
+            await Swipe(false);  // dislike
+        }
+
+        // reset position
+        StartX = 0;
+        CurrentX = 0;
+    }
+
+    async Task Swipe(bool isLike)
+    {
+        if (Profiles.Count == 0) return;
+
+        var profile = Profiles.First();
+        await OnSwipe.InvokeAsync((profile, isLike));
+    }
+}
