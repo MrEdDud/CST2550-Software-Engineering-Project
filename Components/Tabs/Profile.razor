@@ -1,5 +1,198 @@
 ﻿@page "/profile"
 
-<section>
-    <h1>This is the profiles page!</h1>
+<section class="profile-card profile-card--pink">
+    <div class="card-header">
+        <div class="card-title">
+            <div class="avatar-wrap">
+                <div class="avatar-placeholder">
+                    <i class="fas fa-user fa-2x text-muted"></i>
+                </div>
+                <div class="avatar-edit">Edit</div>
+            </div>
+            <h1 class="profile-name">@profile.FullName</h1>
+        </div>
+        <button class="edit-btn" @onclick="ToggleEdit">@((isEditing) ? "Close" : "Edit")</button>
+    </div>
+
+    <div class="profile-content">
+        <div class="info-col">
+            <!-- Age -->
+            <div class="info-row">
+                <div class="info-label">Age</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Age</div>
+                    }
+                    else
+                    {
+                        <input class="form-control value-input" type="number" @bind="editProfile.Age" />
+                    }
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="info-row">
+                <div class="info-label">Gender</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Gender <span class="chev">▾</span></div>
+                    }
+                    else
+                    {
+                        <select class="form-select value-input" @bind="editProfile.Gender">
+                            <option>Female</option>
+                            <option>Male</option>
+                            <option>Other</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Height -->
+            <div class="info-row">
+                <div class="info-label">Height</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Height cm</div>
+                    }
+                    else
+                    {
+                        <input class="form-control value-input" type="number" @bind="editProfile.Height" />
+                    }
+                </div>
+            </div>
+
+            <!-- Ethnicity -->
+            <div class="info-row">
+                <div class="info-label">Ethnicity</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Ethnicity <span class="chev">▾</span></div>
+                    }
+                    else
+                    {
+                        <input class="form-control value-input" type="text" @bind="editProfile.Ethnicity" />
+                    }
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="info-row">
+                <div class="info-label">Tags</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill value-pill--tags">@profile.TagsDisplay <span class="chev">▾</span></div>
+                    }
+                    else
+                    {
+                        <input class="form-control value-input" type="text" @bind="editTags" placeholder="#blonde #tall #gamer" />
+                    }
+                </div>
+            </div>
+
+            @if (isEditing)
+            {
+                <div class="info-row">
+                    <div class="info-label"></div>
+                    <div class="info-value">
+                        <button class="save-btn" @onclick="SaveProfile">Save</button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Images section -->
+        <aside class="images-col">
+            <div class="images-header">
+                <div>Your profile images.</div>
+                <button class="edit-btn" @onclick="EditImages">Edit</button>
+            </div>
+
+            <div class="images-grid">
+                <div class="image-placeholder">+</div>
+                <div class="image-placeholder">+</div>
+                <div class="image-placeholder">+</div>
+            </div>
+        </aside>
+    </div>
 </section>
+
+@code {
+    private bool isEditing = false;
+
+    private ProfileModel profile = new ProfileModel
+    {
+        FullName = "CARLA GOMEZ",
+        Age = 30,
+        Gender = "Female",
+        Height = 163,
+        Ethnicity = "Hispanic",
+        Tags = new List<string> { "blonde", "tall", "gamer" }
+    };
+
+    private ProfileModel editProfile = new ProfileModel();
+    private string editTags = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        CopyToEdit();
+    }
+
+    private void CopyToEdit()
+    {
+        editProfile = new ProfileModel
+        {
+            FullName = profile.FullName,
+            Age = profile.Age,
+            Gender = profile.Gender,
+            Height = profile.Height,
+            Ethnicity = profile.Ethnicity,
+            Tags = profile.Tags.ToList()
+        };
+
+        editTags = string.Join(" ", editProfile.Tags.Select(t => "#" + t));
+    }
+
+    private void ToggleEdit()
+    {
+        isEditing = !isEditing;
+        if (isEditing) CopyToEdit();
+    }
+
+    private void SaveProfile()
+    {
+        var list = (editTags ?? string.Empty)
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Select(t => t.TrimStart('#'))
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .ToList();
+
+        editProfile.Tags = list;
+        profile = editProfile;
+        isEditing = false;
+    }
+
+    private void EditImages()
+    {
+        // placeholder
+    }
+
+    public class ProfileModel
+    {
+        public string FullName { get; set; } = string.Empty;
+        public int Age { get; set; }
+        public string Gender { get; set; } = string.Empty;
+        public int Height { get; set; }
+        public string Ethnicity { get; set; } = string.Empty;
+        public List<string> Tags { get; set; } = new List<string>();
+
+        public string TagsDisplay => Tags != null && Tags.Count > 0
+            ? string.Join(" ", Tags.Select(t => "#" + t))
+            : string.Empty;
+    }
+}
