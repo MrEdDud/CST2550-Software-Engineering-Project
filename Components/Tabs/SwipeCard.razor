@@ -1,4 +1,6 @@
-﻿<div class="profile-card"
+﻿@using CST2550Project.Models
+
+<div class="profile-card"
      @onmousedown="StartDrag"
      @onmousemove="OnDrag"
      @onmouseup="EndDrag"
@@ -8,8 +10,9 @@
     @if (Profiles?.Any() == true)
     {
         var profile = Profiles.First();
+        var mainPhoto = profile.Photos.FirstOrDefault() ?? profile.ProfilePhotoUrl;
 
-        <img src="@profile.ProfilePhotoUrl" class="card-photo" />
+        <img src="@mainPhoto" class="card-photo" draggable="false" />
 
         <div class="card-info">
             <h2>@profile.Name, @profile.Age</h2>
