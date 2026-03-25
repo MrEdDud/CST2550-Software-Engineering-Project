@@ -21,14 +21,13 @@
                     <h2>No more profiles</h2>
                     <p>You've seen everyone for now. Check back later for new people!</p>
                     <button class="btn btn-primary" @onclick="LoadProfiles">
-                        <i class="fas fa-sync-alt" style="color: black;"></i> Refresh
+                        <i class="fas fa-sync-alt"></i> Refresh
                     </button>
                 </div>
             }
             else
             {
-                <SwipeCard Profiles="Profiles"
-                           OnSwipe="HandleSwipe" />
+                <SwipeCard Profiles="Profiles" OnSwipe="@HandleSwipe" />
             }
 
         </div>
@@ -62,8 +61,26 @@
         // TEMP MOCK DATA (remove when API ready)
         Profiles = new List<ProfileModel>
         {
-            new ProfileModel { UserId = 1, Name = "Anna", Age = 21, Bio = "Loves coffee ☕", ProfilePhotoUrl = "https://media.gettyimages.com/id/2063799507/photo/business-portrait-and-black-man-in-city-outdoor-for-career-or-job-of-businessman-face.jpg?s=612x612&w=gi&k=20&c=aV_6jGmVEE5WQR6F__JPMwAxJZiPBBIg-a0pdzKgL6A=" },
-            new ProfileModel { UserId = 2, Name = "Sophie", Age = 23, Bio = "Gym & travel", ProfilePhotoUrl = "https://plus.unsplash.com/premium_photo-1689530775582-83b8abdb5020?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cmFuZG9tJTIwcGVyc29ufGVufDB8fDB8fHww" }
+            new ProfileModel
+            {
+                UserId = 1,
+                Name = "Anna",
+                Age = 21,
+                Bio = "Loves coffee ☕",
+                Photos = new List<string> {
+                    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimageio.forbes.com%2Fspecials-images%2Fimageserve%2F6532a388407b720effdbd589%2F0x0.jpg%3Fformat%3Djpg%26height%3D900%26width%3D1600%26fit%3Dbounds&f=1&nofb=1&ipt=3cd1009d788d7e40a211d7b44404691dd8035c1c8ae2bf277ab02c423b341a1b"
+                }
+            },
+            new ProfileModel
+            {
+                UserId = 2,
+                Name = "Sophie",
+                Age = 23,
+                Bio = "Gym & travel",
+                Photos = new List<string> {
+                    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Fsmiling-random-person-graphic-png-trv-4350ryshed47fke7.jpg&f=1&nofb=1&ipt=1d3ce4ddd43345b8eecc0705161e2bf91645b598a0943bdca4a40d5f08d189f2"
+                }
+            }
         };
 
         IsLoading = false;
@@ -75,7 +92,7 @@
         // 🔌 Send to API later
         // await Api.Swipe(...)
 
-        Profiles.Remove(data.profile);
+        Profiles.RemoveAll(p => p.UserId == data.profile.UserId);
 
         if (Profiles.Count == 0)
         {
@@ -89,4 +106,11 @@
     {
         NavigationManager.NavigateTo("/profile");
     }
+
+    private string SearchTerm = "";
+    private bool ShowFilters = false;
+
+    private int MinAge = 18;
+    private int MaxAge = 35;
+    private string SelectedGender = "";
 }
