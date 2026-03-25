@@ -1,5 +1,6 @@
 ﻿@page "/details"
 @using System.ComponentModel.DataAnnotations
+@inject NavigationManager Navigation
 @layout AuthLayout
 
 <div class="auth-header">
@@ -12,7 +13,6 @@
           class="auth-form">
 
     <DataAnnotationsValidator />
-    <ValidationSummary />
 
     <div class="form-group">
         <label><i class="fas fa-venus-mars"></i> Gender</label>
@@ -76,6 +76,7 @@
 
     private void HandleRegister()
     {
-        successMessage = "Account created (front-end demo)";
+        successMessage = "Account created";
+        Navigation.NavigateTo("/home", true);
     }
 }
