@@ -1,47 +1,90 @@
 ﻿@page "/search"
+@using CST2550Project.DTOs
+@using CST2550Project.Services
+@inject ProfileService ProfileService
 
 <div class="page">
 
     <h1 class="page-title">Discover</h1>
-    <p class="page-subtitle">People near you (demo data)</p>
+    <p class="page-subtitle">People near you</p>
 
-    <div class="card-grid">
-        <!--For every card in the demo profiles-->
-        @foreach (var p in demoProfiles)
-        {
-            <div class="profile-card">
-
-                <div class="profile-photo">
-                    <span class="profile-initial">@p.Initial</span>
-                </div>
-
-                <div class="profile-info">
-                    <div class="profile-name">
-                        @p.Name
-                        <span class="profile-age">@p.Age</span>
-                    </div>
-                    <div class="profile-bio">@p.Bio</div>
-                </div>
-
-                <div class="profile-actions">
-
-                    <!-- SAFE onclick syntax (no quote conflict) -->
-                    <button class="icon-btn nope"
-                            @onclick='() => HandleAction("Nope", p.Name)'>
-                        ✕
-                    </button>
-
-                    <button class="icon-btn like"
-                            @onclick='() => HandleAction("Like", p.Name)'>
-                        ❤
-                    </button>
-
-                </div>
-
-            </div>
-        }
-
+    <div class="form-group" style="margin-bottom: 16px;">
+        <input class="form-control"
+               placeholder="Search by name, bio, location, occupation..."
+               @bind="SearchTerm" />
     </div>
+
+    <div class="form-group" style="margin-bottom: 16px;">
+        <select class="form-control" @bind="SelectedGender">
+            <option value="">Everyone</option>
+            <option value="Male">Men</option>
+            <option value="Female">Women</option>
+        </select>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 16px;">
+        <label>Min Age</label>
+        <input class="form-control" type="number" @bind="MinAge" />
+    </div>
+
+    <div class="form-group" style="margin-bottom: 16px;">
+        <label>Max Age</label>
+        <input class="form-control" type="number" @bind="MaxAge" />
+    </div>
+
+    <div style="margin-bottom: 24px;">
+        <button class="btn btn-primary" @onclick="LoadProfiles">
+            Apply Search
+        </button>
+    </div>
+
+    @if (Profiles.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h2>No profiles found</h2>
+            <p>Try changing your filters or search term.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card-grid">
+            @foreach (var p in Profiles)
+            {
+                <div class="profile-card">
+
+                    <div class="profile-photo">
+                        <span class="profile-initial">
+                            @(string.IsNullOrWhiteSpace(p.Name) ? "?" : p.Name.Substring(0, 1))
+                        </span>
+                    </div>
+
+                    <div class="profile-info">
+                        <div class="profile-name">
+                            @p.Name
+                            <span class="profile-age">@p.Age</span>
+                        </div>
+                        <div class="profile-bio">@p.Bio</div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="icon-btn nope"
+                                @onclick='() => HandleAction("Nope", p.Name)'>
+                            ✕
+                        </button>
+
+                        <button class="icon-btn like"
+                                @onclick='() => HandleAction("Like", p.Name)'>
+                            ❤
+                        </button>
+                    </div>
+
+                </div>
+            }
+        </div>
+    }
 
     @if (!string.IsNullOrWhiteSpace(lastAction))
     {
@@ -51,15 +94,35 @@
 </div>
 
 @code {
-
-    // Stores the last action message (shown as toast)
     private string lastAction = string.Empty;
 
-    /*
-        HandleAction
-        Runs when user clicks Like or Nope.
-        Updates the toast message.
-    */
+    private string SearchTerm = "";
+    private string SelectedGender = "";
+    private int? MinAge = 18;
+    private int? MaxAge = 35;
+
+    private List<ProfileDto> Profiles = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfiles();
+    }
+
+    private async Task LoadProfiles()
+    {
+        var filter = new DiscoverFilterDto
+        {
+            SearchTerm = SearchTerm,
+            Gender = SelectedGender,
+            MinAge = MinAge,
+            MaxAge = MaxAge,
+            Count = 50
+        };
+
+        // demo user id 1 for now
+        Profiles = await ProfileService.GetDiscoveryProfilesAsync(1, filter);
+    }
+
     private void HandleAction(string action, string name)
     {
         if (action == "Like")
@@ -71,27 +134,4 @@
             lastAction = $"❌ You skipped {name}";
         }
     }
-
-    /*
-        Demo profile data.
-        Later this will come from your database / API.
-    */
-    private readonly List<Profile> demoProfiles = new()
-    {
-        new Profile("A", "Amelia", 21, "Coffee, movies, and city walks."),
-        new Profile("J", "James", 23, "Gym + playlists + late-night food."),
-        new Profile("S", "Sofia", 22, "Museums, sunsets, and good chats."),
-        new Profile("M", "Maya", 24, "Bookworm. Brunch lover. Meme dealer.")
-    };
-
-    /*
-        Profile record:
-        Simple data structure for demo users.
-    */
-    private sealed record Profile(
-        string Initial,
-        string Name,
-        int Age,
-        string Bio
-    );
 }

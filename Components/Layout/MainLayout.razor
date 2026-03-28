@@ -48,33 +48,11 @@
                         <span>Profile</span>
                     </a>
 
-<<<<<<< HEAD
                     <a href="/settings" class="sidebar-link">
                         <i class="fa-solid fa-gear"></i>
                         <span>Settings</span>
                     </a>
                 </nav>
-            </aside>
-=======
-                <NavLink href="/home" class="sidebar-link">
-                    <i class="fas fa-fire"></i>
-                    <span>Home</span>
-                </NavLink>
-
-                <NavLink href="/matches" class="sidebar-link">
-                    <i class="fas fa-heart"></i>
-                    <span>Matches</span>
-                </NavLink>
-
-                <NavLink href="/profile" class="sidebar-link">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </NavLink>
-
-                <NavLink href="/settings" class="sidebar-link">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </NavLink>
 
                 <div class="sidebar-search">
                     <input type="text"
@@ -84,298 +62,25 @@
 
                     <i class="fas fa-search search-icon"></i>
 
-                    <button class="filter-btn" @onclick="ToggleFilters">
+                    <button type="button" class="filter-btn" @onclick="ToggleFilters">
                         <i class="fas fa-sliders-h"></i>
                     </button>
                 </div>
-
-            </nav>
-
-        </aside>
-
-        <!-- Page content -->
-        <main class="app-main">
-            @Body
-        </main>
-        <!-- FILTERS -->
-        <div class="filter-panel @(ShowFilters ? "open" : "")">
-
-            <!-- HEADER -->
-            <div class="filter-header">
-                <h3>Filters</h3>
-            </div>
-
-
-            <!-- CONTENT -->
-            <div class="filter-content">
-
-                <!-- GENDER -->
-                <div class="filter-group">
-                    <label>Interested In</label>
-
-                    <div class="filter-options">
-
-                        <button type="button"
-                                class="filter-option @(SelectedGender == "" ? "active" : "")"
-                                @onclick='() => SelectedGender = ""'>
-                            Everyone
-                        </button>
-
-                        <button type="button"
-                                class="filter-option @(SelectedGender == "Female" ? "active" : "")"
-                                @onclick='() => SelectedGender = "Female"'>
-                            Women
-                        </button>
-
-                        <button type="button"
-                                class="filter-option @(SelectedGender == "Male" ? "active" : "")"
-                                @onclick='() => SelectedGender = "Male"'>
-                            Men
-                        </button>
-
-                    </div>
-                </div>
-
-
-                <!-- AGE RANGE -->
-                <div class="filter-group">
-
-                    <label>
-                        Age Range:
-                        <span>@MinAge - @MaxAge</span>
-                    </label>
-
-                    <div class="dual-range">
-
-                        <div class="range-track"></div>
-
-                        <input type="range"
-                               min="18"
-                               max="65"
-                               @bind="MinAge" />
-
-                        <input type="range"
-                               min="18"
-                               max="65"
-                               @bind="MaxAge" />
-
-                    </div>
-
-                </div>
-
-
-                <!-- HAIR COLOR -->
-                <div class="filter-group">
-
-                    <label>Hair Color</label>
-
-                    <select class="filter-select"
-                            @bind="HairColor">
-
-                        <option value="">Any</option>
-                        <option>Black</option>
-                        <option>Brown</option>
-                        <option>Blonde</option>
-                        <option>Red</option>
-                        <option>Auburn</option>
-                        <option>Grey</option>
-                        <option>White</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- SKIN TONE -->
-                <div class="filter-group">
-
-                    <label>Skin Tone</label>
-
-                    <select class="filter-select"
-                            @bind="SkinTone">
-
-                        <option value="">Any</option>
-                        <option>Fair</option>
-                        <option>Light</option>
-                        <option>Medium</option>
-                        <option>Olive</option>
-                        <option>Tan</option>
-                        <option>Dark</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- EYE COLOR -->
-                <div class="filter-group">
-
-                    <label>Eye Color</label>
-
-                    <select class="filter-select"
-                            @bind="EyeColor">
-
-                        <option value="">Any</option>
-                        <option>Brown</option>
-                        <option>Blue</option>
-                        <option>Green</option>
-                        <option>Hazel</option>
-                        <option>Grey</option>
-                        <option>Amber</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- BODY TYPE -->
-                <div class="filter-group">
-
-                    <label>Body Type</label>
-
-                    <select class="filter-select"
-                            @bind="BodyType">
-
-                        <option value="">Any</option>
-                        <option>Slim</option>
-                        <option>Athletic</option>
-                        <option>Average</option>
-                        <option>Curvy</option>
-                        <option>Muscular</option>
-                        <option>Plus Size</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- ETHNICITY -->
-                <div class="filter-group">
-
-                    <label>Ethnicity</label>
-
-                    <select class="filter-select"
-                            @bind="Ethnicity">
-
-                        <option value="">Any</option>
-                        <option>White</option>
-                        <option>Black</option>
-                        <option>Asian</option>
-                        <option>Hispanic</option>
-                        <option>Middle Eastern</option>
-                        <option>Mixed</option>
-                        <option>Other</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- SMOKING -->
-                <div class="filter-group">
-
-                    <label>Smoking</label>
-
-                    <select class="filter-select"
-                            @bind="Smoking">
-
-                        <option value="">Any</option>
-                        <option>Never</option>
-                        <option>Occasionally</option>
-                        <option>Regularly</option>
-
-                    </select>
-
-                </div>
-
-
-                <!-- DRINKING -->
-                <div class="filter-group">
-
-                    <label>Drinking</label>
-
-                    <select class="filter-select"
-                            @bind="Drinking">
-
-                        <option value="">Any</option>
-                        <option>Never</option>
-                        <option>Rarely</option>
-                        <option>Socially</option>
-                        <option>Occasionally</option>
-                        <option>Regularly</option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- ACTIONS -->
-            <div class="filter-actions">
-
-                <button class="btn btn-ghost"
-                        @onclick="ResetFilters">
-                    Reset
-                </button>
-
-                <button class="btn btn-primary"
-                        @onclick="ApplyFilters">
-                    Apply Filters
-                </button>
-
-            </div>
-
-        </div>
->>>>>>> f72ecb9511c029b3aed98853b9c3f2d7d37c48d5
+            </aside>
 
             <main class="app-main">
                 @Body
             </main>
         </div>
     </div>
-<<<<<<< HEAD
-</div>
-=======
-
 </div>
 
 @code {
-
     string SearchTerm = "";
-
     bool ShowFilters = false;
-
-    int MinAge = 18;
-    int MaxAge = 50;
-
-    string SelectedGender = "";
-
-    string HairColor = "";
-    string SkinTone = "";
-    string EyeColor = "";
-    string BodyType = "";
-    string Ethnicity = "";
-    string Smoking = "";
-    string Drinking = "";
 
     void ToggleFilters()
     {
         ShowFilters = !ShowFilters;
     }
-
-    void ResetFilters()
-    {
-        MinAge = 18;
-        MaxAge = 65;
-        SelectedGender = "";
-    }
-
-    void ApplyFilters()
-    {
-        // later: filter profiles here
-        ShowFilters = false;
-    }
 }
->>>>>>> f72ecb9511c029b3aed98853b9c3f2d7d37c48d5
