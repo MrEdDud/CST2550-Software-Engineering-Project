@@ -15,21 +15,21 @@ namespace CST2550Project.Services
             _context = context;
         }
 
-        public async Task<SwipeResultDto> SwipeAsync(int userId, SwipeDto dto)
+        public async Task<SwipeResponseDto> SwipeAsync(int userId, SwipeDto dto)
         {
-            var result = new SwipeResultDto { IsMatch = false };
+            var result = new SwipeResponseDto { Success = true, IsMatch = false };
 
             if (!dto.IsLike) return result;
 
             var existingLike = await _context.Likes
-                .FirstOrDefaultAsync(l => l.FromUserId == userId && l.ToUserId == dto.TargetUserId);
+                .FirstOrDefaultAsync(l => l.FromUserId == userId && l.ToUserId == dto.ToUserId);
 
             if (existingLike != null) return result;
 
             var like = new Like
             {
                 FromUserId = userId,
-                ToUserId = dto.TargetUserId,
+                ToUserId = dto.ToUserId,
                 IsSuperLike = dto.IsSuperLike
             };
 
@@ -37,14 +37,14 @@ namespace CST2550Project.Services
             await _context.SaveChangesAsync();
 
             var mutualLike = await _context.Likes
-                .FirstOrDefaultAsync(l => l.FromUserId == dto.TargetUserId && l.ToUserId == userId);
+                .FirstOrDefaultAsync(l => l.FromUserId == dto.ToUserId && l.ToUserId == userId);
 
             if (mutualLike != null)
             {
                 var match = new Match
                 {
-                    User1Id = Math.Min(userId, dto.TargetUserId),
-                    User2Id = Math.Max(userId, dto.TargetUserId)
+                    User1Id = Math.Min(userId, dto.ToUserId),
+                    User2Id = Math.Max(userId, dto.ToUserId)
                 };
 
                 _context.Matches.Add(match);
@@ -52,7 +52,7 @@ namespace CST2550Project.Services
 
                 var matchedProfile = await _context.Profiles
                     .Include(p => p.User)
-                    .FirstOrDefaultAsync(p => p.UserId == dto.TargetUserId);
+                    .FirstOrDefaultAsync(p => p.UserId == dto.ToUserId);
 
                 result.IsMatch = true;
                 result.Match = new MatchDto

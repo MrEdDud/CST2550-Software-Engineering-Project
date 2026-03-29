@@ -1,1 +1,30 @@
+# IDE
 .vs
+.vscode
+*.swp
+*.swo
+
+# Build outputs
+bin/
+obj/
+
+# Database
+datingapp.db
+datingapp.db-shm
+datingapp.db-wal
+
+# OS
+.DS_Store
+Thumbs.db
+
+# User-specific files
+*.user
+*.userprefs
+
+# Dependencies
+node_modules/
+
+# Misc
+*.log
+.env
+*.tmp

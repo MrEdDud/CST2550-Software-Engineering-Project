@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CST2550Project")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2a7cf099e214b45f8abbab51456acab6f9544a91")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ecef6d12f82f4833ec131cb8245f1ef56c4b183")]
 [assembly: System.Reflection.AssemblyProductAttribute("CST2550Project")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CST2550Project")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

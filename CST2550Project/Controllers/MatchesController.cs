@@ -22,7 +22,7 @@ namespace CST2550Project.Controllers
         }
 
         [HttpPost("swipe")]
-        public async Task<ActionResult<SwipeResultDto>> Swipe([FromBody] SwipeDto dto)
+        public async Task<ActionResult<SwipeResponseDto>> Swipe([FromBody] SwipeDto dto)
         {
             var userId = GetCurrentUserId();
             if (userId == 0) return Unauthorized();

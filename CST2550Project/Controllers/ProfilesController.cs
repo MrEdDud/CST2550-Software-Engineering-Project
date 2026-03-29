@@ -62,7 +62,7 @@ namespace CST2550Project.Controllers
         }
 
         [HttpGet("discover")]
-        public async Task<ActionResult<List<ProfileDto>>> GetDiscoveryProfiles([FromQuery] DiscoverFilterDto filter)
+        public async Task<ActionResult<List<ProfileDto>>> GetDiscoveryProfiles([FromQuery] DiscoveryFilterDto filter)
         {
             var userId = GetCurrentUserId();
             if (userId == 0) return Unauthorized();

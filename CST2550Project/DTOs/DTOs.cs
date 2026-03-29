@@ -124,7 +124,7 @@ namespace CST2550Project.DTOs
         public string? LookingFor { get; set; }
     }
 
-    public class DiscoverFilterDto
+    public class DiscoveryFilterDto
     {
         public int Count { get; set; } = 10;
         public string? Gender { get; set; }
@@ -141,10 +141,14 @@ namespace CST2550Project.DTOs
         public string? Interest { get; set; }
     }
 
+    public class DiscoveryProfileDto : ProfileDto
+    {
+    }
+
     public class SwipeDto
     {
         [Required]
-        public int TargetUserId { get; set; }
+        public int ToUserId { get; set; }
 
         [Required]
         public bool IsLike { get; set; }
@@ -152,8 +156,9 @@ namespace CST2550Project.DTOs
         public bool IsSuperLike { get; set; } = false;
     }
 
-    public class SwipeResultDto
+    public class SwipeResponseDto
     {
+        public bool Success { get; set; }
         public bool IsMatch { get; set; }
         public MatchDto? Match { get; set; }
     }

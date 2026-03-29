@@ -86,7 +86,7 @@ namespace CST2550Project.Services
             return MapToDto(profile);
         }
 
-        public async Task<List<ProfileDto>> GetDiscoveryProfilesAsync(int userId, DiscoverFilterDto filter)
+        public async Task<List<ProfileDto>> GetDiscoveryProfilesAsync(int userId, DiscoveryFilterDto filter)
         {
             var userProfile = await _context.Profiles
                 .FirstOrDefaultAsync(p => p.UserId == userId);
