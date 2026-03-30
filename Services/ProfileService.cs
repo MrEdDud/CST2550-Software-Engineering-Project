@@ -48,10 +48,13 @@ namespace CST2550Project.Services
             if (dto.Username != null && profile.User != null)
             {
                 var trimmed = dto.Username.Trim();
+
                 var exists = await _context.Users
                     .AnyAsync(u => u.Username == trimmed && u.Id != userId);
+
                 if (exists)
                     throw new InvalidOperationException("Username already taken");
+
                 profile.User.Username = trimmed;
             }
 
@@ -91,9 +94,9 @@ namespace CST2550Project.Services
             var userProfile = await _context.Profiles
                 .FirstOrDefaultAsync(p => p.UserId == userId);
 
-            if (userProfile == null) return new List<ProfileDto>();
+            if (userProfile == null)
+                return new List<ProfileDto>();
 
-            // don't show profiles the user already swiped on
             var swipedUserIds = await _context.Likes
                 .Where(l => l.FromUserId == userId)
                 .Select(l => l.ToUserId)
@@ -105,7 +108,7 @@ namespace CST2550Project.Services
                 .Where(p => !swipedUserIds.Contains(p.UserId));
 
             var genderFilter = filter.Gender ?? userProfile.LookingFor;
-            if (!string.IsNullOrEmpty(genderFilter) && genderFilter != "Everyone")
+            if (!string.IsNullOrWhiteSpace(genderFilter) && genderFilter != "Everyone")
             {
                 query = query.Where(p => p.Gender == genderFilter);
             }
@@ -114,44 +117,57 @@ namespace CST2550Project.Services
             var maxAge = filter.MaxAge ?? userProfile.MaxAge;
             query = query.Where(p => p.Age >= minAge && p.Age <= maxAge);
 
-            if (!string.IsNullOrEmpty(filter.HairColor))
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var term = filter.SearchTerm.Trim().ToLower();
+
+                query = query.Where(p =>
+                    p.Name.ToLower().Contains(term) ||
+                    p.Bio.ToLower().Contains(term) ||
+                    p.Location.ToLower().Contains(term) ||
+                    p.Occupation.ToLower().Contains(term));
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.HairColor))
             {
                 query = query.Where(p => p.HairColor == filter.HairColor);
             }
 
-            if (!string.IsNullOrEmpty(filter.SkinTone))
+            if (!string.IsNullOrWhiteSpace(filter.SkinTone))
             {
                 query = query.Where(p => p.SkinTone == filter.SkinTone);
             }
 
-            if (!string.IsNullOrEmpty(filter.EyeColor))
+            if (!string.IsNullOrWhiteSpace(filter.EyeColor))
             {
                 query = query.Where(p => p.EyeColor == filter.EyeColor);
             }
 
-            if (!string.IsNullOrEmpty(filter.BodyType))
+            if (!string.IsNullOrWhiteSpace(filter.BodyType))
             {
                 query = query.Where(p => p.BodyType == filter.BodyType);
             }
 
-            if (!string.IsNullOrEmpty(filter.Ethnicity))
+            if (!string.IsNullOrWhiteSpace(filter.Ethnicity))
             {
                 query = query.Where(p => p.Ethnicity == filter.Ethnicity);
             }
 
-            if (!string.IsNullOrEmpty(filter.Smoking))
+            if (!string.IsNullOrWhiteSpace(filter.Smoking))
             {
                 query = query.Where(p => p.Smoking == filter.Smoking);
             }
 
-            if (!string.IsNullOrEmpty(filter.Drinking))
+            if (!string.IsNullOrWhiteSpace(filter.Drinking))
             {
                 query = query.Where(p => p.Drinking == filter.Drinking);
             }
 
+            var count = filter.Count <= 0 ? 20 : filter.Count;
+
             var profiles = await query
                 .OrderBy(p => Guid.NewGuid())
-                .Take(filter.Count)
+                .Take(count)
                 .ToListAsync();
 
             return profiles.Select(MapToDto).ToList();
