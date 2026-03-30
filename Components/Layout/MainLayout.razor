@@ -1,13 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="app-shell">
-
-    <!-- Top bar -->
     <header class="topbar">
         <div class="brand">
             <i class="fa-solid fa-heart"></i>
             <span class="brand-name">Pairly</span>
         </div>
+
+        <nav class="topnav">
+            <a href="/home" class="topnav-link">Home</a>
+            <a href="/matches" class="topnav-link">Matches</a>
+            <a href="/profile" class="topnav-link">Profile</a>
+            <a href="/settings" class="topnav-link">Settings</a>
+        </nav>
 
         <div class="topbar-actions">
             <button class="header-btn">
@@ -17,37 +22,37 @@
     </header>
 
     <div class="app-content">
+        <div class="main-layout">
+            <aside class="app-sidebar">
+                <div class="sidebar-profile">
+                    <i class="fa-regular fa-circle-user sidebar-avatar"></i>
+                    <div>
+                        <strong>You</strong><br />
+                        <span>@@user</span>
+                    </div>
+                </div>
 
-        <!-- Sidebar -->
-        <aside class="app-sidebar">
+                <nav class="sidebar-nav">
+                    <a href="/home" class="sidebar-link">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Home</span>
+                    </a>
 
-            <div class="sidebar-profile">
-                <i class="fa-regular fa-circle-user sidebar-avatar"></i>
-                <strong>You</strong>
-                <span>@@user</span>
-            </div>
+                    <a href="/matches" class="sidebar-link">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>Matches</span>
+                    </a>
 
-            <nav class="sidebar-nav">
+                    <a href="/profile" class="sidebar-link">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Profile</span>
+                    </a>
 
-                <NavLink href="/home" class="sidebar-link">
-                    <i class="fas fa-fire"></i>
-                    <span>Home</span>
-                </NavLink>
-
-                <NavLink href="/matches" class="sidebar-link">
-                    <i class="fas fa-heart"></i>
-                    <span>Matches</span>
-                </NavLink>
-
-                <NavLink href="/profile" class="sidebar-link">
-                    <i class="fas fa-user"></i>
-                    <span>Profile</span>
-                </NavLink>
-
-                <NavLink href="/settings" class="sidebar-link">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </NavLink>
+                    <a href="/settings" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </nav>
 
                 <div class="sidebar-search">
                     <input type="text"
@@ -57,81 +62,25 @@
 
                     <i class="fas fa-search search-icon"></i>
 
-                    <button class="filter-btn">
+                    <button type="button" class="filter-btn" @onclick="ToggleFilters">
                         <i class="fas fa-sliders-h"></i>
                     </button>
                 </div>
+            </aside>
 
-            </nav>
-
-        </aside>
-
-        <!-- Page content -->
-        <main class="app-main">
-            @Body
-        </main>
-
-        <div class="filter-panel @(ShowFilters ? "open" : "")">
-
-            <div class="filter-header">
-                <h3>Filters</h3>
-                <button @onclick="ToggleFilters">✖</button>
-            </div>
-
-            <div class="filter-content">
-
-                <!-- Age -->
-                <label>Age: @MinAge - @MaxAge</label>
-                <input type="range" min="18" max="65" @bind="MinAge" />
-                <input type="range" min="18" max="65" @bind="MaxAge" />
-
-                <!-- Gender -->
-                <label>Show Me</label>
-                <select @bind="SelectedGender">
-                    <option value="">Everyone</option>
-                    <option value="Female">Women</option>
-                    <option value="Male">Men</option>
-                </select>
-
-            </div>
-
-            <div class="filter-actions">
-                <button @onclick="ResetFilters">Reset</button>
-                <button @onclick="ApplyFilters">Apply</button>
-            </div>
-
+            <main class="app-main">
+                @Body
+            </main>
         </div>
-
     </div>
-
 </div>
 
 @code {
-
     string SearchTerm = "";
-
     bool ShowFilters = false;
-
-    int MinAge = 18;
-    int MaxAge = 35;
-
-    string SelectedGender = "";
 
     void ToggleFilters()
     {
         ShowFilters = !ShowFilters;
-    }
-
-    void ResetFilters()
-    {
-        MinAge = 18;
-        MaxAge = 35;
-        SelectedGender = "";
-    }
-
-    void ApplyFilters()
-    {
-        // later: filter profiles here
-        ShowFilters = false;
     }
 }
