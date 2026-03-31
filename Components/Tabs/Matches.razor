@@ -4,20 +4,13 @@
 
 <div class="chat-layout">
 
-    <!-- Sidebar -->
+    <!-- Matches Sidebar -->
     <aside class="sidebar">
-        <nav class="sidebar-nav">
-            <button class="nav-icon" title="Settings"><span class="icon">⚙</span></button>
-            <button class="nav-icon active" title="Matches"><span class="icon">🤍</span></button>
-            <button class="nav-icon" title="Profile"><span class="icon">👤</span></button>
-            <button class="nav-icon" title="Preferences"><span class="icon">⚙</span></button>
-        </nav>
-
         <div class="matches-panel">
-            <div class="matches-header">
-                <span class="match-request-icon">✉</span>
+            <button class="matches-header-btn">
+                <i class="fa-regular fa-envelope"></i>
                 <span>Match requests</span>
-            </div>
+            </button>
 
             <ul class="match-list">
                 @foreach (var match in MatchList)
@@ -93,12 +86,6 @@
                         <polyline points="21 15 16 10 5 21" />
                     </svg>
                 </button>
-            </div>
-        }
-        else
-        {
-            <div class="empty-state">
-                <p>Select a match to start chatting 💕</p>
             </div>
         }
     </main>
