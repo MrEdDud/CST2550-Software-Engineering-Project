@@ -1,0 +1,160 @@
+﻿@page "/matches"
+@page "/matches/{MatchId:int}"
+@using CST2550Project.Models
+
+<div class="chat-layout">
+
+    <!-- Matches Sidebar -->
+    <aside class="sidebar">
+        <div class="matches-panel">
+            <button class="matches-header-btn">
+                <i class="fa-regular fa-envelope"></i>
+                <span>Match requests</span>
+            </button>
+
+            <ul class="match-list">
+                @foreach (var match in MatchList)
+                {
+                    var other = GetOtherUser(match);
+                    <li class="match-item @(SelectedMatch?.Id == match.Id ? "active" : "")"
+                        @onclick="() => ChooseMatch(match)">
+                        <div class="avatar">
+                            <span class="avatar-fallback">@other.Username[0]</span>
+                        </div>
+                        <span class="match-name">@other.Username</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Chat Area -->
+    <main class="chat-main">
+        @if (SelectedMatch != null)
+        {
+            var other = GetOtherUser(SelectedMatch);
+
+            <div class="chat-header">
+                <div class="chat-header-avatar">
+                    <span class="avatar-fallback">@other.Username[0]</span>
+                </div>
+                <span class="chat-header-name">@other.Username</span>
+            </div>
+
+            <hr class="chat-divider" />
+
+            <div class="messages-container" @ref="messagesContainer">
+                @foreach (var msg in SelectedMatch.Messages)
+                {
+                    var fromMe = msg.SenderId == CurrentUserId;
+                    <div class="message-row @(fromMe ? "from-me" : "from-them")">
+                        @if (!fromMe)
+                        {
+                            <div class="msg-avatar">
+                                <span class="avatar-fallback sm">@other.Username[0]</span>
+                            </div>
+                        }
+                        <div class="message-bubble @(fromMe ? "bubble-me" : "bubble-them")">
+                            @msg.Content
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="input-bar">
+                <button class="emoji-btn" title="Emoji">😊</button>
+                <input class="message-input"
+                       type="text"
+                       placeholder="message..."
+                       @bind="newMessage"
+                       @bind:event="oninput"
+                       @onkeydown="HandleKeyDown" />
+                <button class="send-btn" @onclick="SendMessage" title="Send">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="19" x2="12" y2="5" />
+                        <polyline points="5 12 12 5 19 12" />
+                    </svg>
+                </button>
+                <button class="media-btn" title="Send photo">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                </button>
+            </div>
+        }
+    </main>
+</div>
+
+@code {
+    [Parameter] public int? MatchId { get; set; }
+
+    // Replace with your actual logged-in user ID, e.g. from AuthenticationStateProvider
+    private int CurrentUserId = 1;
+
+    private ElementReference messagesContainer;
+    private string newMessage = string.Empty;
+    private Match? SelectedMatch;
+    private List<Match> MatchList = new();
+
+    protected override void OnInitialized()
+    {
+        // TODO: load real matches from your service, e.g.:
+        // MatchList = await MatchService.GetMatchesForUserAsync(CurrentUserId);
+
+        SelectedMatch = MatchId.HasValue
+            ? MatchList.FirstOrDefault(m => m.Id == MatchId.Value)
+            : MatchList.FirstOrDefault();
+    }
+
+    // Returns the other participant in the match (not the current user)
+    private User GetOtherUser(Match match)
+    {
+        if (match.User1Id == CurrentUserId)
+            return match.User2 ?? new User { Username = "Unknown" };
+
+        return match.User1 ?? new User { Username = "Unknown" };
+    }
+
+    private void ChooseMatch(Match match)
+    {
+        SelectedMatch = match;
+        // TODO: optionally reload messages for this match:
+        // SelectedMatch.Messages = await MessageService.GetMessagesAsync(match.Id);
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await SendMessage();
+    }
+
+    private async Task SendMessage()
+    {
+        var text = newMessage.Trim();
+        if (string.IsNullOrWhiteSpace(text) || SelectedMatch == null) return;
+
+        var message = new Message
+        {
+            MatchId = SelectedMatch.Id,
+            SenderId = CurrentUserId,
+            Content = text,
+            SentAt = DateTime.UtcNow
+        };
+
+        // TODO: persist via your service, e.g.:
+        // await MessageService.SendAsync(message);
+
+        SelectedMatch.Messages.Add(message);
+        newMessage = string.Empty;
+
+        await Task.Yield();
+        // Scroll to bottom — add this JS to wwwroot/index.html:
+        // window.scrollToBottom = (el) => el.scrollTop = el.scrollHeight;
+        // await JS.InvokeVoidAsync("scrollToBottom", messagesContainer);
+    }
+}

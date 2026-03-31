@@ -1,27 +1,348 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="app-shell">
-    <!-- Top bar -->
     <header class="topbar">
         <div class="brand">
-            <span class="brand-dot"></span>
+            <i class="fa-solid fa-heart"></i>
             <span class="brand-name">Pairly</span>
         </div>
 
-        <nav class="topnav">
-            <a href="/home" class="topnav-link">Discover</a>
-            <a href="/matches" class="topnav-link">Matches</a>
-            <a href="/messages" class="topnav-link">Messages</a>
-            <a href="/profile" class="topnav-link">Profile</a>
-        </nav>
-
         <div class="topbar-actions">
-            <a class="ghost-btn" href="/login">Logout</a>
+            <button class="header-btn">
+                <i class="fas fa-bell"></i>
+            </button>
         </div>
     </header>
 
-    <!-- Page content -->
-    <main class="app-content">
-        @Body
-    </main>
+    <div class="main-layout">
+        <aside class="app-sidebar">
+            <div class="sidebar-profile">
+                <i class="fa-regular fa-circle-user sidebar-avatar"></i>
+                <div>
+                    <strong>You</strong><br />
+                    <span>@@user</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/home" class="sidebar-link">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Home</span>
+                </a>
+
+                <a href="/matches" class="sidebar-link">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Matches</span>
+                </a>
+
+                <a href="/profile" class="sidebar-link">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Profile</span>
+                </a>
+
+                <a href="/settings" class="sidebar-link">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-search">
+                <input type="text"
+                        placeholder="Search..."
+                        @bind="SearchTerm"
+                        @bind:event="oninput" />
+
+                <i class="fas fa-search search-icon"></i>
+
+                <button type="button" class="filter-btn" @onclick="ToggleFilters">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+            </div>
+        </aside>
+
+        <main class="">
+            @Body
+        </main>
+        <!-- FILTERS -->
+        <div class="filter-panel @(ShowFilters ? "open" : "")">
+
+            <!-- HEADER -->
+            <div class="filter-header">
+                <h3>Filters</h3>
+
+            </div>
+
+
+            <!-- CONTENT -->
+            <div class="filter-content">
+
+                <!-- GENDER -->
+                <div class="filter-group">
+                    <label>Interested In</label>
+
+                    <div class="filter-options">
+
+                        <button type="button"
+                                class="filter-option @(SelectedGender == "" ? "active" : "")"
+                                @onclick='() => SelectedGender = ""'>
+                            Everyone
+                        </button>
+
+                        <button type="button"
+                                class="filter-option @(SelectedGender == "Female" ? "active" : "")"
+                                @onclick='() => SelectedGender = "Female"'>
+                            Women
+                        </button>
+
+                        <button type="button"
+                                class="filter-option @(SelectedGender == "Male" ? "active" : "")"
+                                @onclick='() => SelectedGender = "Male"'>
+                            Men
+                        </button>
+
+                    </div>
+                </div>
+
+
+                <!-- AGE RANGE -->
+                <div class="filter-group">
+
+                    <label>
+                        Age Range:
+                        <span>@MinAge - @MaxAge</span>
+                    </label>
+
+                    <div class="dual-range">
+
+                        <div class="range-track"></div>
+
+                        <input type="range"
+                               min="18"
+                               max="65"
+                               @bind="MinAge" />
+
+                        <input type="range"
+                               min="18"
+                               max="65"
+                               @bind="MaxAge" />
+
+                    </div>
+
+                </div>
+
+
+                <!-- HAIR COLOR -->
+                <div class="filter-group">
+
+                    <label>Hair Color</label>
+
+                    <select class="filter-select"
+                            @bind="HairColor">
+
+                        <option value="">Any</option>
+                        <option>Black</option>
+                        <option>Brown</option>
+                        <option>Blonde</option>
+                        <option>Red</option>
+                        <option>Auburn</option>
+                        <option>Grey</option>
+                        <option>White</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- SKIN TONE -->
+                <div class="filter-group">
+
+                    <label>Skin Tone</label>
+
+                    <select class="filter-select"
+                            @bind="SkinTone">
+
+                        <option value="">Any</option>
+                        <option>Fair</option>
+                        <option>Light</option>
+                        <option>Medium</option>
+                        <option>Olive</option>
+                        <option>Tan</option>
+                        <option>Dark</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- EYE COLOR -->
+                <div class="filter-group">
+
+                    <label>Eye Color</label>
+
+                    <select class="filter-select"
+                            @bind="EyeColor">
+
+                        <option value="">Any</option>
+                        <option>Brown</option>
+                        <option>Blue</option>
+                        <option>Green</option>
+                        <option>Hazel</option>
+                        <option>Grey</option>
+                        <option>Amber</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- BODY TYPE -->
+                <div class="filter-group">
+
+                    <label>Body Type</label>
+
+                    <select class="filter-select"
+                            @bind="BodyType">
+
+                        <option value="">Any</option>
+                        <option>Slim</option>
+                        <option>Athletic</option>
+                        <option>Average</option>
+                        <option>Curvy</option>
+                        <option>Muscular</option>
+                        <option>Plus Size</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- ETHNICITY -->
+                <div class="filter-group">
+
+                    <label>Ethnicity</label>
+
+                    <select class="filter-select"
+                            @bind="Ethnicity">
+
+                        <option value="">Any</option>
+                        <option>White</option>
+                        <option>Black</option>
+                        <option>Asian</option>
+                        <option>Hispanic</option>
+                        <option>Middle Eastern</option>
+                        <option>Mixed</option>
+                        <option>Other</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- SMOKING -->
+                <div class="filter-group">
+
+                    <label>Smoking</label>
+
+                    <select class="filter-select"
+                            @bind="Smoking">
+
+                        <option value="">Any</option>
+                        <option>Never</option>
+                        <option>Occasionally</option>
+                        <option>Regularly</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- DRINKING -->
+                <div class="filter-group">
+
+                    <label>Drinking</label>
+
+                    <select class="filter-select"
+                            @bind="Drinking">
+
+                        <option value="">Any</option>
+                        <option>Never</option>
+                        <option>Rarely</option>
+                        <option>Socially</option>
+                        <option>Occasionally</option>
+                        <option>Regularly</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ACTIONS -->
+            <div class="filter-actions">
+
+                <button class="btn btn-ghost"
+                        @onclick="ResetFilters">
+                    Reset
+                </button>
+
+                <button class="btn btn-primary"
+                        @onclick="ApplyFilters">
+                    Apply Filters
+                </button>
+
+            </div>
+
+        </div>
+    </div>
 </div>
+
+
+@code {
+
+    string SearchTerm = "";
+    bool ShowFilters = false;
+
+    void ToggleFilters()
+    {
+        ShowFilters = !ShowFilters;
+    }
+
+    // FILTER STATE
+    string SelectedGender = "";
+
+    int MinAge = 18;
+    int MaxAge = 35;
+
+    string HairColor = "";
+    string SkinTone = "";
+    string EyeColor = "";
+    string BodyType = "";
+    string Ethnicity = "";
+    string Smoking = "";
+    string Drinking = "";
+
+    void ResetFilters()
+    {
+        SelectedGender = "";
+        MinAge = 18;
+        MaxAge = 35;
+
+        HairColor = "";
+        SkinTone = "";
+        EyeColor = "";
+        BodyType = "";
+        Ethnicity = "";
+        Smoking = "";
+        Drinking = "";
+    }
+
+    void ApplyFilters()
+    {
+        ShowFilters = false;
+
+        // later you can pass these filters to your API
+        Console.WriteLine("Filters applied");
+    }
+}
