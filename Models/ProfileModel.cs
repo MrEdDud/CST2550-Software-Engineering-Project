@@ -1,5 +1,4 @@
-// user profile - personal info, appearance, preferences
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CST2550Project.Models
 {
@@ -30,8 +29,8 @@ namespace CST2550Project.Models
 
         public string ProfilePhotoUrl { get; set; } = string.Empty;
 
+        // ✅ FIXED (must be lists)
         public List<string> Photos { get; set; } = new();
-
         public List<string> Interests { get; set; } = new();
 
         [StringLength(30)]
@@ -64,6 +63,7 @@ namespace CST2550Project.Models
         [StringLength(100)]
         public string Occupation { get; set; } = string.Empty;
 
+        // ✅ FIXED (must be list)
         public List<string> Hobbies { get; set; } = new();
 
         [Range(18, 120)]

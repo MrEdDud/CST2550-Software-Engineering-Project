@@ -127,6 +127,7 @@ namespace CST2550Project.DTOs
     public class DiscoverFilterDto
     {
         public int Count { get; set; } = 10;
+        public string? SearchTerm { get; set; }
         public string? Gender { get; set; }
         public int? MinAge { get; set; }
         public int? MaxAge { get; set; }
