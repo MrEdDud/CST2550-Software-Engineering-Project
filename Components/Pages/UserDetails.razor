@@ -42,6 +42,125 @@
         <ValidationMessage For="@(() => registerData.LookingFor)" />
     </div>
 
+    <div class="form-group">
+        <label><i class="fa-solid fa-eye-dropper"></i> Hair Colour</label>
+
+        <InputSelect class="form-control"
+                     @bind-Value="registerData.HairColor">
+            <option value="">Select...</option>
+            <option>Black</option>
+            <option>Brown</option>
+            <option>Blonde</option>
+            <option>Red</option>
+            <option>Auburn</option>
+            <option>Grey</option>
+            <option>White</option>
+            <option>Other</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.HairColor)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-eye-dropper"></i> Skin Colour</label>
+
+        <InputSelect class="form-control"
+                     @bind-Value="registerData.Skin">
+            <option value="">Select...</option>
+            <option>Fair</option>
+            <option>Light</option>
+            <option>Medium</option>
+            <option>Olive</option>
+            <option>Tan</option>
+            <option>Dark</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Skin)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-eye-dropper"></i> Eye Colour</label>
+
+        <InputSelect class="form-control"
+                     @bind-Value="registerData.Eye">
+            <option value="">Select...</option>
+            <option>Brown</option>
+            <option>Blue</option>
+            <option>Green</option>
+            <option>Hazel</option>
+            <option>Grey</option>
+            <option>Amber</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Eye)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-person"></i> Body Size</label>
+
+        <InputSelect class="form-control"
+                     @bind-Value="registerData.Body">
+            <option value="">Select...</option>
+            <option>Slim</option>
+            <option>Athletic</option>
+            <option>Average</option>
+            <option>Curvy</option>
+            <option>Muscular</option>
+            <option>Plus sized</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Body)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-earth-europe"></i> Ethnicity</label>
+
+        <InputSelect class="form-control"
+                     @bind-Value="registerData.Ethnicity">
+            <option value="">Select...</option>
+            <option>White</option>
+            <option>Black</option>
+            <option>Asian</option>
+            <option>Hispanic</option>
+            <option>Middle eastern</option>
+            <option>Mixed</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Ethnicity)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-smoking"></i> Smoking</label>
+
+        <InputSelect class="form-control"
+                     @bind-Value="registerData.Smoking">
+            <option value="">Select...</option>
+            <option>Never</option>
+            <option>Rarely</option>
+            <option>Socially</option>
+            <option>Occasionally</option>
+            <option>Regularly</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Smoking)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fa-solid fa-champagne-glasses"></i> Drinking</label>
+
+        <InputSelect class="form-control"
+                     @bind-Value="registerData.Drinking">
+            <option value="">Select...</option>
+            <option>Never</option>
+            <option>Rarely</option>
+            <option>Socially</option>
+            <option>Occasionally</option>
+            <option>Regularly</option>
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Drinking)" />
+    </div>
+
     <button type="submit" class="btn btn-primary btn-block">
         <span>Create Account</span>
         <i class="fas fa-check"></i>
@@ -68,6 +187,20 @@
 		public string Gender { get; set; } = string.Empty;
 	
 		public string LookingFor { get; set; } = string.Empty;
+
+		public string HairColor { get; set; } = string.Empty;
+
+		public string Skin { get; set; } = string.Empty;
+
+		public string Eye { get; set; } = string.Empty;
+
+		public string Body { get; set; } = string.Empty;
+
+		public string Ethnicity { get; set; } = string.Empty;
+
+		public string Smoking { get; set; } = string.Empty;
+
+		public string Drinking { get; set; } = string.Empty;
     }
 
     private RegisterModel registerData = new();

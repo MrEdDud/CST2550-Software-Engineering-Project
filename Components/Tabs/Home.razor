@@ -13,7 +13,7 @@
                 </div>
             }
             else if (noMoreProfiles)
-            {
+            {  
                 <div class="empty-state">
                     <div class="empty-icon">
                         <i class="fas fa-heart-broken"></i>
@@ -41,9 +41,6 @@
 
     private bool noMoreProfiles = false;
     private bool IsLoading = true;
-
-    [Inject]
-    private NavigationManager NavigationManager { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,11 +97,6 @@
         }
 
         await Task.CompletedTask;
-    }
-
-    private void NavigateToProfile()
-    {
-        NavigationManager.NavigateTo("/profile");
     }
 
     private string SearchTerm = "";
