@@ -13,7 +13,10 @@ builder.Services.AddDbContext<DatingAppContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<MatchService>();
+builder.Services.AddScoped<MessageService>();
 
 var app = builder.Build();
 

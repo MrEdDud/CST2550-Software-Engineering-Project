@@ -2,10 +2,9 @@
 @page "/matches/{MatchId:int}"
 @using CST2550Project.Models
 
-<div class="chat-layout">
-
+<div class="chat-layout @(SelectedMatch == null ? "no-selection" : "") @(SidebarOpen ? "sidebar-open" : "")">
     <!-- Matches Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" @onclick="ToggleSidebar">
         <div class="matches-panel">
             <button class="matches-header-btn">
                 <i class="fa-regular fa-envelope"></i>
@@ -92,6 +91,7 @@
 </div>
 
 @code {
+    private bool SidebarOpen = true;
     [Parameter] public int? MatchId { get; set; }
 
     // Replace with your actual logged-in user ID, e.g. from AuthenticationStateProvider
@@ -101,6 +101,11 @@
     private string newMessage = string.Empty;
     private Match? SelectedMatch;
     private List<Match> MatchList = new();
+
+    private void ToggleSidebar()
+    {
+        SidebarOpen = !SidebarOpen;
+    }
 
     protected override void OnInitialized()
     {
