@@ -1,6 +1,9 @@
 ﻿@page "/details"
 @using System.ComponentModel.DataAnnotations
+@using System.Text.Json
+@inject ProfileService ProfileService
 @inject NavigationManager Navigation
+@inject HttpClient Http
 @layout AuthLayout
 
 <div class="auth-header">
@@ -9,10 +12,36 @@
 </div>
 
 <EditForm Model="@registerData"
-          OnValidSubmit="@HandleRegister"
+          OnSubmit="@HandleRegister"
           class="auth-form">
 
     <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label><i class="fas fa-pen"></i> Bio</label>
+
+        <InputTextArea class="form-control"
+                       @bind-Value="registerData.Bio"
+                       placeholder="Tell us about yourself...">
+        </InputTextArea>
+
+        <ValidationMessage For="@(() => registerData.Bio)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-map-marker-alt"></i> Location</label>
+
+        <InputSelect class="form-control"
+                     @bind-Value="registerData.Location">
+            <option value="">Select...</option>
+            @foreach (var city in FilteredCities)
+            {
+                <option>@city</option>
+            }
+        </InputSelect>
+
+        <ValidationMessage For="@(() => registerData.Location)" />
+    </div>
 
     <div class="form-group">
         <label><i class="fas fa-venus-mars"></i> Gender</label>
@@ -62,10 +91,10 @@
     </div>
 
     <div class="form-group">
-        <label><i class="fa-solid fa-eye-dropper"></i> Skin Colour</label>
+        <label><i class="fa-solid fa-eye-dropper"></i> Skin Tone</label>
 
         <InputSelect class="form-control"
-                     @bind-Value="registerData.Skin">
+                     @bind-Value="registerData.SkinTone">
             <option value="">Select...</option>
             <option>Fair</option>
             <option>Light</option>
@@ -75,14 +104,14 @@
             <option>Dark</option>
         </InputSelect>
 
-        <ValidationMessage For="@(() => registerData.Skin)" />
+        <ValidationMessage For="@(() => registerData.SkinTone)" />
     </div>
 
     <div class="form-group">
         <label><i class="fa-solid fa-eye-dropper"></i> Eye Colour</label>
 
         <InputSelect class="form-control"
-                     @bind-Value="registerData.Eye">
+                     @bind-Value="registerData.EyeColor">
             <option value="">Select...</option>
             <option>Brown</option>
             <option>Blue</option>
@@ -92,14 +121,14 @@
             <option>Amber</option>
         </InputSelect>
 
-        <ValidationMessage For="@(() => registerData.Eye)" />
+        <ValidationMessage For="@(() => registerData.EyeColor)" />
     </div>
 
     <div class="form-group">
         <label><i class="fa-solid fa-person"></i> Body Size</label>
 
         <InputSelect class="form-control"
-                     @bind-Value="registerData.Body">
+                     @bind-Value="registerData.BodyType">
             <option value="">Select...</option>
             <option>Slim</option>
             <option>Athletic</option>
@@ -109,7 +138,7 @@
             <option>Plus sized</option>
         </InputSelect>
 
-        <ValidationMessage For="@(() => registerData.Body)" />
+        <ValidationMessage For="@(() => registerData.BodyType)" />
     </div>
 
     <div class="form-group">
@@ -180,36 +209,86 @@
     </p>
 </div>
 
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject ProfileService ProfileService
+
 @code {
+    private ProfileModel registerData = new();
 
-    private sealed class RegisterModel
-    {
-		public string Gender { get; set; } = string.Empty;
-	
-		public string LookingFor { get; set; } = string.Empty;
-
-		public string HairColor { get; set; } = string.Empty;
-
-		public string Skin { get; set; } = string.Empty;
-
-		public string Eye { get; set; } = string.Empty;
-
-		public string Body { get; set; } = string.Empty;
-
-		public string Ethnicity { get; set; } = string.Empty;
-
-		public string Smoking { get; set; } = string.Empty;
-
-		public string Drinking { get; set; } = string.Empty;
-    }
-
-    private RegisterModel registerData = new();
+    private Dictionary<string, List<string>> CountriesCities = new();
+    private List<string> Countries => CountriesCities.Keys.OrderBy(c => c).ToList();
+    private List<string> FilteredCities = new();
 
     private string successMessage = string.Empty;
 
-    private void HandleRegister()
+    protected override async Task OnInitializedAsync()
     {
-        successMessage = "Account created";
-        Navigation.NavigateTo("/home", true);
+        try
+        {
+            // Load countries JSON
+            var response = await Http.GetAsync("/data/countries.min.json");
+
+            if (!response.IsSuccessStatusCode) return;
+
+            var json = await response.Content.ReadAsStringAsync();
+            CountriesCities = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(json) ?? new();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load countries JSON: {ex.Message}");
+        }
+    }
+
+    private void OnCountryChanged(ChangeEventArgs e)
+    {
+        if (e.Value is string selectedCountry && !string.IsNullOrWhiteSpace(selectedCountry))
+        {
+            FilteredCities = CountriesCities.TryGetValue(selectedCountry, out var cities)
+                ? cities.OrderBy(c => c).ToList()
+                : new List<string>();
+            registerData.Location = string.Empty;
+        }
+        else
+        {
+            FilteredCities = new List<string>();
+            registerData.Location = string.Empty;
+        }
+    }
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+            // Get the current user's ID from JWT token
+            var currentUserId = await GetCurrentUserIdFromTokenAsync();
+            registerData.UserId = currentUserId;
+
+            // Create the profile
+            await ProfileService.CreateProfileAsync(registerData);
+
+            successMessage = "Account created successfully!";
+            Navigation.NavigateTo("/home", true);
+        }
+        catch (Exception ex)
+        {
+            successMessage = $"Error creating account: {ex.Message}";
+        }
+    }
+
+    private async Task<int> GetCurrentUserIdFromTokenAsync()
+    {
+        var token = await JS.InvokeAsync<string>("localStorage.getItem", "authToken");
+        if (string.IsNullOrEmpty(token))
+            throw new Exception("User not logged in");
+
+        var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(token);
+
+        var userIdClaim = jwt.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+            throw new Exception("User ID claim not found in token");
+
+        return int.Parse(userIdClaim.Value);
     }
 }

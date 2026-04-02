@@ -161,7 +161,6 @@ namespace CST2550Project.Services
                 Location = p.Location,
                 ProfilePhotoUrl = p.ProfilePhotoUrl,
                 Photos = p.Photos,
-                Interests = p.Interests,
                 HairColor = p.HairColor,
                 SkinTone = p.SkinTone,
                 EyeColor = p.EyeColor,
@@ -170,9 +169,6 @@ namespace CST2550Project.Services
                 HeightCm = p.HeightCm,
                 Smoking = p.Smoking,
                 Drinking = p.Drinking,
-                Education = p.Education,
-                Occupation = p.Occupation,
-                Hobbies = p.Hobbies
             };
         }
     }

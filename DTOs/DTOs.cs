@@ -7,7 +7,7 @@ namespace CST2550Project.DTOs
     {
         [Required]
         [StringLength(50, MinimumLength = 3)]
-        public string Username { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
@@ -18,18 +18,8 @@ namespace CST2550Project.DTOs
         public string Password { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
-
-        [Required]
         [Range(18, 120)]
         public int Age { get; set; }
-
-        [Required]
-        public string Gender { get; set; } = string.Empty;
-
-        [Required]
-        public string LookingFor { get; set; } = string.Empty;
     }
 
     public class LoginDto
@@ -72,7 +62,6 @@ namespace CST2550Project.DTOs
         public int? HeightCm { get; set; }
         public string Smoking { get; set; } = string.Empty;
         public string Drinking { get; set; } = string.Empty;
-        public string Education { get; set; } = string.Empty;
         public string Occupation { get; set; } = string.Empty;
         public List<string> Hobbies { get; set; } = new();
     }
@@ -108,7 +97,6 @@ namespace CST2550Project.DTOs
         public int? HeightCm { get; set; }
         public string? Smoking { get; set; }
         public string? Drinking { get; set; }
-        public string? Education { get; set; }
         public string? Occupation { get; set; }
         public List<string>? Hobbies { get; set; }
 

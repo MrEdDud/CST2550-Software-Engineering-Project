@@ -1,6 +1,8 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
+@using CST2550Project.DTOs
 @inject NavigationManager Navigation
+@inject AuthService AuthService
 @layout AuthLayout
 
 <div class="auth-header">
@@ -50,10 +52,8 @@
 
         <InputText type="password"
                     class="form-control"
-                    @bind-Value="registerData.ConfPassword"
+                    @bind-Value="confirmPassword"
                     placeholder="Write your password again" />
-
-        <ValidationMessage For="@(() => registerData.ConfPassword)" />
     </div>
 
     <div class="form-group">
@@ -85,35 +85,41 @@
 </div>
 
 @code {
-    private sealed class RegisterModel
-    {
-        [Required(ErrorMessage = "Your username is required")]
-        public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Your email is required")]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
+    private RegisterDto registerData = new();
 
-        [Required(ErrorMessage = "You must create a password")]
-        [MinLength(6)]
-        public string Password { get; set; } = string.Empty;
-
-		[Required(ErrorMessage = "You must confirm your password")]
-        [Compare("Password")]
-        public string ConfPassword { get; set; } = string.Empty;
-
-		[Required]
-        [Range(18, 120, ErrorMessage = "You must be at least 18 years old")]
-        public int Age { get; set; }
-    }
-
-    private RegisterModel registerData = new();
+    private string confirmPassword = "";
 
     private string successMessage = string.Empty;
 
-    private void HandleRegister()
+    private async Task HandleRegister()
     {
-        successMessage = "Success!";
-        Navigation.NavigateTo("/details", true);
+        // frontend-only validation
+        if (registerData.Password != confirmPassword)
+        {
+            successMessage = "Passwords do not match";
+            return;
+        }
+
+        try
+        {
+            var result = await AuthService.RegisterAsync(registerData);
+
+            if (result != null)
+            {
+                successMessage = "Account created successfully";
+
+                // go to profile completion page
+                Navigation.NavigateTo("/details");
+            }
+            else
+            {
+                successMessage = "Registration failed";
+            }
+        }
+        catch (Exception ex)
+        {
+            successMessage = ex.Message;
+        }
     }
 }
