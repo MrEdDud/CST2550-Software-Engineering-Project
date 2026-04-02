@@ -129,10 +129,6 @@ namespace CST2550Project.Data
                     SkinTone = "Light",
                     EyeColor = "Blue",
                     BodyType = "Athletic",
-                    Occupation = "Photographer",
-                    Education = "University",
-                    Hobbies = new List<string> { "Hiking", "Photography", "Cooking" },
-                    Interests = new List<string> { "Photography", "Travel", "Cooking" },
                     Smoking = "Never",
                     Drinking = "Socially"
                 },
@@ -150,10 +146,6 @@ namespace CST2550Project.Data
                     SkinTone = "Fair",
                     EyeColor = "Green",
                     BodyType = "Slim",
-                    Occupation = "Marketing Manager",
-                    Education = "University",
-                    Hobbies = new List<string> { "Coffee", "Dogs", "Yoga" },
-                    Interests = new List<string> { "Dogs", "Coffee", "Yoga" },
                     Smoking = "Never",
                     Drinking = "Socially"
                 },
@@ -171,10 +163,6 @@ namespace CST2550Project.Data
                     SkinTone = "Medium",
                     EyeColor = "Brown",
                     BodyType = "Average",
-                    Occupation = "Music Producer",
-                    Education = "College",
-                    Hobbies = new List<string> { "Music", "Cooking" },
-                    Interests = new List<string> { "Music", "Cooking" },
                     Smoking = "Occasionally",
                     Drinking = "Socially"
                 }

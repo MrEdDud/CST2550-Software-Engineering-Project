@@ -143,11 +143,6 @@ namespace CST2550.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("Education")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("Ethnicity")
                         .IsRequired()
                         .HasMaxLength(50)

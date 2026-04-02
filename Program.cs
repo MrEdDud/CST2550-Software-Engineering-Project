@@ -18,6 +18,8 @@ builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<MatchService>();
 builder.Services.AddScoped<MessageService>();
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Seed database
@@ -43,5 +45,7 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.UseStaticFiles();
 
 app.Run();

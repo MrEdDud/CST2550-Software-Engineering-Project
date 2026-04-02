@@ -37,6 +37,14 @@ namespace CST2550Project.Services
             return MapToDto(profile);
         }
 
+        public async Task<ProfileDto> CreateProfileAsync(ProfileModel model)
+        {
+            _context.Profiles.Add(model);
+            await _context.SaveChangesAsync();
+
+            return MapToDto(model); // return a DTO if you want
+        }
+
         public async Task<ProfileDto?> UpdateProfileAsync(int userId, UpdateProfileDto dto)
         {
             var profile = await _context.Profiles
@@ -64,10 +72,6 @@ namespace CST2550Project.Services
             if (dto.Location != null) profile.Location = dto.Location.Trim();
             if (dto.ProfilePhotoUrl != null) profile.ProfilePhotoUrl = dto.ProfilePhotoUrl;
             if (dto.Photos != null) profile.Photos = dto.Photos;
-            if (dto.Interests != null) profile.Interests = dto.Interests;
-            if (dto.MinAge.HasValue) profile.MinAge = dto.MinAge.Value;
-            if (dto.MaxAge.HasValue) profile.MaxAge = dto.MaxAge.Value;
-            if (dto.MaxDistance.HasValue) profile.MaxDistance = dto.MaxDistance.Value;
             if (dto.LookingFor != null) profile.LookingFor = dto.LookingFor;
 
             if (dto.HairColor != null) profile.HairColor = dto.HairColor;
@@ -78,9 +82,6 @@ namespace CST2550Project.Services
             if (dto.HeightCm.HasValue) profile.HeightCm = dto.HeightCm.Value;
             if (dto.Smoking != null) profile.Smoking = dto.Smoking;
             if (dto.Drinking != null) profile.Drinking = dto.Drinking;
-            if (dto.Education != null) profile.Education = dto.Education;
-            if (dto.Occupation != null) profile.Occupation = dto.Occupation;
-            if (dto.Hobbies != null) profile.Hobbies = dto.Hobbies;
 
             profile.UpdatedAt = DateTime.UtcNow;
 
@@ -113,10 +114,6 @@ namespace CST2550Project.Services
                 query = query.Where(p => p.Gender == genderFilter);
             }
 
-            var minAge = filter.MinAge ?? userProfile.MinAge;
-            var maxAge = filter.MaxAge ?? userProfile.MaxAge;
-            query = query.Where(p => p.Age >= minAge && p.Age <= maxAge);
-
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var term = filter.SearchTerm.Trim().ToLower();
@@ -124,8 +121,7 @@ namespace CST2550Project.Services
                 query = query.Where(p =>
                     p.Name.ToLower().Contains(term) ||
                     p.Bio.ToLower().Contains(term) ||
-                    p.Location.ToLower().Contains(term) ||
-                    p.Occupation.ToLower().Contains(term));
+                    p.Location.ToLower().Contains(term));
             }
 
             if (!string.IsNullOrWhiteSpace(filter.HairColor))
@@ -188,7 +184,6 @@ namespace CST2550Project.Services
                 Location = profile.Location,
                 ProfilePhotoUrl = profile.ProfilePhotoUrl,
                 Photos = profile.Photos,
-                Interests = profile.Interests,
                 HairColor = profile.HairColor,
                 SkinTone = profile.SkinTone,
                 EyeColor = profile.EyeColor,
@@ -197,9 +192,6 @@ namespace CST2550Project.Services
                 HeightCm = profile.HeightCm,
                 Smoking = profile.Smoking,
                 Drinking = profile.Drinking,
-                Education = profile.Education,
-                Occupation = profile.Occupation,
-                Hobbies = profile.Hobbies
             };
         }
     }

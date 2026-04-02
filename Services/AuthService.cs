@@ -24,7 +24,7 @@ namespace CST2550Project.Services
 
         public async Task<AuthResponseDto?> RegisterAsync(RegisterDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
+            if (await _context.Users.AnyAsync(u => u.Username == dto.Name))
             {
                 throw new InvalidOperationException("Username already taken");
             }
@@ -36,7 +36,7 @@ namespace CST2550Project.Services
 
             var user = new User
             {
-                Username = dto.Username,
+                Username = dto.Name,
                 Email = dto.Email,
                 PasswordHash = HashPassword(dto.Password)
             };
@@ -49,9 +49,21 @@ namespace CST2550Project.Services
                 UserId = user.Id,
                 Name = dto.Name,
                 Age = dto.Age,
-                Gender = dto.Gender,
-                LookingFor = dto.LookingFor,
-                ProfilePhotoUrl = GetDefaultAvatar(dto.Gender)
+                Gender = "",         // optional
+                LookingFor = "",     // optional
+                ProfilePhotoUrl = GetDefaultAvatar("other"),
+                Bio = "",
+                Location = "",
+                Photos = new List<string>(),
+                HairColor = "",
+                SkinTone = "",
+                EyeColor = "",
+                BodyType = "",
+                Ethnicity = "",
+                HeightCm = null,
+                Smoking = "",
+                Drinking = "",
+                UpdatedAt = DateTime.UtcNow
             };
 
             _context.Profiles.Add(profile);
