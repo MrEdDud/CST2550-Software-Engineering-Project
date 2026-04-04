@@ -88,6 +88,8 @@ namespace CST2550Project.DTOs
         [Range(18, 120)]
         public int? Age { get; set; }
 
+        public string? Gender { get; set; }
+
         [StringLength(500)]
         public string? Bio { get; set; }
 
