@@ -4,17 +4,16 @@
 @inject ProfileService ProfileService
 
 <div class="page">
-
     <h1 class="page-title">Discover</h1>
     <p class="page-subtitle">People near you</p>
 
-    <div class="form-group" style="margin-bottom: 16px;">
+    <div class="form-group" style="margin-bottom:16px;">
         <input class="form-control"
                placeholder="Search by name, bio, location, occupation..."
                @bind="SearchTerm" />
     </div>
 
-    <div class="form-group" style="margin-bottom: 16px;">
+    <div class="form-group" style="margin-bottom:16px;">
         <select class="form-control" @bind="SelectedGender">
             <option value="">Everyone</option>
             <option value="Male">Men</option>
@@ -22,39 +21,47 @@
         </select>
     </div>
 
-    <div class="form-group" style="margin-bottom: 16px;">
+    <div class="form-group" style="margin-bottom:16px;">
         <label>Min Age</label>
         <input class="form-control" type="number" @bind="MinAge" />
     </div>
 
-    <div class="form-group" style="margin-bottom: 16px;">
+    <div class="form-group" style="margin-bottom:16px;">
         <label>Max Age</label>
         <input class="form-control" type="number" @bind="MaxAge" />
     </div>
 
-    <div style="margin-bottom: 24px;">
-        <button class="btn btn-primary" @onclick="LoadProfiles">
+    <div style="margin-bottom:24px;">
+        <button class="btn btn-primary" @onclick="LoadProfilesAsync">
             Apply Search
         </button>
     </div>
 
-    @if (Profiles.Count == 0)
+    @if (isLoading)
+    {
+        <div class="empty-state">
+            <div class="loading-card">
+                <div class="loader"></div>
+                <p>Loading profiles...</p>
+            </div>
+        </div>
+    }
+    else if (profiles.Count == 0)
     {
         <div class="empty-state">
             <div class="empty-icon">
                 <i class="fas fa-search"></i>
             </div>
             <h2>No profiles found</h2>
-            <p>Try changing your filters or search term.</p>
+            <p>Try changing your search or filters.</p>
         </div>
     }
     else
     {
         <div class="card-grid">
-            @foreach (var p in Profiles)
+            @foreach (var p in profiles)
             {
                 <div class="profile-card">
-
                     <div class="profile-photo">
                         <span class="profile-initial">
                             @(string.IsNullOrWhiteSpace(p.Name) ? "?" : p.Name.Substring(0, 1))
@@ -66,6 +73,7 @@
                             @p.Name
                             <span class="profile-age">@p.Age</span>
                         </div>
+
                         <div class="profile-bio">@p.Bio</div>
                     </div>
 
@@ -80,7 +88,6 @@
                             ❤
                         </button>
                     </div>
-
                 </div>
             }
         </div>
@@ -90,26 +97,29 @@
     {
         <div class="toast">@lastAction</div>
     }
-
 </div>
 
 @code {
+    private List<ProfileDto> profiles = new();
+    private bool isLoading = true;
     private string lastAction = string.Empty;
 
-    private string SearchTerm = "";
-    private string SelectedGender = "";
+    private string SearchTerm = string.Empty;
+    private string SelectedGender = string.Empty;
     private int? MinAge = 18;
     private int? MaxAge = 35;
 
-    private List<ProfileDto> Profiles = new();
+    private const int DemoUserId = 1;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProfiles();
+        await LoadProfilesAsync();
     }
 
-    private async Task LoadProfiles()
+    private async Task LoadProfilesAsync()
     {
+        isLoading = true;
+
         var filter = new DiscoverFilterDto
         {
             SearchTerm = SearchTerm,
@@ -119,8 +129,9 @@
             Count = 50
         };
 
-        // demo user id 1 for now
-        Profiles = await ProfileService.GetDiscoveryProfilesAsync(1, filter);
+        profiles = await ProfileService.GetDiscoveryProfilesAsync(DemoUserId, filter);
+
+        isLoading = false;
     }
 
     private void HandleAction(string action, string name)
