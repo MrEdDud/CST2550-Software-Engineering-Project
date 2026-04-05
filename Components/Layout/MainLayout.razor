@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@using CST2550Project.Services
+@inject SessionService Session
 
 <div class="app-shell">
     <header class="topbar">
@@ -19,8 +21,7 @@
             <div class="sidebar-profile">
                 <i class="fa-regular fa-circle-user sidebar-avatar"></i>
                 <div>
-                    <strong>You</strong><br />
-                    <span>@@user</span>
+                    <strong>@Username</strong><br />
                 </div>
             </div>
 
@@ -40,18 +41,18 @@
                     <span>Profile</span>
                 </a>
 
-                <a href="/settings" class="sidebar-link">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                </a>
-
                 <a href="/search" class="sidebar-link">
                     <i class="fas fa-search search-icon"></i>
                     <span>Search</span>
                 </a>
+
+                <a href="/settings" class="sidebar-link">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
             </nav>
 
-            <div class="sidebar-search">
+            @* <div class="sidebar-search">
                 <input type="text"
                         placeholder="Search..."
                         @bind="SearchTerm"
@@ -62,7 +63,7 @@
                 <button type="button" class="filter-btn" @onclick="ToggleFilters">
                     <i class="fas fa-sliders-h"></i>
                 </button>
-            </div>
+            </div> *@
         </aside>
 
         <main class="">
@@ -305,6 +306,16 @@
 
 
 @code {
+    string Username = "Guest";
+
+    protected override void OnInitialized()
+    {
+        if (Session.IsLoggedIn)
+        {
+            Username = Session.Username;
+        }
+    }
+
 
     string SearchTerm = "";
     bool ShowFilters = false;

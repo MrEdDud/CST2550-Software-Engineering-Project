@@ -205,6 +205,7 @@ i {
     top: 92px;
     width: 100%;
     min-height: calc(100vh - 120px);
+    height: auto;
     background: rgba(255,255,255,0.72);
     backdrop-filter: blur(10px);
     border-radius: 24px;
@@ -319,30 +320,13 @@ i {
     margin-bottom: 40px;
 }
 
-.bottom-tabs {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 80px;
-    background: var(--white);
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 var(--space-2);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    border-top: 1px solid var(--gray-100);
-    z-index: var(--z-fixed);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
-}
-
 .discovery-container {
     display: flex;
     justify-content: center;
     align-items: center;
     justify-items: center;
     position: relative;
-    height: calc(100vh - 120px);
+    min-height: calc(100vh - 120px);
 }
 
 .hidden {
@@ -475,7 +459,6 @@ input.form-control {
     background: #2d2d4a;
     backdrop-filter: blur(20px);
     outline: none;
-    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
     font-family: inherit;
     font-size: 1rem;
 }
@@ -615,7 +598,6 @@ input.form-control {
 .profile-name {
     font-weight: 900;
     font-size: 22px;
-    color: var(--white);
 }
 
 .profile-age {
@@ -844,7 +826,6 @@ input.form-control {
         width: 100%;
         height: 100%;
         border-radius: 24px;
-        overflow: hidden;
         background: #121a33;
         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         display: flex;
@@ -981,8 +962,8 @@ input.form-control {
     width: 350px;
     height: calc(100vh - 55px);
     background: white;
-    box-shadow: -2px 0 10px rgba(0,0,0,0.3);
     transition: right 0.3s ease;
+    box-shadow: none;
     padding: 16px;
     z-index: 1000;
     overflow-y: auto;
@@ -990,6 +971,7 @@ input.form-control {
 
     .filter-panel.open {
         right: 0;
+        box-shadow: -2px 0 10px rgba(0,0,0,0.3);
     }
 
 .filter-header {
@@ -1214,19 +1196,14 @@ input.form-control {
 .profile-card {
     border-radius: 16px;
     margin: 0 0;
-    width: 95%;
-    height: 100%;
-    background: rgba(18, 26, 51, 0.96);
-    border: 1px solid var(--border2);
     border-radius: 24px;
     overflow: hidden;
-    box-shadow: var(--shadow);
 }
 
 /* Pink version */
 .profile-card--pink {
-    background: rgba(255, 214, 216, 0.5);
-    box-shadow: 0 18px 30px rgba(0,0,0,0.18);
+    background: none;
+    box-shadow: var(--shadow-soft);
     padding: 24px;
 }
 
@@ -1236,6 +1213,11 @@ input.form-control {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px; /* spacing between Edit and Save */
 }
 
 .card-title {
@@ -1252,15 +1234,19 @@ input.form-control {
 }
 
 .avatar-placeholder {
+    width: 6rem;
+    height: 6rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    font-size: 6rem;
+    color: rgb(45, 45, 74);
+}
+
+.avatar-img {
     width: 110px;
     height: 110px;
     border-radius: 50%;
-    background: #e9e9ea;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 6px solid #ffd6d8;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    object-fit: cover;
+    border: 6px solid rgba(0,0,0,0.1);
 }
 
 .avatar-edit {
@@ -1291,19 +1277,21 @@ input.form-control {
 
 .images-col {
     width: 320px;
+    text-align: center;
 }
 
 /* Info rows */
 .info-row {
     display: flex;
     padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
     align-items: center;
 }
 
 .info-label {
     width: 120px;
     font-weight: 600;
+    color: var(--muted);
 }
 
 .info-value {
@@ -1313,20 +1301,16 @@ input.form-control {
 
 /* Value pills */
 .value-pill {
-    display: inline-block;
-    background: #ffc6c8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 40px;
+    min-width: 30%;
+    background: #2d2d4a;
     padding: 10px 16px;
     border-radius: 10px;
-    font-weight: 700;
-    color: #111;
+    color: white;
     box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-}
-
-.value-pill--tags {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 .chev {
@@ -1336,7 +1320,8 @@ input.form-control {
 
 /* Inputs */
 .value-input {
-    background: #ffd1d3;
+    background: #2d2d4a;
+    color: white;
     border-radius: 10px;
     padding: 8px 12px;
     width: 220px;
@@ -1350,22 +1335,32 @@ input.form-control {
 /* Buttons */
 .edit-btn {
     background: none;
-    border: 1px solid #ddd;
+    border: none;
     border-radius: 20px;
     padding: 6px 16px;
     font-size: 14px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(255, 75, 110, 0.18);
 }
+    .edit-btn:hover {
+        box-shadow: 0 4px 20px rgba(255, 75, 110, 0.28);
+    }
 
 .save-btn {
     background: #191a2e;
-    color: white;
-    border-radius: 18px;
-    padding: 10px 26px;
-    width: 140px;
     border: none;
+    color: white;
+    border-radius: 20px;
+    padding: 6px 16px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(255, 75, 110, 0.18);
 }
+    .save-btn:hover {
+        background: #11144f;
+        box-shadow: 0 4px 20px rgba(255, 75, 110, 0.28);
+    }
 
 /* Images */
 .images-header {
@@ -1375,15 +1370,11 @@ input.form-control {
     margin-bottom: 12px;
 }
 
-.images-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
+
 
 .image-placeholder {
-    aspect-ratio: 1/1;
-    background: #eaeaea;
+    aspect-ratio: 1/2;
+    background: rgba(0,0,0,0.1);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -1942,4 +1933,34 @@ input.form-control {
     justify-content: center;
     color: var(--text-muted);
     font-size: 1rem;
+}
+
+
+.section-title {
+    font-size: 1.5rem;
+    padding: 0.5rem 0;
+    font-weight: 600;
+}
+
+.images-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.image-item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.add-photo button {
+    width: 100%;
+    height: 100%;
+    font-size: 2rem;
+    border: 2px dashed #ccc;
+    background: none;
+    cursor: pointer;
+    border-radius: 8px;
 }

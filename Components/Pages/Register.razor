@@ -3,6 +3,7 @@
 @using CST2550Project.DTOs
 @inject NavigationManager Navigation
 @inject AuthService AuthService
+@inject SessionService Session
 @layout AuthLayout
 
 <div class="auth-header">
@@ -94,7 +95,6 @@
 
     private async Task HandleRegister()
     {
-        // frontend-only validation
         if (registerData.Password != confirmPassword)
         {
             successMessage = "Passwords do not match";
@@ -107,9 +107,13 @@
 
             if (result != null)
             {
+                // store login session
+                Session.UserId = result.UserId;
+                Session.Token = result.Token;
+                Session.Username = result.Username;
+
                 successMessage = "Account created successfully";
 
-                // go to profile completion page
                 Navigation.NavigateTo("/details");
             }
             else
