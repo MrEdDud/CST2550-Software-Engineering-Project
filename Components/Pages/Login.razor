@@ -1,5 +1,9 @@
 ﻿@page "/login"
 @using System.ComponentModel.DataAnnotations
+@using CST2550Project.DTOs
+@inject AuthService AuthService
+@inject SessionService Session
+@inject NavigationManager Navigation
 @layout AuthLayout
 
 <div class="auth-header">
@@ -52,8 +56,28 @@
 
     private string successMessage = string.Empty;
 
-    private void HandleLogin()
+    private async Task HandleLogin()
     {
-        successMessage = "Login successful";
+        var dto = new LoginDto
+        {
+            Username = loginData.Username,
+            Password = loginData.Password
+        };
+
+        var response = await AuthService.LoginAsync(dto);
+
+        if (response != null)
+        {
+            // Set session info
+            Session.UserId = response.UserId;
+            Session.Username = response.Username;
+
+            // Redirect to home page
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            successMessage = "Invalid username or password";
+        }
     }
 }

@@ -80,6 +80,8 @@ namespace CST2550Project.DTOs
         [StringLength(500)]
         public string? Bio { get; set; }
 
+        public string? Gender { get; set; }
+
         [StringLength(100)]
         public string? Location { get; set; }
 

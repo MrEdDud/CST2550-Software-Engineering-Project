@@ -76,7 +76,7 @@ namespace CST2550Project.Services
                 UserId = user.Id,
                 Username = user.Username,
                 Token = token,
-                HasProfile = true
+                HasProfile = false
             };
         }
 

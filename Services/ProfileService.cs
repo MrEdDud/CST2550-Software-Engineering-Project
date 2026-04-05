@@ -37,6 +37,11 @@ namespace CST2550Project.Services
             return MapToDto(profile);
         }
 
+        public async Task<ProfileModel?> GetProfileByUserIdAsync(int userId)
+        {
+            return await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
+        }
+
         public async Task<ProfileDto> CreateProfileAsync(ProfileModel model)
         {
             _context.Profiles.Add(model);
@@ -72,8 +77,8 @@ namespace CST2550Project.Services
             if (dto.Location != null) profile.Location = dto.Location.Trim();
             if (dto.ProfilePhotoUrl != null) profile.ProfilePhotoUrl = dto.ProfilePhotoUrl;
             if (dto.Photos != null) profile.Photos = dto.Photos;
+            if (dto.Gender != null) profile.Gender = dto.Gender;
             if (dto.LookingFor != null) profile.LookingFor = dto.LookingFor;
-
             if (dto.HairColor != null) profile.HairColor = dto.HairColor;
             if (dto.SkinTone != null) profile.SkinTone = dto.SkinTone;
             if (dto.EyeColor != null) profile.EyeColor = dto.EyeColor;
