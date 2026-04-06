@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 namespace CST2550Project.Models
 {
@@ -31,7 +33,14 @@ namespace CST2550Project.Models
         public string ProfilePhotoUrl { get; set; } = string.Empty;
 
         // must be lists
-        public List<string> Photos { get; set; } = new();
+        public string PhotosJson { get; set; } = "[]";
+
+        [NotMapped]
+        public List<string> Photos
+        {
+            get => string.IsNullOrWhiteSpace(PhotosJson) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(PhotosJson)!;
+            set => PhotosJson = JsonSerializer.Serialize(value);
+        }
 
         [StringLength(30)]
         public string HairColor { get; set; } = string.Empty;

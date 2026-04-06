@@ -8,5 +8,14 @@
         public bool HasProfile { get; set; } = false;
 
         public bool IsLoggedIn => UserId != null;
+
+        public void Logout()
+        {
+            UserId = null;
+            Username = null;
+            Token = null;
+            HasProfile = false;
+        }
     }
 }
+    

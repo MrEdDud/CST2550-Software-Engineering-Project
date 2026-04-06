@@ -77,7 +77,7 @@
 
             <!-- Preferred Gender -->
             <div class="info-row">
-                <div class="info-label">Preferred Gender</div>
+                <div class="info-label">Interested In</div>
                 <div class="info-value">
                     @if (!isEditing)
                     {
@@ -88,8 +88,7 @@
                         <select class="value-input" @bind="editProfile.LookingFor">
                             <option>Female</option>
                             <option>Male</option>
-                            <option>Other</option>
-                            <option>No preference</option>
+                            <option>Everyone</option>
                         </select>
                     }
                 </div>
@@ -105,7 +104,7 @@
                     }
                     else
                     {
-                        <input class="value-input" type="number" @bind="editProfile.Age" />
+                        <input class="value-input" type="number" min="18" max="120" step="1" @bind="editProfile.Age" />
                     }
                 </div>
             </div>
@@ -143,7 +142,9 @@
                             <option>Brown</option>
                             <option>Blonde</option>
                             <option>Red</option>
+                            <option>Auburn</option>
                             <option>Grey</option>
+                            <option>White</option>
                             <option>Other</option>
                         </select>
                     }
@@ -161,12 +162,12 @@
                     else
                     {
                         <select class="value-input" @bind="editProfile.EyeColor">
-                            <option>Blue</option>
                             <option>Brown</option>
+                            <option>Blue</option>
                             <option>Green</option>
                             <option>Hazel</option>
-                            <option>Black</option>
                             <option>Grey</option>
+                            <option>Amber</option>
                         </select>
                     }
                 </div>
@@ -183,13 +184,12 @@
                     else
                     {
                         <select class="value-input" @bind="editProfile.SkinTone">
-                            <option>Very Fair</option>
                             <option>Fair</option>
                             <option>Light</option>
                             <option>Medium</option>
                             <option>Olive</option>
+                            <option>Tan</option>
                             <option>Dark</option>
-                            <option>Very Dark</option>
                         </select>
                     }
                 </div>
@@ -206,11 +206,11 @@
                     else
                     {
                         <select class="value-input" @bind="editProfile.Ethnicity">
-                            <option>Asian</option>
-                            <option>Black</option>
-                            <option>Hispanic</option>
                             <option>White</option>
-                            <option>Middle Eastern</option>
+                            <option>Black</option>
+                            <option>Asian</option>
+                            <option>Hispanic</option>
+                            <option>Middle eastern</option>
                             <option>Mixed</option>
                             <option>Other</option>
                         </select>
@@ -228,7 +228,7 @@
                     }
                     else
                     {
-                        <input class="value-input" type="number" @bind="editProfile.HeightCm" />
+                        <input class="value-input" type="number" min="120" max="230" step="1" @bind="editProfile.HeightCm" />
                     }
                 </div>
             </div>
@@ -249,6 +249,7 @@
                             <option>Average</option>
                             <option>Curvy</option>
                             <option>Muscular</option>
+                            <option>Plus sized</option>
                         </select>
                     }
                 </div>
@@ -268,9 +269,11 @@
                     else
                     {
                         <select class="value-input" @bind="editProfile.Smoking">
-                            <option>Non-smoker</option>
-                            <option>Smoker</option>
-                            <option>Occasional</option>
+                            <option>Never</option>
+                            <option>Rarely</option>
+                            <option>Socially</option>
+                            <option>Occasionally</option>
+                            <option>Regularly</option>
                         </select>
                     }
                 </div>
@@ -287,9 +290,11 @@
                     else
                     {
                         <select class="value-input" @bind="editProfile.Drinking">
-                            <option>Non-drinker</option>
-                            <option>Social drinker</option>
-                            <option>Regular drinker</option>
+                            <option>Never</option>
+                            <option>Rarely</option>
+                            <option>Socially</option>
+                            <option>Occasionally</option>
+                            <option>Regularly</option>
                         </select>
                     }
                 </div>
@@ -307,6 +312,12 @@
                 {
                     <div class="image-item">
                         <img src="@photoUrl" alt="Profile Photo" />
+                        @if (isEditing)
+                        {
+                            <button class="remove-photo-btn" @onclick="() => RemoveGalleryPhoto(photoUrl)">
+                                ✕
+                            </button>
+                        }
                     </div>
                 }
 
@@ -339,6 +350,7 @@
         }
         
         profile = await ProfileService.GetProfileByUserIdAsync(Session.UserId!.Value);
+        profile.Photos ??= new List<string>();
 
         if (profile == null)
         {
@@ -422,47 +434,42 @@
         return $"data:{file.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}";
     }
 
-    private void EditImages()
-    {
-        // placeholder
-    }
-
     private async Task UploadProfilePhoto(InputFileChangeEventArgs e)
     {
         var file = e.File;
-        using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
-        using var ms = new MemoryStream();
-        await stream.CopyToAsync(ms);
-        var base64 = Convert.ToBase64String(ms.ToArray());
+        var url = await ProfileService.SaveProfilePhotoAsync(profile.UserId, file, "profile");
 
-        profile.ProfilePhotoUrl = $"data:{file.ContentType};base64,{base64}";
-
-        // Persist to DB
-        var dto = new UpdateProfileDto
-        {
-            ProfilePhotoUrl = profile.ProfilePhotoUrl
-        };
-        await ProfileService.UpdateProfileAsync(profile.UserId, dto);
+        profile.ProfilePhotoUrl = url;
+        await ProfileService.UpdateProfilePhotoAsync(profile.UserId, url);
     }
 
     private async Task UploadGalleryPhoto(InputFileChangeEventArgs e)
     {
         var file = e.File;
-        using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
-        using var ms = new MemoryStream();
-        await stream.CopyToAsync(ms);
-        var base64 = Convert.ToBase64String(ms.ToArray());
+        var url = await ProfileService.SaveProfilePhotoAsync(profile.UserId, file, "gallery");
 
-        var imageUrl = $"data:{file.ContentType};base64,{base64}";
+        var updatedProfile = await ProfileService.AddGalleryPhotoAsync(profile.UserId, url);
 
-        profile.Photos ??= new List<string>();
-        profile.Photos.Add(imageUrl);
-
-        // Persist to DB
-        var dto = new UpdateProfileDto
+        if (updatedProfile != null)
         {
-            Photos = profile.Photos
-        };
-        await ProfileService.UpdateProfileAsync(profile.UserId, dto);
+            profile.Photos = updatedProfile.Photos;
+            StateHasChanged(); // force Blazor to re-render the images grid
+        }
+    }
+
+    private async Task RemoveGalleryPhoto(string photoUrl)
+    {
+        if (profile.Photos.Contains(photoUrl))
+        {
+            profile.Photos.Remove(photoUrl); // remove from local list immediately
+            StateHasChanged(); // update UI
+        }
+
+        var updatedProfile = await ProfileService.RemoveGalleryPhotoAsync(profile.UserId, photoUrl);
+        if (updatedProfile != null)
+        {
+            profile.Photos = updatedProfile.Photos;
+            StateHasChanged();
+        }
     }
 }

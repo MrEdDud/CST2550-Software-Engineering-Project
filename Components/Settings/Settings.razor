@@ -1,4 +1,6 @@
 ﻿@page "/settings"
+@inject SessionService Session
+@inject NavigationManager Nav
 
 <div class="settings-page">
 
@@ -74,11 +76,32 @@
 
     private void SelectSetting(string settingName)
     {
-        statusMessage = $"{settingName} clicked";
+        switch (settingName)
+        {
+            case "Account":
+                Nav.NavigateTo("/settings/account");
+                break;
+
+            case "Notifications":
+                Nav.NavigateTo("/settings/notifications");
+                break;
+
+            case "Privacy":
+                Nav.NavigateTo("/settings/privacy");
+                break;
+
+            case "About":
+                Nav.NavigateTo("/settings/about");
+                break;
+        }
     }
 
     private void HandleSignOut()
     {
-        statusMessage = "Signed out (front-end demo)";
+        Session.Logout();
+        statusMessage = "Signed out successfully";
+
+        // Redirect to login page
+        Nav.NavigateTo("/login", forceLoad: true);
     }
 }
