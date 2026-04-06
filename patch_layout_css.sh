@@ -1,0 +1,1 @@
+sed -i '' -e 's/margin: auto 0 !important; \/\* Centers the navigation vertically \*\//margin: 0 !important; flex: 1 !important; justify-content: center !important;/g' Components/Layout/MainLayout.razor.css

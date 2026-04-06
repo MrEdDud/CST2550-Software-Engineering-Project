@@ -10,10 +10,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddDbContext<DatingAppContext>(options =>
-    options.UseSqlServer(
+    options.UseSqlite(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 

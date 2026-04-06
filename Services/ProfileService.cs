@@ -166,11 +166,10 @@ namespace CST2550Project.Services
             var count = filter.Count <= 0 ? 20 : filter.Count;
 
             var profiles = await query
-                .OrderBy(p => Guid.NewGuid())
                 .Take(count)
                 .ToListAsync();
 
-            return profiles.Select(MapToDto).ToList();
+            return profiles.OrderBy(p => Guid.NewGuid()).Select(MapToDto).ToList();
         }
 
         private ProfileDto MapToDto(ProfileModel profile)

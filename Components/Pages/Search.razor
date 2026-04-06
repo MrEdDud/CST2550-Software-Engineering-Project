@@ -8,88 +8,92 @@
     <h1 class="page-title">Discover</h1>
     <p class="page-subtitle">People near you</p>
 
-    <div class="form-group" style="margin-bottom: 16px;">
-        <input class="form-control"
-               placeholder="Search by name, bio, location, occupation..."
-               @bind="SearchTerm" />
-    </div>
+    <div class="search-filter-row">
+        <div class="search-filter-item search-filter-item--wide">
+            <input class="form-control"
+                   placeholder="Search by name, bio, location, occupation..."
+                   @bind="SearchTerm" />
+        </div>
 
-    <div class="form-group" style="margin-bottom: 16px;">
-        <select class="form-control" @bind="SelectedGender">
-            <option value="">Everyone</option>
-            <option value="Male">Men</option>
-            <option value="Female">Women</option>
-        </select>
-    </div>
+        <div class="search-filter-item">
+            <select class="form-control" @bind="SelectedGender">
+                <option value="">Everyone</option>
+                <option value="Male">Men</option>
+                <option value="Female">Women</option>
+            </select>
+        </div>
 
-    <div class="form-group" style="margin-bottom: 16px;">
-        <label>Min Age</label>
-        <input class="form-control" type="number" @bind="MinAge" />
-    </div>
+        <div class="search-filter-item search-filter-item--age">
+            <label>Min</label>
+            <input class="form-control" type="number" @bind="MinAge" />
+        </div>
 
-    <div class="form-group" style="margin-bottom: 16px;">
-        <label>Max Age</label>
-        <input class="form-control" type="number" @bind="MaxAge" />
-    </div>
+        <div class="search-filter-item search-filter-item--age">
+            <label>Max</label>
+            <input class="form-control" type="number" @bind="MaxAge" />
+        </div>
 
-    <div style="margin-bottom: 24px;">
-        <button class="btn btn-primary" @onclick="LoadProfiles">
-            Apply Search
+        <button class="btn btn-primary search-apply-btn" @onclick="LoadProfiles">
+            Apply
         </button>
     </div>
 
-    @if (Profiles.Count == 0)
-    {
-        <div class="empty-state">
-            <div class="empty-icon">
-                <i class="fas fa-search"></i>
-            </div>
-            <h2>No profiles found</h2>
-            <p>Try changing your filters or search term.</p>
-        </div>
-    }
-    else
-    {
-        <div class="card-grid">
-            @foreach (var p in Profiles)
-            {
-                <div class="profile-card">
-
-                    <div class="profile-photo">
-                        <span class="profile-initial">
-                            @(string.IsNullOrWhiteSpace(p.Name) ? "?" : p.Name.Substring(0, 1))
-                        </span>
-                    </div>
-
-                    <div class="profile-info">
-                        <div class="profile-name">
-                            @p.Name
-                            <span class="profile-age">@p.Age</span>
-                        </div>
-                        <div class="profile-bio">@p.Bio</div>
-                    </div>
-
-                    <div class="profile-actions">
-                        <button class="icon-btn nope"
-                                @onclick='() => HandleAction("Nope", p.Name)'>
-                            ✕
-                        </button>
-
-                        <button class="icon-btn like"
-                                @onclick='() => HandleAction("Like", p.Name)'>
-                            ❤
-                        </button>
-                    </div>
-
+    <div class="search-results-wrap">
+        @if (Profiles.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
                 </div>
-            }
-        </div>
-    }
+                <h2>No profiles found</h2>
+                <p>Try changing your filters or search term.</p>
+            </div>
+        }
+        else
+        {
+            <div class="card-grid">
+                @foreach (var p in Profiles)
+                {
+                    <div class="profile-card">
 
-    @if (!string.IsNullOrWhiteSpace(lastAction))
-    {
-        <div class="toast">@lastAction</div>
-    }
+                        <div class="profile-photo">
+                            <span class="profile-initial">
+                                @(string.IsNullOrWhiteSpace(p.Name) ? "?" : p.Name.Substring(0, 1))
+                            </span>
+                        </div>
+
+                        <div class="profile-info">
+                            <div class="profile-name">
+                                @p.Name
+                                <span class="profile-age">@p.Age</span>
+                            </div>
+                            <div class="profile-bio">@p.Bio</div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="icon-btn nope"
+                                    @onclick='() => HandleAction("Nope", p.Name)'>
+                                ✕
+                            </button>
+
+                            <button class="icon-btn like"
+                                    @onclick='() => HandleAction("Like", p.Name)'>
+                                ❤
+                            </button>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="search-toast-wrap">
+        @if (!string.IsNullOrWhiteSpace(lastAction))
+        {
+            <div class="toast">@lastAction</div>
+        }
+    </div>
 
 </div>
 
