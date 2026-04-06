@@ -284,7 +284,8 @@ else
             Ethnicity = Ethnicity,
             Smoking = Smoking,
             Drinking = Drinking,
-            Count = 50
+            Count = 50,
+            IncludeLikedOrSkipped = true
         };
 
         profiles = await ProfileService.GetDiscoveryProfilesAsync(DemoUserId, filter);

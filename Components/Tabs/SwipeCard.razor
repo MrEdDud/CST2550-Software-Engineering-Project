@@ -10,7 +10,7 @@
     @if (Profiles?.Any() == true)
     {
         var profile = Profiles.First();
-        var mainPhoto = profile.Photos.FirstOrDefault() ?? profile.ProfilePhotoUrl;
+        var mainPhoto = profile.ProfilePhotoUrl;
 
         <img src="@mainPhoto" class="card-photo" draggable="false" />
 

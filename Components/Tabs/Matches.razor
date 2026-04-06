@@ -2,6 +2,7 @@
 @page "/matches/{MatchId:int}"
 @inject HttpClient Http
 @inject SessionService Session
+@inject IConfiguration Config
 @using CST2550Project.DTOs
 @using CST2550Project.Models
 
@@ -87,6 +88,9 @@
             </div>
 
             <div class="input-bar">
+                    <button class="btn btn-secondary" @onclick="GenerateMessage">
+                        🤖 AI Suggest
+                    </button>
                 <input class="message-input"
                        type="text"
                        placeholder="message..."
@@ -125,6 +129,8 @@
     private List<ProfileDto> MatchRequestsList = new();
 
     private bool ShowingMatchRequests = false;
+
+    private ProfileModel CurrentChatProfile;
 
     protected override async Task OnInitializedAsync()
     {
@@ -200,10 +206,44 @@
         return match.User1 ?? new UserDto { Username = "Unknown" };
     }
 
+    private async Task SetCurrentChatProfile(MatchDto match)
+    {
+        var otherUser = GetOtherUser(match); // returns UserDto
+        if (otherUser == null)
+        {
+            Console.WriteLine("SetCurrentChatProfile: OtherUser is null");
+            return;
+        }
+
+        try
+        {
+            // fetch profile for this user
+            var profile = await Http.GetFromJsonAsync<ProfileDto>($"api/profiles/{otherUser.Id}");
+            if (profile == null)
+            {
+                Console.WriteLine("SetCurrentChatProfile: Profile fetch returned null");
+                return;
+            }
+
+            CurrentChatProfile = new ProfileModel
+            {
+                Name = profile.Name,
+                Age = profile.Age,
+                Bio = profile.Bio
+            };
+
+            Console.WriteLine($"SetCurrentChatProfile: Name={CurrentChatProfile.Name}, Age={CurrentChatProfile.Age}, Bio={CurrentChatProfile.Bio}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"SetCurrentChatProfile: Failed to fetch profile: {ex.Message}");
+        }
+    }
+
     private async Task ChooseMatch(MatchDto match)
     {
         SelectedMatch = match;
-
+        await SetCurrentChatProfile(match);
         await LoadMessages(match.Id);
     }
 
@@ -301,6 +341,119 @@
         {
             // Remove from requests list
             MatchRequestsList.RemoveAll(p => p.Id == userId);
+        }
+    }
+
+    private async Task GenerateMessage()
+    {
+        if (CurrentChatProfile == null) 
+        {
+            Console.WriteLine("GenerateMessage: CurrentChatProfile is null!");
+            return;
+        }
+
+        var prompt = $@"
+You are helping write a friendly message to a person. 
+Here is the person's info:
+- Name: {CurrentChatProfile.Name}
+- Age: {CurrentChatProfile.Age}
+- Bio: {CurrentChatProfile.Bio}
+
+Write a short, friendly, and engaging message that I could send to them.
+";
+
+        var requestBody = new
+        {
+            model = "gpt-3.5-turbo",
+            messages = new object[]
+            {
+            new { role = "user", content = prompt }
+            },
+            max_tokens = 200
+        };
+
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
+        request.Headers.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Config["OpenAI:ApiKey"]);
+        request.Content = JsonContent.Create(requestBody);
+
+        try
+        {
+            Console.WriteLine("GenerateMessage: Sending HTTP request...");
+            var response = await Http.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("GenerateMessage: Response received successfully");
+                var json = await response.Content.ReadFromJsonAsync<OpenAIResponse>();
+                if (json?.choices?.Length > 0)
+                {
+                    newMessage = json.choices[0].message.content.Trim(); // <-- assign to newMessage
+                    Console.WriteLine($"GenerateMessage: AI suggested: {newMessage}");
+                    StateHasChanged(); // update the input immediately
+                }
+                else
+                {
+                    Console.WriteLine("GenerateMessage: No choices returned from OpenAI");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"GenerateMessage: Failed with status {response.StatusCode}");
+                newMessage = "Failed to generate message 🤖";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"GenerateMessage: Exception occurred - {ex.Message}");
+            newMessage = "Error generating message 🤖";
+        }
+    }
+
+    private async Task SendAIMessage()
+    {
+        if (SelectedMatch == null || string.IsNullOrWhiteSpace(newMessage))
+            return;
+
+        var dto = new SendMessageDto
+        {
+            MatchId = SelectedMatch.Id,
+            Content = newMessage
+        };
+
+        var response = await Http.PostAsJsonAsync("api/messages", dto);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var messageDto = await response.Content.ReadFromJsonAsync<MessageDto>();
+            if (messageDto != null)
+            {
+                SelectedMatch.Messages.Add(messageDto);
+                newMessage = ""; // clear input after sending
+            }
+        }
+    }
+
+    private async Task HandleEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await SendAIMessage();
+    }
+
+    // Simple DTO for parsing OpenAI response
+    private class OpenAIResponse
+    {
+        public Choice[] choices { get; set; }
+
+        public class Choice
+        {
+            public Message message { get; set; }
+        }
+
+        public class Message
+        {
+            public string role { get; set; }
+            public string content { get; set; }
         }
     }
 }

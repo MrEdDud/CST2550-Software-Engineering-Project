@@ -140,6 +140,7 @@ namespace CST2550Project.DTOs
         public string? Drinking { get; set; }
         public string? Hobby { get; set; }
         public string? Interest { get; set; }
+        public bool IncludeLikedOrSkipped { get; set; } = false;
     }
 
     public class SwipeDto

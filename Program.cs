@@ -2,10 +2,14 @@ using CST2550.Components;
 using CST2550Project.Data;
 using CST2550Project.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var openAiKey = builder.Configuration["OpenAI:ApiKey"];
+
+builder.Configuration["OpenAI:ApiKey"] = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
