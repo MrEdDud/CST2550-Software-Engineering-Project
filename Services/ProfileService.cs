@@ -229,6 +229,41 @@ namespace CST2550Project.Services
             return profiles.Select(MapToDto).ToList();
         }
 
+        public async Task<bool> LikeProfileAsync(int fromUserId, int toUserId)
+        {
+            // Check if already liked
+            if (await _context.Likes.AnyAsync(l => l.FromUserId == fromUserId && l.ToUserId == toUserId))
+                return false;
+
+            // Save like
+            _context.Likes.Add(new Like { FromUserId = fromUserId, ToUserId = toUserId, CreatedAt = DateTime.UtcNow });
+
+            // Check for mutual like
+            var mutual = await _context.Likes.FirstOrDefaultAsync(l => l.FromUserId == toUserId && l.ToUserId == fromUserId);
+            if (mutual != null)
+            {
+                _context.Matches.Add(new Match { User1Id = fromUserId, User2Id = toUserId, MatchedAt = DateTime.UtcNow });
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeclineProfileAsync(int fromUserId, int toUserId)
+        {
+            if (!await _context.Likes.AnyAsync(l => l.FromUserId == fromUserId && l.ToUserId == toUserId))
+            {
+                _context.Likes.Add(new Like
+                {
+                    FromUserId = fromUserId,
+                    ToUserId = toUserId,
+                    CreatedAt = DateTime.UtcNow
+                });
+                await _context.SaveChangesAsync();
+            }
+            return true;
+        }
+
         private ProfileDto MapToDto(ProfileModel profile)
         {
             return new ProfileDto

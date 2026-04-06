@@ -51,7 +51,7 @@ namespace CST2550Project.Services
                 Age = dto.Age,
                 Gender = "",         // optional
                 LookingFor = "",     // optional
-                ProfilePhotoUrl = GetDefaultAvatar("other"),
+                ProfilePhotoUrl = "",
                 Bio = "",
                 Location = "",
                 Photos = new List<string>(),
@@ -173,16 +173,6 @@ namespace CST2550Project.Services
             {
                 return false;
             }
-        }
-
-        private string GetDefaultAvatar(string gender)
-        {
-            return gender.ToLower() switch
-            {
-                "male" => "uploads/placeholder-profile.png",
-                "female" => "uploads/placeholder-profile.png",
-                _ => "uploads/placeholder-profile.png"
-            };
         }
     }
 }

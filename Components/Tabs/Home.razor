@@ -1,5 +1,8 @@
 ﻿@page "/"
 @page "/home"
+@inject ProfileService ProfileService
+@inject SessionService Session
+@using CST2550Project.DTOs
 
 <section>
     <div class="discovery-container">
@@ -13,7 +16,7 @@
                 </div>
             }
             else if (noMoreProfiles)
-            {  
+            {
                 <div class="empty-state">
                     <div class="empty-icon">
                         <i class="fas fa-heart-broken"></i>
@@ -52,33 +55,24 @@
         IsLoading = true;
         noMoreProfiles = false;
 
-        // 🔌 Replace with your API later
-        await Task.Delay(1000);
-
-        // TEMP MOCK DATA (remove when API ready)
-        Profiles = new List<ProfileModel>
+        var discoveryFilter = new DiscoverFilterDto
         {
-            new ProfileModel
-            {
-                UserId = 1,
-                Name = "Anna",
-                Age = 21,
-                Bio = "Loves coffee ☕",
-                Photos = new List<string> {
-                    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimageio.forbes.com%2Fspecials-images%2Fimageserve%2F6532a388407b720effdbd589%2F0x0.jpg%3Fformat%3Djpg%26height%3D900%26width%3D1600%26fit%3Dbounds&f=1&nofb=1&ipt=3cd1009d788d7e40a211d7b44404691dd8035c1c8ae2bf277ab02c423b341a1b"
-                }
-            },
-            new ProfileModel
-            {
-                UserId = 2,
-                Name = "Sophie",
-                Age = 23,
-                Bio = "Gym & travel",
-                Photos = new List<string> {
-                    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Fsmiling-random-person-graphic-png-trv-4350ryshed47fke7.jpg&f=1&nofb=1&ipt=1d3ce4ddd43345b8eecc0705161e2bf91645b598a0943bdca4a40d5f08d189f2"
-                }
-            }
+            MinAge = MinAge,
+            MaxAge = MaxAge,
+            Gender = SelectedGender 
         };
+
+        var currentUserId = Session.UserId ?? 0;
+        var profiles = await ProfileService.GetDiscoveryProfilesAsync(currentUserId, discoveryFilter);
+
+        Profiles = profiles.Select(p => new ProfileModel
+        {
+            UserId = p.UserId,
+            Name = p.Name,
+            Age = p.Age,
+            Bio = p.Bio,
+            Photos = p.Photos ?? new List<string>()
+        }).ToList();
 
         IsLoading = false;
         noMoreProfiles = Profiles.Count == 0;
@@ -86,8 +80,16 @@
 
     private async Task HandleSwipe((ProfileModel profile, bool isLike) data)
     {
-        // 🔌 Send to API later
-        // await Api.Swipe(...)
+        var currentUserId = 1;
+
+        if (data.isLike)
+        {
+            await ProfileService.LikeProfileAsync(currentUserId, data.profile.UserId);
+        }
+        else
+        {
+            await ProfileService.DeclineProfileAsync(currentUserId, data.profile.UserId);
+        }
 
         Profiles.RemoveAll(p => p.UserId == data.profile.UserId);
 
@@ -95,8 +97,6 @@
         {
             noMoreProfiles = true;
         }
-
-        await Task.CompletedTask;
     }
 
     private string SearchTerm = "";

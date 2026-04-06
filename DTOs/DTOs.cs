@@ -162,21 +162,32 @@ namespace CST2550Project.DTOs
     public class MatchDto
     {
         public int Id { get; set; }
-        public ProfileDto MatchedUser { get; set; } = new();
-        public DateTime MatchedAt { get; set; }
-        public MessageDto? LastMessage { get; set; }
+        public int User1Id { get; set; }
+        public int User2Id { get; set; }
+        public UserDto? User1 { get; set; }
+        public UserDto? User2 { get; set; }
+        public List<MessageDto> Messages { get; set; } = new();
+        public ProfileDto? MatchedUser { get; set; }
+        public MessageDto? LastMessage { get; set; } 
         public int UnreadCount { get; set; }
+        public DateTime MatchedAt { get; set; }
+    }
+    public class UserDto
+    {
+        public int Id { get; set; }
+        public string Username { get; set; } = "";
     }
 
     public class MessageDto
     {
         public int Id { get; set; }
+        public int MatchId { get; set; }
         public int SenderId { get; set; }
-        public string SenderName { get; set; } = string.Empty;
-        public string Content { get; set; } = string.Empty;
+        public string Content { get; set; } = "";
         public DateTime SentAt { get; set; }
-        public bool IsRead { get; set; }
-        public bool IsMine { get; set; }
+        public string SenderName { get; set; } = "";  
+        public bool IsRead { get; set; }              
+        public bool IsMine { get; set; }              
     }
 
     public class SendMessageDto

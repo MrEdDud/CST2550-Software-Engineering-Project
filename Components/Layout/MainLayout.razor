@@ -59,6 +59,18 @@
     </div>
 </div>
 
+<!-- LOGIN BLOCKER MODAL -->
+@if (!Session.IsLoggedIn)
+{
+    <div class="login-blocker">
+        <div class="login-blocker-content">
+            <h2>You're not logged in</h2>
+            <p>Please log in to access Pairly.</p>
+            <a href="/login" class="btn btn-primary">Go to Login</a>
+        </div>
+    </div>
+}
+
 @code {
     string Username = "Guest";
 

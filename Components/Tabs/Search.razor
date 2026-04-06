@@ -11,6 +11,7 @@
     <input class="form-control"
            placeholder="Search by name, bio, location, occupation..."
            @bind="SearchTerm"
+           @bind:event="oninput"
            @onkeydown="HandleKeyDown" />
 
     <button class="btn btn-search" @onclick="LoadProfilesAsync">
@@ -258,6 +259,14 @@ else
         await LoadProfilesAsync();
     }
 
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await LoadProfilesAsync();
+        }
+    }
+
     private async Task LoadProfilesAsync()
     {
         isLoading = true;
@@ -311,13 +320,5 @@ else
     {
         ShowFilters = false;
         await LoadProfilesAsync();
-    }
-
-    private async Task HandleKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-        {
-            await LoadProfilesAsync();
-        }
     }
 }

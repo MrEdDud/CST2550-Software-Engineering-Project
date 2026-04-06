@@ -128,6 +128,8 @@ namespace CST2550Project.Services
 
         public async Task<List<ProfileDto>> GetLikesReceivedAsync(int userId)
         {
+            Console.WriteLine($"CurrentUserId inside service: {userId}");
+
             var likerIds = await _context.Likes
                 .Where(l => l.ToUserId == userId)
                 .Select(l => l.FromUserId)
@@ -144,6 +146,39 @@ namespace CST2550Project.Services
                 .ToListAsync();
 
             return profiles.Select(MapToProfileDto).ToList();
+        }
+
+        public async Task<bool> AcceptMatchAsync(int currentUserId, int otherUserId)
+        {
+            // Add a match record if not already exists
+            var exists = await _context.Matches.AnyAsync(m =>
+                (m.User1Id == currentUserId && m.User2Id == otherUserId) ||
+                (m.User1Id == otherUserId && m.User2Id == currentUserId));
+
+            if (exists) return false;
+
+            _context.Matches.Add(new Match
+            {
+                User1Id = currentUserId,
+                User2Id = otherUserId,
+                MatchedAt = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeclineMatchAsync(int currentUserId, int otherUserId)
+        {
+            // Simply remove the like from Likes table
+            var like = await _context.Likes
+                .FirstOrDefaultAsync(l => l.FromUserId == otherUserId && l.ToUserId == currentUserId);
+
+            if (like == null) return false;
+
+            _context.Likes.Remove(like);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         private static ProfileDto MapToProfileDto(ProfileModel p)

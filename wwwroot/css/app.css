@@ -44,7 +44,6 @@ body {
     margin: 0;
     color: var(--text-dark);
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,245,247,0.98));
 }
 
 a {
@@ -210,7 +209,7 @@ i {
     backdrop-filter: blur(10px);
     border-radius: 24px;
     border: 1px solid rgba(17,24,39,0.05);
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     z-index: 10;
@@ -428,6 +427,38 @@ i {
     width: 100%;
 }
 
+.login-blocker {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* make sure it’s above everything */
+}
+
+.login-blocker-content {
+    background: #121a33;
+    color: #fff;
+    padding: 32px;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+    .login-blocker-content h2 {
+        margin-bottom: 16px;
+    }
+
+    .login-blocker-content p {
+        margin-bottom: 24px;
+    }
+
+    .login-blocker-content .btn {
+        width: 100%;
+    }
+
 /* =========================================================
    AUTH PAGES (Login + Register)
 ========================================================= */
@@ -464,6 +495,7 @@ input.form-control {
 }
 
     .form-control:focus {
+        color: white;
         border-color: rgba(108,99,255,0.75);
         background: #2d2d4a;
     }
@@ -541,7 +573,8 @@ input.form-control {
 
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 380px));
+    justify-content: center;
     gap: 22px;
 }
     .card-grid .home-card {
@@ -682,7 +715,7 @@ input.form-control {
 }
 
     .btn-search:hover {
-        background: #2d2d9a;
+        background: #11144f;
         transform: translateY(-2px);
     }
 
@@ -1554,7 +1587,7 @@ input.form-control {
 /* ── Layout Shell ────────────────────────────── */
 .chat-layout {
     display: flex;
-    height: calc(100vh - 56px); /* subtract your header height */
+    height: calc(100vh - 92px); /* subtract your header height */
     overflow: hidden;
     background: var(--white);
     font-family: var(--font-ui);
@@ -1589,7 +1622,7 @@ input.form-control {
     overflow: visible;
     transform: translateX(calc(-1 * (260px + 28px)));
     transition: transform 0.3s ease;
-    z-index: 0;
+    z-index: 1;
 }
 
 /* Trigger zone to the right of sidebar - small clickable area with arrow */
@@ -1702,9 +1735,10 @@ input.form-control {
 
 .match-item {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 15px;
-    padding: 16px 12px;
+    padding: 0.5rem 0;
     cursor: pointer;
     border-radius: 16px;
     transition: background 0.2s;
@@ -1723,11 +1757,30 @@ input.form-control {
         color: var(--text-dark);
     }
 
+.match-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .match-name {
     font-size: 0.95rem;
     font-weight: 600;
     color: inherit;
+    margin-top: 0.25rem;
 }
+
+.match-actions {
+    display: flex;
+    gap: 0.5rem; /* space between buttons */
+    margin-top: 0.25rem; /* small space below username */
+}
+
+    .match-actions button {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        border-radius: 4px;
+    }
 
 /* ── Avatar ──────────────────────────────────── */
 .avatar {

@@ -71,6 +71,30 @@ namespace CST2550Project.Controllers
             return Ok(new { message = "Unmatched successfully" });
         }
 
+        [HttpPost("accept/{userId}")]
+        public async Task<ActionResult> Accept(int userId)
+        {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == 0) return Unauthorized();
+
+            var success = await _matchService.AcceptMatchAsync(currentUserId, userId);
+            if (!success) return NotFound();
+
+            return Ok();
+        }
+
+        [HttpPost("decline/{userId}")]
+        public async Task<ActionResult> Decline(int userId)
+        {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == 0) return Unauthorized();
+
+            var success = await _matchService.DeclineMatchAsync(currentUserId, userId);
+            if (!success) return NotFound();
+
+            return Ok();
+        }
+
         private int GetCurrentUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
