@@ -1929,3 +1929,32 @@ input.form-control {
     color: var(--text-muted);
     font-size: 1rem;
 }
+
+
+/* ── Compatibility Box ─────────────────────────────── */
+
+.compatibility-box {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 14px;
+    max-width: 320px;
+}
+
+.compatibility-score {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #c2185b;
+    margin-bottom: 8px;
+}
+
+.compatibility-reasons {
+    margin: 0;
+    padding-left: 18px;
+}
+
+    .compatibility-reasons li {
+        margin-bottom: 4px;
+        font-size: 0.95rem;
+        color: #333;
+    }

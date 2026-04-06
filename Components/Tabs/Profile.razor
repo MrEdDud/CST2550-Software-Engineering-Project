@@ -10,6 +10,20 @@
                 <div class="avatar-edit">Edit</div>
             </div>
             <h1 class="profile-name">@profile.FullName</h1>
+            <div class="compatibility-box">
+                <div class="compatibility-score">@compatibilityScore% Match</div>
+
+                @if (compatibilityReasons.Any())
+                {
+                    <ul class="compatibility-reasons">
+                        @foreach (var reason in compatibilityReasons)
+                        {
+                            <li>@reason</li>
+                        }
+                    </ul>
+                }
+            </div>
+
         </div>
         <button class="edit-btn" @onclick="ToggleEdit">@((isEditing) ? "Close" : "Edit")</button>
     </div>
@@ -45,6 +59,26 @@
                             <option>Female</option>
                             <option>Male</option>
                             <option>Other</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Looking For -->
+            <div class="info-row">
+                <div class="info-label">Looking For</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.LookingFor <span class="chev">▾</span></div>
+                    }
+                    else
+                    {
+                        <select class="form-select value-input" @bind="editProfile.LookingFor">
+                            <option>Female</option>
+                            <option>Male</option>
+                            <option>Other</option>
+                            <option>Any</option>
                         </select>
                     }
                 </div>
@@ -130,10 +164,27 @@
         FullName = "CARLA GOMEZ",
         Age = 30,
         Gender = "Female",
+        LookingFor = "Male",
         Height = 163,
         Ethnicity = "Hispanic",
         Tags = new List<string> { "blonde", "tall", "gamer" }
     };
+
+
+    private ProfileModel otherProfile = new ProfileModel
+    {
+        FullName = "JAMES PARKER",
+        Age = 28,
+        Gender = "Male",
+        LookingFor = "Female",
+        Height = 178,
+        Ethnicity = "White",
+        Tags = new List<string> { "gamer", "travel", "music" }
+    };
+
+    private int compatibilityScore = 0;
+    private List<string> compatibilityReasons = new();
+
 
     private ProfileModel editProfile = new ProfileModel();
     private string editTags = string.Empty;
@@ -141,6 +192,7 @@
     protected override void OnInitialized()
     {
         CopyToEdit();
+        CalculateCompatibility();
     }
 
     private void CopyToEdit()
@@ -150,12 +202,87 @@
             FullName = profile.FullName,
             Age = profile.Age,
             Gender = profile.Gender,
+            LookingFor = profile.LookingFor,
             Height = profile.Height,
             Ethnicity = profile.Ethnicity,
             Tags = profile.Tags.ToList()
         };
 
         editTags = string.Join(" ", editProfile.Tags.Select(t => "#" + t));
+    }
+
+
+    private void CalculateCompatibility()
+    {
+        compatibilityScore = 0;
+        compatibilityReasons.Clear();
+
+        // 1. Preference match
+        bool currentLikesOther =
+            profile.LookingFor.Equals(otherProfile.Gender, StringComparison.OrdinalIgnoreCase)
+            || profile.LookingFor.Equals("Any", StringComparison.OrdinalIgnoreCase);
+
+        bool otherLikesCurrent =
+            otherProfile.LookingFor.Equals(profile.Gender, StringComparison.OrdinalIgnoreCase)
+            || otherProfile.LookingFor.Equals("Any", StringComparison.OrdinalIgnoreCase);
+
+        if (currentLikesOther && otherLikesCurrent)
+        {
+            compatibilityScore += 40;
+            compatibilityReasons.Add("Your preferences match each other.");
+        }
+        else if (currentLikesOther || otherLikesCurrent)
+        {
+            compatibilityScore += 20;
+            compatibilityReasons.Add("There is a partial preference match.");
+        }
+
+        // 2. Age compatibility
+        int ageDifference = Math.Abs(profile.Age - otherProfile.Age);
+
+        if (ageDifference <= 2)
+        {
+            compatibilityScore += 20;
+            compatibilityReasons.Add("You are very close in age.");
+        }
+        else if (ageDifference <= 5)
+        {
+            compatibilityScore += 15;
+            compatibilityReasons.Add("You are in a similar age range.");
+        }
+        else if (ageDifference <= 8)
+        {
+            compatibilityScore += 10;
+        }
+        else if (ageDifference <= 12)
+        {
+            compatibilityScore += 5;
+        }
+
+        // 3. Shared tags (interests)
+        var sharedTags = profile.Tags
+            .Intersect(otherProfile.Tags, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (sharedTags.Count >= 3)
+        {
+            compatibilityScore += 40;
+            compatibilityReasons.Add($"You share several interests: {string.Join(", ", sharedTags.Take(3))}.");
+        }
+        else if (sharedTags.Count == 2)
+        {
+            compatibilityScore += 25;
+            compatibilityReasons.Add($"You both like {sharedTags[0]} and {sharedTags[1]}.");
+        }
+        else if (sharedTags.Count == 1)
+        {
+            compatibilityScore += 15;
+            compatibilityReasons.Add($"You both like {sharedTags[0]}.");
+        }
+
+        // Cap at 100
+        if (compatibilityScore > 100)
+            compatibilityScore = 100;
     }
 
     private void ToggleEdit()
@@ -187,6 +314,7 @@
         public string FullName { get; set; } = string.Empty;
         public int Age { get; set; }
         public string Gender { get; set; } = string.Empty;
+        public string LookingFor { get; set; } = string.Empty;
         public int Height { get; set; }
         public string Ethnicity { get; set; } = string.Empty;
         public List<string> Tags { get; set; } = new List<string>();
