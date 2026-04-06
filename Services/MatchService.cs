@@ -70,6 +70,8 @@ namespace CST2550Project.Services
         {
             var matches = await _context.Matches
                 .Include(m => m.Messages.OrderByDescending(msg => msg.SentAt).Take(1))
+                .Include(m => m.User1) // <- added to fix "unknown user"
+                .Include(m => m.User2) // <- added to fix "unknown user"
                 .Where(m => m.User1Id == userId || m.User2Id == userId)
                 .Where(m => m.IsActive)
                 .OrderByDescending(m => m.MatchedAt)
@@ -95,6 +97,10 @@ namespace CST2550Project.Services
                 {
                     Id = match.Id,
                     MatchedAt = match.MatchedAt,
+                    User1Id = match.User1Id,
+                    User2Id = match.User2Id,
+                    User1 = new UserDto { Id = match.User1.Id, Username = match.User1.Username },
+                    User2 = new UserDto { Id = match.User2.Id, Username = match.User2.Username },
                     MatchedUser = MapToProfileDto(matchedProfile),
                     LastMessage = lastMessage != null ? new MessageDto
                     {

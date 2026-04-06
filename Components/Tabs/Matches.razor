@@ -9,28 +9,47 @@
     <!-- Matches Sidebar -->
     <aside class="sidebar" @onclick="ToggleSidebar">
         <div class="matches-panel">
-            <button class="matches-header-btn" @onclick:stopPropagation="true" @onclick="ShowMatchRequests">
+            <button class="matches-header-btn" @onclick:stopPropagation="true" @onclick="ToggleMatchRequests">
                 <i class="fa-regular fa-envelope"></i>
                 <span>Match requests</span>
             </button>
-
-            <ul class="match-list">
-                @foreach (var profile in MatchRequestsList)
-                {
-                    <li class="match-item">
-                        <div class="match-top">
-                            <div class="avatar">
-                                <span class="avatar-fallback">@profile.Username[0]</span>
+            @if (ShowingMatchRequests)
+            {
+                <ul class="match-list">
+                    @foreach (var profile in MatchRequestsList)
+                    {
+                        <li class="match-item">
+                            <div class="match-top">
+                                <div class="avatar">
+                                    <span class="avatar-fallback">@profile.Username[0]</span>
+                                </div>
+                                <span class="match-name">@profile.Username</span>
                             </div>
-                            <span class="match-name">@profile.Username</span>
-                        </div>
-                        <div class="match-actions">
-                            <button class="btn btn-success btn-sm" @onclick:stopPropagation="true" @onclick="() => AcceptMatch(profile.Id)">Accept</button>
-                            <button class="btn btn-danger btn-sm" @onclick:stopPropagation="true" @onclick="() => DeclineMatch(profile.Id)">Decline</button>
-                        </div>
-                    </li>
-                }
-            </ul>
+                            <div class="match-actions">
+                                <button class="btn btn-success btn-sm" @onclick:stopPropagation="true" @onclick="() => AcceptMatch(profile.Id)">Accept</button>
+                                <button class="btn btn-danger btn-sm" @onclick:stopPropagation="true" @onclick="() => DeclineMatch(profile.Id)">Decline</button>
+                            </div>
+                        </li>
+                    }
+                </ul>            
+            }
+            else
+            {
+                <ul class="match-list">
+                    @foreach (var match in MatchList)
+                    {
+                        var other = GetOtherUser(match);
+                        <li class="match-item" @onclick:stopPropagation="true" @onclick="() => ChooseMatch(match)">
+                            <div class="match-top">
+                                <div class="avatar">
+                                    <span class="avatar-fallback">@other.Username[0]</span>
+                                </div>
+                                <span class="match-name">@other.Username</span>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
         </div>
     </aside>
 
@@ -105,6 +124,8 @@
 
     private List<ProfileDto> MatchRequestsList = new();
 
+    private bool ShowingMatchRequests = false;
+
     protected override async Task OnInitializedAsync()
     {
         if (!Session.IsLoggedIn)
@@ -118,6 +139,22 @@
 
         if (SelectedMatch != null)
             await LoadMessages(SelectedMatch.Id);
+    }
+
+    private async Task ToggleMatchRequests()
+    {
+        ShowingMatchRequests = !ShowingMatchRequests;
+
+        if (ShowingMatchRequests)
+        {
+            // Load pending requests
+            await ShowMatchRequests();
+        }
+        else
+        {
+            // Clear selection to show normal matches
+            SelectedMatch = null;
+        }
     }
 
     // Load all matches for the current user
