@@ -343,12 +343,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (Session.UserId == null)
-        {
-            Nav.NavigateTo("/login");
-            return;
-        }
-        
         profile = await ProfileService.GetProfileByUserIdAsync(Session.UserId!.Value);
         profile.Photos ??= new List<string>();
 

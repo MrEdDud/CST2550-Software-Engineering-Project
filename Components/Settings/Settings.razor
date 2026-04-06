@@ -96,12 +96,11 @@
         }
     }
 
-    private void HandleSignOut()
+    private async Task HandleSignOut()
     {
-        Session.Logout();
+        await Session.LogoutAsync();
         statusMessage = "Signed out successfully";
 
-        // Redirect to login page
-        Nav.NavigateTo("/login", forceLoad: true);
+        Nav.NavigateTo("/login");
     }
 }

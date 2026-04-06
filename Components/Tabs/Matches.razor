@@ -1,26 +1,33 @@
 ﻿@page "/matches"
 @page "/matches/{MatchId:int}"
+@inject HttpClient Http
+@inject SessionService Session
+@using CST2550Project.DTOs
 @using CST2550Project.Models
 
 <div class="chat-layout @(SelectedMatch == null ? "no-selection" : "") @(SidebarOpen ? "sidebar-open" : "")">
     <!-- Matches Sidebar -->
     <aside class="sidebar" @onclick="ToggleSidebar">
         <div class="matches-panel">
-            <button class="matches-header-btn">
+            <button class="matches-header-btn" @onclick:stopPropagation="true" @onclick="ShowMatchRequests">
                 <i class="fa-regular fa-envelope"></i>
                 <span>Match requests</span>
             </button>
 
             <ul class="match-list">
-                @foreach (var match in MatchList)
+                @foreach (var profile in MatchRequestsList)
                 {
-                    var other = GetOtherUser(match);
-                    <li class="match-item @(SelectedMatch?.Id == match.Id ? "active" : "")"
-                        @onclick="() => ChooseMatch(match)">
-                        <div class="avatar">
-                            <span class="avatar-fallback">@other.Username[0]</span>
+                    <li class="match-item">
+                        <div class="match-top">
+                            <div class="avatar">
+                                <span class="avatar-fallback">@profile.Username[0]</span>
+                            </div>
+                            <span class="match-name">@profile.Username</span>
                         </div>
-                        <span class="match-name">@other.Username</span>
+                        <div class="match-actions">
+                            <button class="btn btn-success btn-sm" @onclick:stopPropagation="true" @onclick="() => AcceptMatch(profile.Id)">Accept</button>
+                            <button class="btn btn-danger btn-sm" @onclick:stopPropagation="true" @onclick="() => DeclineMatch(profile.Id)">Decline</button>
+                        </div>
                     </li>
                 }
             </ul>
@@ -40,7 +47,7 @@
                 <span class="chat-header-name">@other.Username</span>
             </div>
 
-            <hr class="chat-divider" />
+            <hr>
 
             <div class="messages-container" @ref="messagesContainer">
                 @foreach (var msg in SelectedMatch.Messages)
@@ -61,7 +68,6 @@
             </div>
 
             <div class="input-bar">
-                <button class="emoji-btn" title="Emoji">😊</button>
                 <input class="message-input"
                        type="text"
                        placeholder="message..."
@@ -76,15 +82,6 @@
                         <polyline points="5 12 12 5 19 12" />
                     </svg>
                 </button>
-                <button class="media-btn" title="Send photo">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                        <circle cx="8.5" cy="8.5" r="1.5" />
-                        <polyline points="21 15 16 10 5 21" />
-                    </svg>
-                </button>
             </div>
         }
     </main>
@@ -92,74 +89,181 @@
 
 @code {
     private bool SidebarOpen = true;
-    [Parameter] public int? MatchId { get; set; }
 
-    // Replace with your actual logged-in user ID, e.g. from AuthenticationStateProvider
-    private int CurrentUserId = 1;
+    [Parameter]
+    public int? MatchId { get; set; }
+
+    private int CurrentUserId => Session.UserId!.Value;
 
     private ElementReference messagesContainer;
+
     private string newMessage = string.Empty;
-    private Match? SelectedMatch;
-    private List<Match> MatchList = new();
+
+    private MatchDto? SelectedMatch;
+
+    private List<MatchDto> MatchList = new();
+
+    private List<ProfileDto> MatchRequestsList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Session.IsLoggedIn)
+            return;
+
+        await LoadMatches();
+
+        SelectedMatch = MatchId.HasValue
+            ? MatchList.FirstOrDefault(m => m.Id == MatchId.Value)
+            : MatchList.FirstOrDefault();
+
+        if (SelectedMatch != null)
+            await LoadMessages(SelectedMatch.Id);
+    }
+
+    // Load all matches for the current user
+    private async Task LoadMatches()
+    {
+        if (!Session.IsLoggedIn)
+            return;
+
+        try
+        {
+            // No user ID in URL; backend uses GetCurrentUserId() from auth
+            MatchList = await Http.GetFromJsonAsync<List<MatchDto>>("api/matches")
+                        ?? new List<MatchDto>();
+
+            // Optionally pick first match if none selected
+            if (SelectedMatch == null && MatchList.Any())
+                SelectedMatch = MatchList.First();
+
+            if (SelectedMatch != null)
+                await LoadMessages(SelectedMatch.Id);
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.Error.WriteLine($"Failed to load matches: {ex.Message}");
+            MatchList = new List<MatchDto>();
+        }
+    }
+
+    private async Task LoadMessages(int matchId)
+    {
+        var messages = await Http.GetFromJsonAsync<List<MessageDto>>(
+        $"api/messages/match/{matchId}");
+
+        if (SelectedMatch != null)
+            SelectedMatch.Messages = messages ?? new List<MessageDto>();
+    }
+
+    private UserDto GetOtherUser(MatchDto match)
+    {
+        if (match.User1Id == CurrentUserId)
+            return match.User2 ?? new UserDto { Username = "Unknown" };
+
+        return match.User1 ?? new UserDto { Username = "Unknown" };
+    }
+
+    private async Task ChooseMatch(MatchDto match)
+    {
+        SelectedMatch = match;
+
+        await LoadMessages(match.Id);
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await SendMessage();
+    }
+
+    private async Task SendMessage()
+    {
+        if (SelectedMatch == null || string.IsNullOrWhiteSpace(newMessage))
+            return;
+
+        var dto = new SendMessageDto
+        {
+            MatchId = SelectedMatch.Id,
+            Content = newMessage
+        };
+
+        var response = await Http.PostAsJsonAsync("api/messages", dto);
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        var messageDto = await response.Content.ReadFromJsonAsync<MessageDto>();
+
+        if (messageDto != null)
+        {
+            SelectedMatch.Messages.Add(messageDto); // DTO list, no conversion needed
+            newMessage = string.Empty;
+        }
+    }
 
     private void ToggleSidebar()
     {
         SidebarOpen = !SidebarOpen;
     }
 
-    protected override void OnInitialized()
+    private async Task<List<ProfileDto>> LoadMatchRequests()
     {
-        // TODO: load real matches from your service, e.g.:
-        // MatchList = await MatchService.GetMatchesForUserAsync(CurrentUserId);
+        if (!Session.UserId.HasValue)
+            return new List<ProfileDto>();
 
-        SelectedMatch = MatchId.HasValue
-            ? MatchList.FirstOrDefault(m => m.Id == MatchId.Value)
-            : MatchList.FirstOrDefault();
-    }
-
-    // Returns the other participant in the match (not the current user)
-    private User GetOtherUser(Match match)
-    {
-        if (match.User1Id == CurrentUserId)
-            return match.User2 ?? new User { Username = "Unknown" };
-
-        return match.User1 ?? new User { Username = "Unknown" };
-    }
-
-    private void ChooseMatch(Match match)
-    {
-        SelectedMatch = match;
-        // TODO: optionally reload messages for this match:
-        // SelectedMatch.Messages = await MessageService.GetMessagesAsync(match.Id);
-    }
-
-    private async Task HandleKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter") await SendMessage();
-    }
-
-    private async Task SendMessage()
-    {
-        var text = newMessage.Trim();
-        if (string.IsNullOrWhiteSpace(text) || SelectedMatch == null) return;
-
-        var message = new Message
+        try
         {
-            MatchId = SelectedMatch.Id,
-            SenderId = CurrentUserId,
-            Content = text,
-            SentAt = DateTime.UtcNow
-        };
+            Console.WriteLine($"Current UserId: {Session.UserId.Value}"); // check your user id
+            var requests = await Http.GetFromJsonAsync<List<ProfileDto>>("api/matches/likes");
+            Console.WriteLine($"Got {requests?.Count ?? 0} match requests");
+            return requests ?? new List<ProfileDto>();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Failed to load match requests: {ex.Message}");
+            return new List<ProfileDto>();
+        }
+    }
 
-        // TODO: persist via your service, e.g.:
-        // await MessageService.SendAsync(message);
+    // Load pending match requests (likes you haven’t matched yet)
+    private async Task ShowMatchRequests()
+    {
+        if (!Session.IsLoggedIn)
+            return;
 
-        SelectedMatch.Messages.Add(message);
-        newMessage = string.Empty;
+        try
+        {
+            MatchRequestsList = await Http.GetFromJsonAsync<List<ProfileDto>>("api/matches/likes")
+                                ?? new List<ProfileDto>();
 
-        await Task.Yield();
-        // Scroll to bottom — add this JS to wwwroot/index.html:
-        // window.scrollToBottom = (el) => el.scrollTop = el.scrollHeight;
-        // await JS.InvokeVoidAsync("scrollToBottom", messagesContainer);
+            // reset selection so chat area clears
+            SelectedMatch = null;
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.Error.WriteLine($"Failed to load match requests: {ex.Message}");
+            MatchRequestsList = new List<ProfileDto>();
+        }
+    }
+
+    private async Task AcceptMatch(int userId)
+    {
+        var response = await Http.PostAsync($"api/matches/accept/{userId}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            // Remove from requests list and reload matches
+            MatchRequestsList.RemoveAll(p => p.Id == userId);
+            await LoadMatches();
+        }
+    }
+
+    private async Task DeclineMatch(int userId)
+    {
+        var response = await Http.PostAsync($"api/matches/decline/{userId}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            // Remove from requests list
+            MatchRequestsList.RemoveAll(p => p.Id == userId);
+        }
     }
 }

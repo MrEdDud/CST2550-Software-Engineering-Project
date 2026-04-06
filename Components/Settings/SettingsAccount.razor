@@ -179,7 +179,12 @@
                 edit
             );
 
-            Session.Username = edit.Username;
+            await Session.SetSessionAsync(
+                Session.UserId!.Value,
+                edit.Username,
+                Session.Token!,
+                Session.HasProfile
+            );
 
             account = await ProfileService.GetAccountAsync(
                 Session.UserId!.Value

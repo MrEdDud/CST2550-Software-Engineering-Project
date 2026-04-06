@@ -107,10 +107,12 @@
 
             if (result != null)
             {
-                // store login session
-                Session.UserId = result.UserId;
-                Session.Token = result.Token;
-                Session.Username = result.Username;
+                await Session.SetSessionAsync(
+                    result.UserId,
+                    result.Username,
+                    result.Token,
+                    result.HasProfile
+                );
 
                 successMessage = "Account created successfully";
 
