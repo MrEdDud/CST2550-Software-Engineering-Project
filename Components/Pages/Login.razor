@@ -36,6 +36,11 @@
         Sign In
     </button>
 
+    @if (!string.IsNullOrWhiteSpace(successMessage))
+    {
+        <div class="text-danger mt-2">@successMessage</div>
+    }
+
 </EditForm>
 
 <div class="auth-footer">

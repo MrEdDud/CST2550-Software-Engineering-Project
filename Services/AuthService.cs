@@ -179,9 +179,9 @@ namespace CST2550Project.Services
         {
             return gender.ToLower() switch
             {
-                "male" => "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-                "female" => "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=400",
-                _ => "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400"
+                "male" => "uploads/placeholder-profile.png",
+                "female" => "uploads/placeholder-profile.png",
+                _ => "uploads/placeholder-profile.png"
             };
         }
     }

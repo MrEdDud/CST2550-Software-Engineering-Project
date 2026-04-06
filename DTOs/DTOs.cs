@@ -114,6 +114,16 @@ namespace CST2550Project.DTOs
         public string? LookingFor { get; set; }
     }
 
+    public class UpdateAccountDto
+    {
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+
+        public string? CurrentPassword { get; set; }
+        public string? NewPassword { get; set; }
+        public string? ConfirmNewPassword { get; set; }
+    }
+    
     public class DiscoverFilterDto
     {
         public int Count { get; set; } = 10;

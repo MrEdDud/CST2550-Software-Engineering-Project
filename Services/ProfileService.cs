@@ -1,8 +1,10 @@
 // profile crud and discovery with server-side filtering
-using Microsoft.EntityFrameworkCore;
-using CST2550Project.Models;
-using CST2550Project.DTOs;
+using System.Security.Cryptography;
 using CST2550Project.Data;
+using CST2550Project.DTOs;
+using CST2550Project.Models;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore;
 
 namespace CST2550Project.Services
 {
@@ -91,6 +93,59 @@ namespace CST2550Project.Services
             profile.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
+
+            return MapToDto(profile);
+        }
+
+        public async Task<string> SaveProfilePhotoAsync(int userId, IBrowserFile file, string folder = "profile")
+        {
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folder);
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            await file.OpenReadStream(5 * 1024 * 1024).CopyToAsync(stream);
+
+            // Return relative URL
+            return $"/uploads/{folder}/{fileName}";
+        }
+
+        public async Task<ProfileDto?> UpdateProfilePhotoAsync(int userId, string photoUrl)
+        {
+            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (profile == null) return null;
+
+            profile.ProfilePhotoUrl = photoUrl;
+            await _context.SaveChangesAsync();
+
+            return MapToDto(profile);
+        }
+
+        public async Task<ProfileModel?> AddGalleryPhotoAsync(int userId, string photoUrl)
+        {
+            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (profile == null) return null;
+
+            profile.Photos ??= new List<string>();
+            profile.Photos.Add(photoUrl);  // Updates PhotosJson automatically
+
+            await _context.SaveChangesAsync();
+            return profile; // <-- return full model for Blazor to update UI
+        }
+
+        public async Task<ProfileDto?> RemoveGalleryPhotoAsync(int userId, string photoUrl)
+        {
+            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
+            if (profile == null) return null;
+
+            if (profile.Photos != null && profile.Photos.Contains(photoUrl))
+            {
+                profile.Photos.Remove(photoUrl);
+                await _context.SaveChangesAsync();
+            }
 
             return MapToDto(profile);
         }
@@ -198,6 +253,80 @@ namespace CST2550Project.Services
                 Smoking = profile.Smoking,
                 Drinking = profile.Drinking,
             };
+        }
+
+        public async Task<UpdateAccountDto?> GetAccountAsync(int userId)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                return null;
+
+            return new UpdateAccountDto
+            {
+                Username = user.Username,
+                Email = user.Email
+            };
+        }
+        private string HashPassword(string password)
+        {
+            byte[] salt = new byte[16];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
+            byte[] hash = pbkdf2.GetBytes(32);
+
+            byte[] hashBytes = new byte[48];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(hash, 0, hashBytes, 16, 32);
+
+            return Convert.ToBase64String(hashBytes);
+        }
+
+        private bool VerifyPassword(string password, string storedHash)
+        {
+            byte[] hashBytes = Convert.FromBase64String(storedHash);
+
+            byte[] salt = new byte[16];
+            Array.Copy(hashBytes, 0, salt, 0, 16);
+
+            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
+            byte[] hash = pbkdf2.GetBytes(32);
+
+            for (int i = 0; i < 32; i++)
+            {
+                if (hashBytes[i + 16] != hash[i])
+                    return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> UpdateAccountAsync(int userId, UpdateAccountDto dto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return false;
+
+            if (!string.IsNullOrWhiteSpace(dto.Username))
+                user.Username = dto.Username.Trim();
+
+            if (!string.IsNullOrWhiteSpace(dto.Email))
+                user.Email = dto.Email.Trim();
+
+            if (!string.IsNullOrWhiteSpace(dto.NewPassword))
+            {
+                if (!VerifyPassword(dto.CurrentPassword, user.PasswordHash))
+                    throw new InvalidOperationException("Current password is incorrect.");
+
+                user.PasswordHash = HashPassword(dto.NewPassword);
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

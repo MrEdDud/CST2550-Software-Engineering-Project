@@ -1,6 +1,6 @@
 ﻿@using CST2550Project.Models
 
-<div class="profile-card"
+<div class="home-card"
      @onmousedown="StartDrag"
      @onmousemove="OnDrag"
      @onmouseup="EndDrag"
@@ -20,14 +20,14 @@
         </div>
 
         <div class="action-buttons">
-            <button class="action-btn dislike"
+            <button class="icon-btn nope" style="color: rgb(255,77,109)"
                     @onclick="() => Swipe(false)">
-                <i class="fa-solid fa-x"></i>
+                ✕
             </button>
 
-            <button class="action-btn like"
+            <button class="icon-btn like" style="color: rgb(46,229,157)"
                     @onclick="() => Swipe(true)">
-                <i class="fa-solid fa-heart"></i>
+                ❤
             </button>
         </div>
     }

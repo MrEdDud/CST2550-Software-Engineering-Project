@@ -3,135 +3,321 @@
 @using CST2550Project.Services
 @inject ProfileService ProfileService
 
-<div class="page">
+<h1 class="page-title">Discover</h1>
+<p class="page-subtitle">People near you</p>
 
-    <h1 class="page-title">Discover</h1>
-    <p class="page-subtitle">People near you</p>
+<!-- SEARCH INPUT -->
+<div class="search-row" style="display:flex; gap:8px; margin-bottom:24px;">
+    <input class="form-control"
+           placeholder="Search by name, bio, location, occupation..."
+           @bind="SearchTerm"
+           @onkeydown="HandleKeyDown" />
 
-    <div class="form-group" style="margin-bottom: 16px;">
-        <input class="form-control"
-               placeholder="Search by name, bio, location, occupation..."
-               @bind="SearchTerm" />
+    <button class="btn btn-search" @onclick="LoadProfilesAsync">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+
+    <button class="btn btn-search" @onclick="ToggleFilters">
+        <i class="fas fa-filter"></i>
+    </button>
+</div>
+
+<!-- FILTERS SIDEBAR -->
+<div class="filter-panel @(ShowFilters ? "open" : "")">
+    <div class="filter-header">
+        <h3>Filters</h3>
     </div>
 
-    <div class="form-group" style="margin-bottom: 16px;">
-        <select class="form-control" @bind="SelectedGender">
-            <option value="">Everyone</option>
-            <option value="Male">Men</option>
-            <option value="Female">Women</option>
-        </select>
-    </div>
+    <div class="filter-content">
 
-    <div class="form-group" style="margin-bottom: 16px;">
-        <label>Min Age</label>
-        <input class="form-control" type="number" @bind="MinAge" />
-    </div>
-
-    <div class="form-group" style="margin-bottom: 16px;">
-        <label>Max Age</label>
-        <input class="form-control" type="number" @bind="MaxAge" />
-    </div>
-
-    <div style="margin-bottom: 24px;">
-        <button class="btn btn-primary" @onclick="LoadProfiles">
-            Apply Search
-        </button>
-    </div>
-
-    @if (Profiles.Count == 0)
-    {
-        <div class="empty-state">
-            <div class="empty-icon">
-                <i class="fas fa-search"></i>
+        <!-- GENDER -->
+        <div class="filter-group">
+            <label>Interested In</label>
+            <div class="filter-options">
+                <button type="button"
+                        class="filter-option @(SelectedGender == "" ? "active" : "")"
+                        @onclick='() => SelectedGender = ""'>
+                    Everyone
+                </button>
+                <button type="button"
+                        class="filter-option @(SelectedGender == "Female" ? "active" : "")"
+                        @onclick='() => SelectedGender = "Female"'>
+                    Women
+                </button>
+                <button type="button"
+                        class="filter-option @(SelectedGender == "Male" ? "active" : "")"
+                        @onclick='() => SelectedGender = "Male"'>
+                    Men
+                </button>
             </div>
-            <h2>No profiles found</h2>
-            <p>Try changing your filters or search term.</p>
         </div>
-    }
-    else
-    {
-        <div class="card-grid">
-            @foreach (var p in Profiles)
-            {
-                <div class="profile-card">
 
-                    <div class="profile-photo">
+        <!-- AGE RANGE -->
+        <div class="filter-group">
+            <label>Age Range: <span>@MinAge - @MaxAge</span></label>
+            <div class="dual-range">
+                <div class="range-track"></div>
+                <input type="range" min="18" max="65" @bind="MinAge" />
+                <input type="range" min="18" max="65" @bind="MaxAge" />
+            </div>
+        </div>
+
+        <!-- OTHER SELECTS (Hair, Skin, Eyes, Body, Ethnicity, Smoking, Drinking) -->
+        <div class="filter-group">
+            <label>Hair Color</label>
+            <select class="filter-select" @bind="HairColor">
+                <option value="">Any</option>
+                <option>Black</option>
+                <option>Brown</option>
+                <option>Blonde</option>
+                <option>Red</option>
+                <option>Auburn</option>
+                <option>Grey</option>
+                <option>White</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Skin Tone</label>
+            <select class="filter-select" @bind="SkinTone">
+                <option value="">Any</option>
+                <option>Fair</option>
+                <option>Light</option>
+                <option>Medium</option>
+                <option>Olive</option>
+                <option>Tan</option>
+                <option>Dark</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Eye Color</label>
+            <select class="filter-select" @bind="EyeColor">
+                <option value="">Any</option>
+                <option>Brown</option>
+                <option>Blue</option>
+                <option>Green</option>
+                <option>Hazel</option>
+                <option>Grey</option>
+                <option>Amber</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Body Type</label>
+            <select class="filter-select" @bind="BodyType">
+                <option value="">Any</option>
+                <option>Slim</option>
+                <option>Athletic</option>
+                <option>Average</option>
+                <option>Curvy</option>
+                <option>Muscular</option>
+                <option>Plus Size</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Ethnicity</label>
+            <select class="filter-select" @bind="Ethnicity">
+                <option value="">Any</option>
+                <option>White</option>
+                <option>Black</option>
+                <option>Asian</option>
+                <option>Hispanic</option>
+                <option>Middle Eastern</option>
+                <option>Mixed</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Smoking</label>
+            <select class="filter-select" @bind="Smoking">
+                <option value="">Any</option>
+                <option>Never</option>
+                <option>Occasionally</option>
+                <option>Regularly</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Drinking</label>
+            <select class="filter-select" @bind="Drinking">
+                <option value="">Any</option>
+                <option>Never</option>
+                <option>Rarely</option>
+                <option>Socially</option>
+                <option>Occasionally</option>
+                <option>Regularly</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="filter-actions">
+        <button class="btn btn-ghost" @onclick="ResetFilters">Reset</button>
+        <button class="btn btn-primary" @onclick="ApplyFilters">Apply Filters</button>
+    </div>
+</div>
+
+<!-- PROFILES GRID -->
+@if (isLoading)
+{
+    <div class="empty-state">
+        <div class="loading-card">
+            <div class="loader"></div>
+            <p>Loading profiles...</p>
+        </div>
+    </div>
+}
+else if (profiles.Count == 0)
+{
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <h2>No profiles found</h2>
+        <p>Try changing your search or filters.</p>
+    </div>
+}
+else
+{
+    <div class="card-grid">
+        @foreach (var p in profiles)
+        {
+            <div class="home-card">
+                <div class="card-photo">
+                    @if (!string.IsNullOrWhiteSpace(p.ProfilePhotoUrl))
+                    {
+                        <img src="@p.ProfilePhotoUrl" alt="@p.Name" />
+                    }
+                    else if (p.Photos.Any())
+                    {
+                        <img src="@p.Photos[0]" alt="@p.Name" />
+                    }
+                    else
+                    {
                         <span class="profile-initial">
                             @(string.IsNullOrWhiteSpace(p.Name) ? "?" : p.Name.Substring(0, 1))
                         </span>
-                    </div>
-
-                    <div class="profile-info">
-                        <div class="profile-name">
-                            @p.Name
-                            <span class="profile-age">@p.Age</span>
-                        </div>
-                        <div class="profile-bio">@p.Bio</div>
-                    </div>
-
-                    <div class="profile-actions">
-                        <button class="icon-btn nope"
-                                @onclick='() => HandleAction("Nope", p.Name)'>
-                            ✕
-                        </button>
-
-                        <button class="icon-btn like"
-                                @onclick='() => HandleAction("Like", p.Name)'>
-                            ❤
-                        </button>
-                    </div>
-
+                    }
                 </div>
-            }
-        </div>
-    }
 
-    @if (!string.IsNullOrWhiteSpace(lastAction))
-    {
-        <div class="toast">@lastAction</div>
-    }
+                <div class="card-info">
+                    <div class="profile-name">
+                        @p.Name
+                        <span class="profile-age">@p.Age</span>
+                    </div>
 
-</div>
+                    <div class="profile-bio">@p.Bio</div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="icon-btn nope" style="color: rgb(255,77,109)"
+                            @onclick='() => HandleAction("Nope", p.Name)'>
+                        ✕
+                    </button>
+
+                    <button class="icon-btn like" style="color: rgb(46,229,157)"
+                            @onclick='() => HandleAction("Like", p.Name)'>
+                        ❤
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(lastAction))
+{
+    <div class="toast">@lastAction</div>
+}
 
 @code {
+    private List<ProfileDto> profiles = new();
+    private bool isLoading = true;
     private string lastAction = string.Empty;
 
-    private string SearchTerm = "";
-    private string SelectedGender = "";
-    private int? MinAge = 18;
-    private int? MaxAge = 35;
+    private string SearchTerm = string.Empty;
+    private string SelectedGender = string.Empty;
+    private int MinAge = 18;
+    private int MaxAge = 35;
+    private string HairColor = "";
+    private string SkinTone = "";
+    private string EyeColor = "";
+    private string BodyType = "";
+    private string Ethnicity = "";
+    private string Smoking = "";
+    private string Drinking = "";
+    private bool ShowFilters = false;
 
-    private List<ProfileDto> Profiles = new();
+    private const int DemoUserId = 1;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProfiles();
+        await LoadProfilesAsync();
     }
 
-    private async Task LoadProfiles()
+    private async Task LoadProfilesAsync()
     {
+        isLoading = true;
+
         var filter = new DiscoverFilterDto
         {
             SearchTerm = SearchTerm,
             Gender = SelectedGender,
             MinAge = MinAge,
             MaxAge = MaxAge,
+            HairColor = HairColor,
+            SkinTone = SkinTone,
+            EyeColor = EyeColor,
+            BodyType = BodyType,
+            Ethnicity = Ethnicity,
+            Smoking = Smoking,
+            Drinking = Drinking,
             Count = 50
         };
 
-        // demo user id 1 for now
-        Profiles = await ProfileService.GetDiscoveryProfilesAsync(1, filter);
+        profiles = await ProfileService.GetDiscoveryProfilesAsync(DemoUserId, filter);
+
+        isLoading = false;
     }
 
     private void HandleAction(string action, string name)
     {
         if (action == "Like")
-        {
             lastAction = $"❤️ You liked {name}";
-        }
         else
-        {
             lastAction = $"❌ You skipped {name}";
+    }
+
+    private void ToggleFilters() => ShowFilters = !ShowFilters;
+
+    private void ResetFilters()
+    {
+        SelectedGender = "";
+        MinAge = 18;
+        MaxAge = 35;
+        HairColor = "";
+        SkinTone = "";
+        EyeColor = "";
+        BodyType = "";
+        Ethnicity = "";
+        Smoking = "";
+        Drinking = "";
+    }
+
+    private async void ApplyFilters()
+    {
+        ShowFilters = false;
+        await LoadProfilesAsync();
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await LoadProfilesAsync();
         }
     }
 }

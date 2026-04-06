@@ -1,0 +1,203 @@
+﻿@page "/settings/account"
+@using CST2550Project.DTOs
+@using CST2550Project.Services
+@inject SessionService Session
+@inject ProfileService ProfileService
+@inject NavigationManager Nav
+
+<section class="profile-card profile-card--pink">
+
+    <div class="card-header">
+
+        <h1 class="profile-name">Account</h1>
+
+        <div class="header-buttons">
+
+            <button class="edit-btn"
+                    @onclick="ToggleEdit">
+
+                @(isEditing ? "Cancel" : "Edit")
+
+            </button>
+
+            @if (isEditing)
+            {
+                <button class="save-btn"
+                        @onclick="Save">
+
+                    Save
+
+                </button>
+            }
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <div class="profile-content">
+
+        <div class="info-col">
+
+            <div class="section-title">
+                Login Info
+            </div>
+
+            <!-- username -->
+            <div class="info-row">
+
+                <div class="info-label">
+                    Username
+                </div>
+
+                <div class="info-value">
+
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">
+                            @account.Username
+                        </div>
+                    }
+                    else
+                    {
+                        <input class="value-input"
+                               @bind="edit.Username" />
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- email -->
+            <div class="info-row">
+
+                <div class="info-label">
+                    Email
+                </div>
+
+                <div class="info-value">
+
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">
+                            @account.Email
+                        </div>
+                    }
+                    else
+                    {
+                        <input class="value-input"
+                               @bind="edit.Email" />
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- password -->
+            <div class="info-row">
+                <div class="info-label">Current Password</div>
+                <input class="value-input" type="password" @bind="edit.CurrentPassword" />
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">New Password</div>
+                <input class="value-input" type="password" @bind="edit.NewPassword" />
+            </div>
+
+            <div class="info-row">
+                <div class="info-label">Confirm New Password</div>
+                <input class="value-input" type="password" @bind="edit.ConfirmNewPassword" />
+            </div>
+
+        </div>
+
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <div class="message success">
+            @message
+        </div>
+    }
+
+</section>
+
+
+@code {
+
+    UpdateAccountDto account = new();
+
+    UpdateAccountDto edit = new();
+
+    bool isEditing = false;
+
+    string message = "";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Session.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        account = await ProfileService.GetAccountAsync(
+            Session.UserId!.Value
+        ) ?? new();
+
+        Copy();
+    }
+
+
+    void ToggleEdit()
+    {
+        isEditing = !isEditing;
+
+        if (isEditing)
+            Copy();
+    }
+
+
+    void Copy()
+    {
+        edit = new UpdateAccountDto
+        {
+            Username = account.Username,
+            Email = account.Email
+        };
+    }
+
+
+    async Task Save()
+    {
+        try
+        {
+            await ProfileService.UpdateAccountAsync(
+                Session.UserId!.Value,
+                edit
+            );
+
+            Session.Username = edit.Username;
+
+            account = await ProfileService.GetAccountAsync(
+                Session.UserId!.Value
+            ) ?? new();
+
+            message = "Saved";
+            isEditing = false;
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Show error in frontend
+            message = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            // generic fallback
+            message = "An unexpected error occurred";
+        }
+    }
+
+}

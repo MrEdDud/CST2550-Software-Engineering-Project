@@ -37,7 +37,6 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DatingAppContext>();
     db.Database.EnsureCreated();
-    await db.SeedDataAsync();
 }
 
 // Configure the HTTP request pipeline.
