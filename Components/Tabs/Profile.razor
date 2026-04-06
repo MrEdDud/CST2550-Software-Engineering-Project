@@ -1,138 +1,374 @@
 ﻿@page "/profile"
 
-<section class="profile-card profile-card--pink">
-    <div class="card-header">
-        <div class="card-title">
-            <div class="avatar-wrap">
-                <div class="avatar-placeholder">
-                    <i class="fas fa-user fa-2x text-muted"></i>
-                </div>
-                <div class="avatar-edit">Edit</div>
-            </div>
-            <h1 class="profile-name">@profile.FullName</h1>
+<div class="profile-page-container">
+    <div class="profile-header">
+        <div class="avatar-container">
+            <img src="https://i.pravatar.cc/150?img=47" alt="Profile Picture" class="profile-avatar" />
+            @if(isEditing)
+            {
+                <button class="edit-avatar-btn"><i class="fas fa-camera"></i></button>
+            }
         </div>
-        <button class="edit-btn" @onclick="ToggleEdit">@((isEditing) ? "Close" : "Edit")</button>
+        <h2 class="profile-name">@profile.FullName</h2>
+        <p class="profile-username">@@@profile.Username</p>
     </div>
 
-    <div class="profile-content">
-        <div class="info-col">
-            <!-- Age -->
-            <div class="info-row">
-                <div class="info-label">Age</div>
-                <div class="info-value">
-                    @if (!isEditing)
-                    {
-                        <div class="value-pill">@profile.Age</div>
-                    }
-                    else
-                    {
-                        <input class="form-control value-input" type="number" @bind="editProfile.Age" />
-                    }
-                </div>
-            </div>
+    <div class="profile-actions">
+        <button class="btn btn-primary edit-profile-btn" @onclick="ToggleEdit">
+            @((isEditing) ? "Cancel" : "Edit Profile")
+        </button>
+        @if (isEditing)
+        {
+            <button class="btn btn-success save-profile-btn" @onclick="SaveProfile">Save Changes</button>
+        }
+    </div>
 
-            <!-- Gender -->
-            <div class="info-row">
-                <div class="info-label">Gender</div>
-                <div class="info-value">
-                    @if (!isEditing)
-                    {
-                        <div class="value-pill">@profile.Gender <span class="chev">▾</span></div>
-                    }
-                    else
-                    {
-                        <select class="form-select value-input" @bind="editProfile.Gender">
-                            <option>Female</option>
-                            <option>Male</option>
-                            <option>Other</option>
-                        </select>
-                    }
-                </div>
-            </div>
+    @if (!string.IsNullOrWhiteSpace(validationMessage))
+    {
+        <div class="validation-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>@validationMessage</span>
+        </div>
+    }
 
-            <!-- Height -->
-            <div class="info-row">
-                <div class="info-label">Height</div>
-                <div class="info-value">
-                    @if (!isEditing)
-                    {
-                        <div class="value-pill">@profile.Height cm</div>
-                    }
-                    else
-                    {
-                        <input class="form-control value-input" type="number" @bind="editProfile.Height" />
-                    }
-                </div>
-            </div>
-
-            <!-- Ethnicity -->
-            <div class="info-row">
-                <div class="info-label">Ethnicity</div>
-                <div class="info-value">
-                    @if (!isEditing)
-                    {
-                        <div class="value-pill">@profile.Ethnicity <span class="chev">▾</span></div>
-                    }
-                    else
-                    {
-                        <input class="form-control value-input" type="text" @bind="editProfile.Ethnicity" />
-                    }
-                </div>
-            </div>
-
-            <!-- Tags -->
-            <div class="info-row">
-                <div class="info-label">Tags</div>
-                <div class="info-value">
-                    @if (!isEditing)
-                    {
-                        <div class="value-pill value-pill--tags">@profile.TagsDisplay <span class="chev">▾</span></div>
-                    }
-                    else
-                    {
-                        <input class="form-control value-input" type="text" @bind="editTags" placeholder="#blonde #tall #gamer" />
-                    }
-                </div>
-            </div>
-
-            @if (isEditing)
+    <div class="profile-body">
+        <div class="bio-section">
+            <h3>About Me</h3>
+            @if (!isEditing)
             {
-                <div class="info-row">
-                    <div class="info-label"></div>
-                    <div class="info-value">
-                        <button class="save-btn" @onclick="SaveProfile">Save</button>
-                    </div>
-                </div>
+                <p class="bio-text">@(string.IsNullOrWhiteSpace(profile.Bio) ? "No bio provided." : profile.Bio)</p>
+            }
+            else
+            {
+                <textarea class="form-control bio-input" @bind="editProfile.Bio" rows="4" placeholder="Write something about yourself..."></textarea>
             }
         </div>
 
-        <!-- Images section -->
-        <aside class="images-col">
-            <div class="images-header">
-                <div>Your profile images.</div>
-                <button class="edit-btn" @onclick="EditImages">Edit</button>
-            </div>
+        <div class="details-section">
+            <h3>My Details</h3>
+            <div class="details-grid">
+                <!-- Gender -->
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="fas fa-venus-mars"></i></div>
+                    <div class="detail-content">
+                        <label>Gender</label>
+                        @if (!isEditing)
+                        {
+                            <span>@profile.Gender</span>
+                        }
+                        else
+                        {
+                            <select class="form-select" @bind="editProfile.Gender">
+                                <option value="Woman">Woman</option>
+                                <option value="Man">Man</option>
+                                <option value="Non-binary">Non-binary</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        }
+                    </div>
+                </div>
 
-            <div class="images-grid">
-                <div class="image-placeholder">+</div>
-                <div class="image-placeholder">+</div>
-                <div class="image-placeholder">+</div>
+                <!-- Height -->
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="fas fa-ruler-vertical"></i></div>
+                    <div class="detail-content">
+                        <label>Height</label>
+                        @if (!isEditing)
+                        {
+                            <span>@(profile.Height > 0 ? $"{profile.Height} cm" : "Not specified")</span>
+                        }
+                        else
+                        {
+                            <input type="number" class="form-control" @bind="editProfile.Height" placeholder="cm" min="50" max="250" />
+                            <small class="validation-hint">50 - 250 cm</small>
+                        }
+                    </div>
+                </div>
+
+                <!-- Weight -->
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="fas fa-weight"></i></div>
+                    <div class="detail-content">
+                        <label>Weight</label>
+                        @if (!isEditing)
+                        {
+                            <span>@(profile.Weight > 0 ? $"{profile.Weight} kg" : "Not specified")</span>
+                        }
+                        else
+                        {
+                            <input type="number" class="form-control" @bind="editProfile.Weight" placeholder="kg" min="30" max="200" />
+                            <small class="validation-hint">30 - 200 kg</small>
+                        }
+                    </div>
+                </div>
+
+                <!-- Ethnicity -->
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="fas fa-globe"></i></div>
+                    <div class="detail-content">
+                        <label>Ethnicity</label>
+                        @if (!isEditing)
+                        {
+                            <span>@(string.IsNullOrWhiteSpace(profile.Ethnicity) ? "Not specified" : profile.Ethnicity)</span>
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control" @bind="editProfile.Ethnicity" placeholder="e.g. Hispanic, Caucasian, etc." />
+                        }
+                    </div>
+                </div>
+
+                <!-- Hair Color -->
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="fas fa-cut"></i></div>
+                    <div class="detail-content">
+                        <label>Hair Color</label>
+                        @if (!isEditing)
+                        {
+                            <span>@(string.IsNullOrWhiteSpace(profile.HairColor) ? "Not specified" : profile.HairColor)</span>
+                        }
+                        else
+                        {
+                            <input type="text" class="form-control" @bind="editProfile.HairColor" placeholder="e.g. Blonde, Brunette, Black" />
+                        }
+                    </div>
+                </div>
+
+                <!-- Age Edit (only visible in edit mode since it's in header) -->
+                @if (isEditing)
+                {
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-birthday-cake"></i></div>
+                        <div class="detail-content">
+                            <label>Age</label>
+                            <input type="number" class="form-control" @bind="editProfile.Age" min="18" max="100" />
+                            <small class="validation-hint">18 - 100 years</small>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon"><i class="fas fa-user-tag"></i></div>
+                        <div class="detail-content">
+                            <label>Name</label>
+                            <input type="text" class="form-control" @bind="editProfile.FullName" />
+                        </div>
+                    </div>
+                }
             </div>
-        </aside>
+        </div>
     </div>
-</section>
+</div>
+
+<style>
+    .profile-page-container {
+        width: 100%;
+        max-width: 820px;
+        height: 100%;
+        max-height: calc(100vh - 140px);
+        margin: 0 auto;
+        padding: 14px 16px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .profile-page-container .profile-header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .profile-page-container .avatar-container {
+        position: relative;
+        width: 92px;
+        height: 92px;
+        margin: 0 auto 8px;
+    }
+
+    .profile-page-container .profile-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #f0f0f0;
+    }
+
+    .profile-page-container .edit-avatar-btn {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .profile-page-container .profile-name {
+        margin: 0 0 4px 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .profile-page-container .profile-age {
+        font-weight: 400;
+        color: #666;
+    }
+
+    .profile-page-container .profile-username {
+        margin: 0;
+        color: #888;
+        font-size: 14px;
+    }
+
+    .profile-page-container .profile-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .profile-page-container .validation-error {
+        padding: 10px 12px;
+        background-color: #fee;
+        border: 1px solid #fcc;
+        border-radius: 6px;
+        color: #c33;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .profile-page-container .validation-error i {
+        font-size: 14px;
+    }
+
+    .profile-page-container .profile-body {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 12px;
+        min-height: 0;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .profile-page-container .profile-body h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+    }
+
+    .profile-page-container .bio-section,
+    .profile-page-container .details-section {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .profile-page-container .bio-text {
+        color: #555;
+        line-height: 1.4;
+        font-size: 13px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 6;
+        line-clamp: 6;
+        overflow: hidden;
+    }
+
+    .profile-page-container .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        align-content: start;
+    }
+
+    .profile-page-container .detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .profile-page-container .detail-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        background-color: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        flex-shrink: 0;
+        font-size: 12px;
+    }
+
+    .profile-page-container .detail-content {
+        flex: 1;
+    }
+
+    .profile-page-container .detail-content label {
+        display: block;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: #888;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+
+    .profile-page-container .detail-content span {
+        font-size: 13px;
+        color: #333;
+    }
+
+    .profile-page-container .form-control,
+    .profile-page-container .form-select {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .profile-page-container .bio-input {
+        min-height: 92px;
+        max-height: 120px;
+        resize: none;
+    }
+
+    .profile-page-container .validation-hint {
+        display: block;
+        font-size: 11px;
+        color: #999;
+        margin-top: 2px;
+        font-style: italic;
+    }
+</style>
 
 @code {
     private bool isEditing = false;
 
     private ProfileModel profile = new ProfileModel
     {
-        FullName = "CARLA GOMEZ",
+        FullName = "Carla Gomez",
+        Username = "carlag",
         Age = 30,
-        Gender = "Female",
+        Gender = "Woman",
         Height = 163,
+        Weight = 55,
         Ethnicity = "Hispanic",
-        Tags = new List<string> { "blonde", "tall", "gamer" }
+        HairColor = "Brunette",
+        Bio = "I love traveling, coffee, and good conversations. Looking for someone to share beautiful moments with.",
+        Tags = new List<string> { "travel", "coffee" }
     };
 
     private ProfileModel editProfile = new ProfileModel();
@@ -148,10 +384,14 @@
         editProfile = new ProfileModel
         {
             FullName = profile.FullName,
+            Username = profile.Username,
             Age = profile.Age,
             Gender = profile.Gender,
             Height = profile.Height,
+            Weight = profile.Weight,
             Ethnicity = profile.Ethnicity,
+            HairColor = profile.HairColor,
+            Bio = profile.Bio,
             Tags = profile.Tags.ToList()
         };
 
@@ -164,8 +404,20 @@
         if (isEditing) CopyToEdit();
     }
 
+    private string validationMessage = string.Empty;
+
     private void SaveProfile()
     {
+        // Validate input data
+        if (!editProfile.IsValid())
+        {
+            var errors = editProfile.GetValidationErrors();
+            validationMessage = string.Join(" | ", errors);
+            return;
+        }
+
+        validationMessage = string.Empty;
+
         var list = (editTags ?? string.Empty)
             .Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .Select(t => t.TrimStart('#'))
@@ -185,14 +437,38 @@
     public class ProfileModel
     {
         public string FullName { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
         public int Age { get; set; }
         public string Gender { get; set; } = string.Empty;
         public int Height { get; set; }
+        public int Weight { get; set; }
         public string Ethnicity { get; set; } = string.Empty;
+        public string HairColor { get; set; } = string.Empty;
+        public string Bio { get; set; } = string.Empty;
         public List<string> Tags { get; set; } = new List<string>();
 
         public string TagsDisplay => Tags != null && Tags.Count > 0
             ? string.Join(" ", Tags.Select(t => "#" + t))
             : string.Empty;
+
+        // Validation methods
+        public bool IsValid()
+        {
+            return Age >= 18 && Age <= 100 &&
+                   Height >= 50 && Height <= 250 &&
+                   Weight >= 30 && Weight <= 200;
+        }
+
+        public List<string> GetValidationErrors()
+        {
+            var errors = new List<string>();
+            if (Age < 18 || Age > 100)
+                errors.Add("Age must be between 18 and 100");
+            if (Height < 50 || Height > 250)
+                errors.Add("Height must be between 50 and 250 cm");
+            if (Weight < 30 || Weight > 200)
+                errors.Add("Weight must be between 30 and 200 kg");
+            return errors;
+        }
     }
 }

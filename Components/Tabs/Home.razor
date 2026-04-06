@@ -1,9 +1,13 @@
 ﻿@page "/"
 @page "/home"
 
-<section>
-    <div class="discovery-container">
-        <div class="card-stack">
+@using CST2550Project.Services
+@using CST2550Project.Models
+@using CST2550Project.DTOs
+
+<section style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 140px);">
+    <div class="discovery-container" style="width: 100%; display: flex; align-items: center; justify-content: center;">
+        <div class="card-stack" style="margin: 0 auto; position: relative;">
 
             @if (IsLoading)
             {
@@ -18,8 +22,8 @@
                     <div class="empty-icon">
                         <i class="fas fa-heart-broken"></i>
                     </div>
-                    <h2>No more profiles</h2>
-                    <p>You've seen everyone for now. Check back later for new people!</p>
+                    <h2>No More Profiles</h2>
+                    <p>You have reached your limit, please check back later for new profiles !</p>
                     <button class="btn btn-primary" @onclick="LoadProfiles">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
@@ -37,13 +41,19 @@
 <div class="toast-container"></div>
 
 @code {
-    private List<ProfileModel> Profiles = new();
+    private List<ProfileDto> Profiles = new();
 
     private bool noMoreProfiles = false;
     private bool IsLoading = true;
 
     [Inject]
     private NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    private ProfileService ProfileService { get; set; } = default!;
+
+    [Inject]
+    private AuthService AuthService { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,48 +65,37 @@
         IsLoading = true;
         noMoreProfiles = false;
 
-        // 🔌 Replace with your API later
-        await Task.Delay(1000);
+        // Using user Id = 1 for now (demo mode)
+        int userId = 1;
 
-        // TEMP MOCK DATA (remove when API ready)
-        Profiles = new List<ProfileModel>
+        var filter = new DiscoverFilterDto
         {
-            new ProfileModel
-            {
-                UserId = 1,
-                Name = "Anna",
-                Age = 21,
-                Bio = "Loves coffee ☕",
-                Photos = new List<string> {
-                    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimageio.forbes.com%2Fspecials-images%2Fimageserve%2F6532a388407b720effdbd589%2F0x0.jpg%3Fformat%3Djpg%26height%3D900%26width%3D1600%26fit%3Dbounds&f=1&nofb=1&ipt=3cd1009d788d7e40a211d7b44404691dd8035c1c8ae2bf277ab02c423b341a1b"
-                }
-            },
-            new ProfileModel
-            {
-                UserId = 2,
-                Name = "Sophie",
-                Age = 23,
-                Bio = "Gym & travel",
-                Photos = new List<string> {
-                    "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapers.com%2Fimages%2Fhd%2Fsmiling-random-person-graphic-png-trv-4350ryshed47fke7.jpg&f=1&nofb=1&ipt=1d3ce4ddd43345b8eecc0705161e2bf91645b598a0943bdca4a40d5f08d189f2"
-                }
-            }
+            Gender = SelectedGender,
+            MinAge = MinAge,
+            MaxAge = MaxAge,
+            SearchTerm = SearchTerm,
+            Count = 20
         };
+
+        Profiles = await ProfileService.GetDiscoveryProfilesAsync(userId, filter);
 
         IsLoading = false;
         noMoreProfiles = Profiles.Count == 0;
     }
 
-    private async Task HandleSwipe((ProfileModel profile, bool isLike) data)
+    private async Task HandleSwipe((ProfileDto profile, bool isLike) data)
     {
-        // 🔌 Send to API later
-        // await Api.Swipe(...)
+        // In the future:
+        // if (data.isLike) await ProfileService.LikeProfileAsync(userId, data.profile.UserId);
+        // else ...
 
         Profiles.RemoveAll(p => p.UserId == data.profile.UserId);
 
         if (Profiles.Count == 0)
         {
             noMoreProfiles = true;
+            // Optionally try to load more automatically
+            // await LoadProfiles();
         }
 
         await Task.CompletedTask;
