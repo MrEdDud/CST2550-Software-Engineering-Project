@@ -34,6 +34,21 @@
                 <button class="save-btn" @onclick="SaveProfile">Save</button>
             }
         </div>
+        @if (otherProfile != null)
+        {
+            <div class="compatibility-box">
+                <div class="compatibility-score">@compatibilityScore% Match</div>
+                @if (compatibilityReasons.Any())
+                {
+                    <ul class="compatibility-reasons">
+                        @foreach (var reason in compatibilityReasons)
+                        {
+                            <li>@reason</li>
+                        }
+                    </ul>
+                }
+            </div>
+        }
     </div>
     <hr>
     <div class="profile-content">
@@ -302,7 +317,7 @@
         </div>
 
         <!-- Images section -->
-        <aside class="images-col">
+        @* <aside class="images-col">
             <div class="section-title">
                 <div>Your profile images.</div>
             </div>
@@ -331,7 +346,7 @@
                     </div>
                 }
             </div>
-        </aside>
+        </aside> *@
     </div>
 </section>
 
@@ -340,6 +355,11 @@
 
     private ProfileModel profile = new();
     private ProfileModel editProfile = new();
+
+    // Compatibility
+    private int compatibilityScore = 0;
+    private List<string> compatibilityReasons = new();
+    private ProfileModel? otherProfile; // this will be the profile you’re comparing with
 
     protected override async Task OnInitializedAsync()
     {
@@ -464,6 +484,52 @@
         {
             profile.Photos = updatedProfile.Photos;
             StateHasChanged();
+        }
+    }
+
+    private void CalculateCompatibility()
+    {
+        if (otherProfile == null) return;
+
+        compatibilityScore = 0;
+        compatibilityReasons.Clear();
+
+        // 1. Preference match
+        bool currentLikesOther =
+            editProfile.LookingFor.Equals(otherProfile.Gender, StringComparison.OrdinalIgnoreCase)
+            || editProfile.LookingFor.Equals("Everyone", StringComparison.OrdinalIgnoreCase);
+
+        bool otherLikesCurrent =
+            otherProfile.LookingFor.Equals(editProfile.Gender, StringComparison.OrdinalIgnoreCase)
+            || otherProfile.LookingFor.Equals("Everyone", StringComparison.OrdinalIgnoreCase);
+
+        if (currentLikesOther && otherLikesCurrent)
+        {
+            compatibilityScore += 40;
+            compatibilityReasons.Add("Your preferences match each other.");
+        }
+        else if (currentLikesOther || otherLikesCurrent)
+        {
+            compatibilityScore += 20;
+            compatibilityReasons.Add("There is a partial preference match.");
+        }
+
+        // 2. Age compatibility
+        int ageDiff = Math.Abs(editProfile.Age - otherProfile.Age);
+        if (ageDiff <= 2) { compatibilityScore += 20; compatibilityReasons.Add("You are very close in age."); }
+        else if (ageDiff <= 5) { compatibilityScore += 15; compatibilityReasons.Add("You are in a similar age range."); }
+        else if (ageDiff <= 8) { compatibilityScore += 10; }
+        else if (ageDiff <= 12) { compatibilityScore += 5; }
+
+        if (compatibilityScore > 100) compatibilityScore = 100;
+    }
+
+    private async Task LoadOtherProfile(int otherUserId)
+    {
+        otherProfile = await ProfileService.GetProfileByUserIdAsync(otherUserId);
+        if (otherProfile != null)
+        {
+            CalculateCompatibility();
         }
     }
 }

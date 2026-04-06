@@ -165,8 +165,13 @@ namespace CST2550Project.Services
 
             var query = _context.Profiles
                 .Include(p => p.User)
-                .Where(p => p.UserId != userId)
-                .Where(p => !swipedUserIds.Contains(p.UserId));
+                .Where(p => p.UserId != userId);
+
+            // Only filter out swiped users if IncludeLikedOrSkipped is false
+            if (filter.IncludeLikedOrSkipped == false)
+            {
+                query = query.Where(p => !swipedUserIds.Contains(p.UserId));
+            }
 
             var genderFilter = filter.Gender ?? userProfile.LookingFor;
             if (!string.IsNullOrWhiteSpace(genderFilter) && genderFilter != "Everyone")
