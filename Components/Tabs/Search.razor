@@ -2,6 +2,7 @@
 @using CST2550Project.DTOs
 @using CST2550Project.Services
 @inject ProfileService ProfileService
+@inject SessionService Session
 
 <h1 class="page-title">Discover</h1>
 <p class="page-subtitle">People near you</p>
@@ -215,12 +216,12 @@ else
 
                 <div class="action-buttons">
                     <button class="icon-btn nope" style="color: rgb(255,77,109)"
-                            @onclick='() => HandleAction("Nope", p.Name)'>
+                            @onclick='() => HandleAction("Nope", p)'>
                         ✕
                     </button>
 
                     <button class="icon-btn like" style="color: rgb(46,229,157)"
-                            @onclick='() => HandleAction("Like", p.Name)'>
+                            @onclick='() => HandleAction("Like", p)'>
                         ❤
                     </button>
                 </div>
@@ -293,12 +294,22 @@ else
         isLoading = false;
     }
 
-    private void HandleAction(string action, string name)
+    private async Task HandleAction(string action, ProfileDto profile)
     {
+        var currentUserId = Session.UserId ?? 0;
+
         if (action == "Like")
-            lastAction = $"❤️ You liked {name}";
+        {
+            await ProfileService.LikeProfileAsync(currentUserId, profile.UserId);
+            lastAction = $"❤️ You liked {profile.Name}";
+        }
         else
-            lastAction = $"❌ You skipped {name}";
+        {
+            await ProfileService.DeclineProfileAsync(currentUserId, profile.UserId);
+            lastAction = $"❌ You skipped {profile.Name}";
+        }
+
+        profiles.RemoveAll(p => p.UserId == profile.UserId);
     }
 
     private void ToggleFilters() => ShowFilters = !ShowFilters;

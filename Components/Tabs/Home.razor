@@ -80,7 +80,7 @@
 
     private async Task HandleSwipe((ProfileModel profile, bool isLike) data)
     {
-        var currentUserId = 1;
+        var currentUserId = Session.UserId ?? 0;
 
         if (data.isLike)
         {
