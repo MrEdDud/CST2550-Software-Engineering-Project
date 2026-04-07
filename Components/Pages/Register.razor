@@ -1,0 +1,131 @@
+﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using CST2550Project.DTOs
+@inject NavigationManager Navigation
+@inject AuthService AuthService
+@inject SessionService Session
+@layout AuthLayout
+
+<div class="auth-header">
+    <h2>Create Account</h2>
+    <p>Start your journey to find love on Pairly</p>
+</div>
+
+<EditForm Model="@registerData"
+            OnValidSubmit="@HandleRegister"
+            class="auth-form">
+
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label><i class="fas fa-id-card"></i> Your Name</label>
+
+        <InputText class="form-control"
+                    @bind-Value="registerData.Name"
+                    placeholder="What should we call you?" />
+
+        <ValidationMessage For="@(() => registerData.Name)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Email</label>
+
+        <InputText class="form-control"
+                    @bind-Value="registerData.Email"
+                    placeholder="your@email.com" />
+
+        <ValidationMessage For="@(() => registerData.Email)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-lock"></i> Password</label>
+
+        <InputText type="password"
+                    class="form-control"
+                    @bind-Value="registerData.Password"
+                    placeholder="Create a strong password" />
+
+        <ValidationMessage For="@(() => registerData.Password)" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-lock"></i> Confirm Password</label>
+
+        <InputText type="password"
+                    class="form-control"
+                    @bind-Value="confirmPassword"
+                    placeholder="Write your password again" />
+    </div>
+
+    <div class="form-group">
+        <label><i class="fas fa-birthday-cake"></i> Age</label>
+
+        <InputNumber class="form-control"
+                        @bind-Value="registerData.Age" />
+
+        <ValidationMessage For="@(() => registerData.Age)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">
+        <span>Next</span>
+        <i class="fas fa-check"></i>
+    </button>
+
+</EditForm>
+
+@if (!string.IsNullOrWhiteSpace(successMessage))
+{
+    <div class="message success">@successMessage</div>
+}
+
+<div class="auth-footer">
+    <p>
+        Already have an account?
+        <NavLink href="/login">Sign In</NavLink>
+    </p>
+</div>
+
+@code {
+
+    private RegisterDto registerData = new();
+
+    private string confirmPassword = "";
+
+    private string successMessage = string.Empty;
+
+    private async Task HandleRegister()
+    {
+        if (registerData.Password != confirmPassword)
+        {
+            successMessage = "Passwords do not match";
+            return;
+        }
+
+        try
+        {
+            var result = await AuthService.RegisterAsync(registerData);
+
+            if (result != null)
+            {
+                await Session.SetSessionAsync(
+                    result.UserId,
+                    result.Username,
+                    result.Token,
+                    result.HasProfile
+                );
+
+                successMessage = "Account created successfully";
+
+                Navigation.NavigateTo("/details");
+            }
+            else
+            {
+                successMessage = "Registration failed";
+            }
+        }
+        catch (Exception ex)
+        {
+            successMessage = ex.Message;
+        }
+    }
+}

@@ -1,0 +1,462 @@
+﻿@page "/matches"
+@page "/matches/{MatchId:int}"
+@inject HttpClient Http
+@inject SessionService Session
+@inject IConfiguration Config
+@using CST2550Project.DTOs
+@using CST2550Project.Models
+
+<div class="chat-layout @(SelectedMatch == null ? "no-selection" : "") @(SidebarOpen ? "sidebar-open" : "")">
+    <!-- Matches Sidebar -->
+    <aside class="sidebar" @onclick="ToggleSidebar">
+        <div class="matches-panel">
+            <button class="matches-header-btn" @onclick:stopPropagation="true" @onclick="ToggleMatchRequests">
+                <i class="fa-regular fa-envelope"></i>
+                <span>Match requests</span>
+            </button>
+            @if (ShowingMatchRequests)
+            {
+                <ul class="match-list">
+                    @foreach (var profile in MatchRequestsList)
+                    {
+                        <li class="match-item">
+                            <div class="match-top">
+                                <div class="avatar">
+                                    <span class="avatar-fallback">@profile.Username[0]</span>
+                                </div>
+                                <span class="match-name">@profile.Username</span>
+                            </div>
+                            <div class="match-actions">
+                                <button class="btn btn-success btn-sm" @onclick:stopPropagation="true" @onclick="() => AcceptMatch(profile.UserId)">Accept</button>
+                                <button class="btn btn-danger btn-sm" @onclick:stopPropagation="true" @onclick="() => DeclineMatch(profile.UserId)">Decline</button>
+                            </div>
+                        </li>
+                    }
+                </ul>            
+            }
+            else
+            {
+                <ul class="match-list">
+                    @foreach (var match in MatchList)
+                    {
+                        var other = GetOtherUser(match);
+                        <li class="match-item" @onclick:stopPropagation="true" @onclick="() => ChooseMatch(match)">
+                            <div class="match-top">
+                                <div class="avatar">
+                                    <span class="avatar-fallback">@other.Username[0]</span>
+                                </div>
+                                <span class="match-name">@other.Username</span>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </aside>
+
+    <!-- Chat Area -->
+    <main class="chat-main">
+        @if (SelectedMatch != null)
+        {
+            var other = GetOtherUser(SelectedMatch);
+
+            <div class="chat-header">
+                <div class="chat-header-avatar">
+                    <span class="avatar-fallback">@other.Username[0]</span>
+                </div>
+                <span class="chat-header-name">@other.Username</span>
+            </div>
+
+            <hr>
+
+            <div class="messages-container" @ref="messagesContainer">
+                @foreach (var msg in SelectedMatch.Messages)
+                {
+                    var fromMe = msg.SenderId == CurrentUserId;
+                    <div class="message-row @(fromMe ? "from-me" : "from-them")">
+                        @if (!fromMe)
+                        {
+                            <div class="msg-avatar">
+                                <span class="avatar-fallback sm">@other.Username[0]</span>
+                            </div>
+                        }
+                        <div class="message-bubble @(fromMe ? "bubble-me" : "bubble-them")">
+                            @msg.Content
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="input-bar">
+                    <button class="ai-btn" @onclick="GenerateMessage">
+                        🤖 AI Suggest
+                    </button>
+                <input class="message-input"
+                       type="text"
+                       placeholder="message..."
+                       @bind="newMessage"
+                       @bind:event="oninput"
+                       @onkeydown="HandleKeyDown" />
+                <button class="send-btn" @onclick="SendMessage" title="Send">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="19" x2="12" y2="5" />
+                        <polyline points="5 12 12 5 19 12" />
+                    </svg>
+                </button>
+            </div>
+        }
+    </main>
+</div>
+
+@code {
+    private bool SidebarOpen = true;
+
+    [Parameter]
+    public int? MatchId { get; set; }
+
+    private int CurrentUserId => Session.UserId!.Value;
+
+    private ElementReference messagesContainer;
+
+    private string newMessage = string.Empty;
+
+    private MatchDto? SelectedMatch;
+
+    private List<MatchDto> MatchList = new();
+
+    private List<ProfileDto> MatchRequestsList = new();
+
+    private bool ShowingMatchRequests = false;
+
+    private ProfileModel CurrentChatProfile;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Session.IsLoggedIn)
+            return;
+
+        await LoadMatches();
+
+        SelectedMatch = MatchId.HasValue
+            ? MatchList.FirstOrDefault(m => m.Id == MatchId.Value)
+            : MatchList.FirstOrDefault();
+
+        if (SelectedMatch != null) 
+        {
+            await SetCurrentChatProfile(SelectedMatch);
+            await LoadMessages(SelectedMatch.Id);
+        }
+    }
+
+    private async Task ToggleMatchRequests()
+    {
+        ShowingMatchRequests = !ShowingMatchRequests;
+
+        if (ShowingMatchRequests)
+        {
+            // Load pending requests
+            await ShowMatchRequests();
+        }
+        else
+        {
+            // Clear selection to show normal matches
+            SelectedMatch = null;
+        }
+    }
+
+    // Load all matches for the current user
+    private async Task LoadMatches()
+    {
+        if (!Session.IsLoggedIn)
+            return;
+
+        try
+        {
+            // No user ID in URL; backend uses GetCurrentUserId() from auth
+            MatchList = await Http.GetFromJsonAsync<List<MatchDto>>("api/matches")
+                        ?? new List<MatchDto>();
+
+            // Optionally pick first match if none selected
+            if (SelectedMatch == null && MatchList.Any())
+                SelectedMatch = MatchList.First();
+
+            if (SelectedMatch != null)
+                await LoadMessages(SelectedMatch.Id);
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.Error.WriteLine($"Failed to load matches: {ex.Message}");
+            MatchList = new List<MatchDto>();
+        }
+    }
+
+    private async Task LoadMessages(int matchId)
+    {
+        var messages = await Http.GetFromJsonAsync<List<MessageDto>>(
+        $"api/messages/match/{matchId}");
+
+        if (SelectedMatch != null)
+            SelectedMatch.Messages = messages ?? new List<MessageDto>();
+    }
+
+    private UserDto GetOtherUser(MatchDto match)
+    {
+        if (match.User1Id == CurrentUserId)
+            return match.User2 ?? new UserDto { Username = "Unknown" };
+
+        return match.User1 ?? new UserDto { Username = "Unknown" };
+    }
+
+    private async Task SetCurrentChatProfile(MatchDto match)
+    {
+        var otherUser = GetOtherUser(match); // returns UserDto
+        if (otherUser == null)
+        {
+            Console.WriteLine("SetCurrentChatProfile: OtherUser is null");
+            return;
+        }
+
+        try
+        {
+            // fetch profile for this user
+            var profile = await Http.GetFromJsonAsync<ProfileDto>($"api/profiles/{otherUser.Id}");
+            if (profile == null)
+            {
+                Console.WriteLine("SetCurrentChatProfile: Profile fetch returned null");
+                return;
+            }
+
+            CurrentChatProfile = new ProfileModel
+            {
+                Name = profile.Name,
+                Age = profile.Age,
+                Bio = profile.Bio
+            };
+
+            Console.WriteLine($"SetCurrentChatProfile: Name={CurrentChatProfile.Name}, Age={CurrentChatProfile.Age}, Bio={CurrentChatProfile.Bio}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"SetCurrentChatProfile: Failed to fetch profile: {ex.Message}");
+        }
+    }
+
+    private async Task ChooseMatch(MatchDto match)
+    {
+        SelectedMatch = match;
+        await SetCurrentChatProfile(match);
+        await LoadMessages(match.Id);
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await SendMessage();
+    }
+
+    private async Task SendMessage()
+    {
+        if (SelectedMatch == null || string.IsNullOrWhiteSpace(newMessage))
+            return;
+
+        var dto = new SendMessageDto
+        {
+            MatchId = SelectedMatch.Id,
+            Content = newMessage
+        };
+
+        var response = await Http.PostAsJsonAsync("api/messages", dto);
+
+        if (!response.IsSuccessStatusCode)
+            return;
+
+        var messageDto = await response.Content.ReadFromJsonAsync<MessageDto>();
+
+        if (messageDto != null)
+        {
+            SelectedMatch.Messages.Add(messageDto); // DTO list, no conversion needed
+            newMessage = string.Empty;
+        }
+    }
+
+    private void ToggleSidebar()
+    {
+        SidebarOpen = !SidebarOpen;
+    }
+
+    private async Task<List<ProfileDto>> LoadMatchRequests()
+    {
+        if (!Session.UserId.HasValue)
+            return new List<ProfileDto>();
+
+        try
+        {
+            Console.WriteLine($"Current UserId: {Session.UserId.Value}"); // check your user id
+            var requests = await Http.GetFromJsonAsync<List<ProfileDto>>("api/matches/likes");
+            Console.WriteLine($"Got {requests?.Count ?? 0} match requests");
+            return requests ?? new List<ProfileDto>();
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Failed to load match requests: {ex.Message}");
+            return new List<ProfileDto>();
+        }
+    }
+
+    // Load pending match requests (likes you haven’t matched yet)
+    private async Task ShowMatchRequests()
+    {
+        if (!Session.IsLoggedIn)
+            return;
+
+        try
+        {
+            MatchRequestsList = await Http.GetFromJsonAsync<List<ProfileDto>>("api/matches/likes")
+                                ?? new List<ProfileDto>();
+
+            // reset selection so chat area clears
+            SelectedMatch = null;
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.Error.WriteLine($"Failed to load match requests: {ex.Message}");
+            MatchRequestsList = new List<ProfileDto>();
+        }
+    }
+
+    private async Task AcceptMatch(int userId)
+    {
+        var response = await Http.PostAsync($"api/matches/accept/{userId}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            // Remove from requests list and reload matches
+            MatchRequestsList.RemoveAll(p => p.Id == userId);
+            await LoadMatches();
+        }
+    }
+
+    private async Task DeclineMatch(int userId)
+    {
+        var response = await Http.PostAsync($"api/matches/decline/{userId}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            // Remove from requests list
+            MatchRequestsList.RemoveAll(p => p.Id == userId);
+        }
+    }
+
+    private async Task GenerateMessage()
+    {
+        if (CurrentChatProfile == null) 
+        {
+            Console.WriteLine("GenerateMessage: CurrentChatProfile is null!");
+            return;
+        }
+
+        var prompt = $@"
+You are helping write a friendly message to a person. 
+Here is the person's info:
+- Name: {CurrentChatProfile.Name}
+- Age: {CurrentChatProfile.Age}
+- Bio: {CurrentChatProfile.Bio}
+
+Write a short, friendly, and engaging message that I could send to them.
+";
+
+        var requestBody = new
+        {
+            model = "gpt-4o-mini",
+            messages = new object[]
+            {
+            new { role = "user", content = prompt }
+            },
+            max_tokens = 200
+        };
+
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
+        request.Headers.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", Config["OpenAI:ApiKey"]);
+        request.Content = JsonContent.Create(requestBody);
+
+        try
+        {
+            Console.WriteLine("GenerateMessage: Sending HTTP request...");
+            var response = await Http.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("GenerateMessage: Response received successfully");
+                var json = await response.Content.ReadFromJsonAsync<OpenAIResponse>();
+                if (json?.choices?.Length > 0)
+                {
+                    newMessage = json.choices[0].message.content.Trim(); // <-- assign to newMessage
+                    Console.WriteLine($"GenerateMessage: AI suggested: {newMessage}");
+                    StateHasChanged(); // update the input immediately
+                }
+                else
+                {
+                    Console.WriteLine("GenerateMessage: No choices returned from OpenAI");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"GenerateMessage: Failed with status {response.StatusCode}");
+                newMessage = "Failed to generate message 🤖";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"GenerateMessage: Exception occurred - {ex.Message}");
+            newMessage = "Error generating message 🤖";
+        }
+    }
+
+    private async Task SendAIMessage()
+    {
+        if (SelectedMatch == null || string.IsNullOrWhiteSpace(newMessage))
+            return;
+
+        var dto = new SendMessageDto
+        {
+            MatchId = SelectedMatch.Id,
+            Content = newMessage
+        };
+
+        var response = await Http.PostAsJsonAsync("api/messages", dto);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var messageDto = await response.Content.ReadFromJsonAsync<MessageDto>();
+            if (messageDto != null)
+            {
+                SelectedMatch.Messages.Add(messageDto);
+                newMessage = ""; // clear input after sending
+            }
+        }
+    }
+
+    private async Task HandleEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await SendAIMessage();
+    }
+
+    // Simple DTO for parsing OpenAI response
+    private class OpenAIResponse
+    {
+        public Choice[] choices { get; set; }
+
+        public class Choice
+        {
+            public Message message { get; set; }
+        }
+
+        public class Message
+        {
+            public string role { get; set; }
+            public string content { get; set; }
+        }
+    }
+}
