@@ -1,0 +1,535 @@
+﻿@page "/profile"
+@using CST2550Project.Models
+@using CST2550Project.Services
+@using CST2550Project.DTOs
+@inject HttpClient Http
+@inject ProfileService ProfileService
+@inject SessionService Session
+@inject NavigationManager Nav
+
+<section class="profile-card profile-card--pink">
+    <div class="card-header">
+        <div class="card-title">
+            <div class="avatar-wrap">
+                @if (!string.IsNullOrWhiteSpace(profile.ProfilePhotoUrl))
+                {
+                    <img src="@profile.ProfilePhotoUrl" class="avatar-img" />
+                }
+                else
+                {
+                    <i class="fa-regular fa-circle-user sidebar-avatar avatar-placeholder"></i>
+                }
+
+                @if (isEditing)
+                {
+                    <InputFile OnChange="UploadProfilePhoto" accept="image/*" />
+                }
+            </div>
+            <h1 class="profile-name">@Session.Username</h1>
+        </div>
+        <div class="header-buttons">
+            <button class="edit-btn" @onclick="ToggleEdit">@((isEditing) ? "Close" : "Edit")</button>
+            @if (isEditing)
+            {
+                <button class="save-btn" @onclick="SaveProfile">Save</button>
+            }
+        </div>
+        @if (otherProfile != null)
+        {
+            <div class="compatibility-box">
+                <div class="compatibility-score">@compatibilityScore% Match</div>
+                @if (compatibilityReasons.Any())
+                {
+                    <ul class="compatibility-reasons">
+                        @foreach (var reason in compatibilityReasons)
+                        {
+                            <li>@reason</li>
+                        }
+                    </ul>
+                }
+            </div>
+        }
+    </div>
+    <hr>
+    <div class="profile-content">
+        <div class="info-col">
+            <!-- BASIC SECTION -->
+            <div class="section-title">Basic</div>
+
+            <!-- Bio -->
+            <div class="info-row">
+                <div class="info-label">Bio</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Bio</div>
+                    }
+                    else
+                    {
+                        <textarea class="value-input" @bind="editProfile.Bio" placeholder="Tell us about yourself..." rows="4"></textarea>
+                    }
+                </div>
+            </div>
+
+            <!-- Gender -->
+            <div class="info-row">
+                <div class="info-label">Gender</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Gender </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.Gender">
+                            <option>Female</option>
+                            <option>Male</option>
+                            <option>Other</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Preferred Gender -->
+            <div class="info-row">
+                <div class="info-label">Interested In</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.LookingFor </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.LookingFor">
+                            <option>Female</option>
+                            <option>Male</option>
+                            <option>Everyone</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Age -->
+            <div class="info-row">
+                <div class="info-label">Age</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Age</div>
+                    }
+                    else
+                    {
+                        <input class="value-input" type="number" min="18" max="120" step="1" @bind="editProfile.Age" />
+                    }
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="info-row">
+                <div class="info-label">Location</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Location</div>
+                    }
+                    else
+                    {
+                        <input class="value-input" type="text" @bind="editProfile.Location" placeholder="City, Country" />
+                    }
+                </div>
+            </div>
+
+            <!-- APPEARANCE SECTION -->
+            <div class="section-title">Appearance</div>
+
+            <!-- Hair Colour -->
+            <div class="info-row">
+                <div class="info-label">Hair Colour</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.HairColor </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.HairColor">
+                            <option>Black</option>
+                            <option>Brown</option>
+                            <option>Blonde</option>
+                            <option>Red</option>
+                            <option>Auburn</option>
+                            <option>Grey</option>
+                            <option>White</option>
+                            <option>Other</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Eye Colour -->
+            <div class="info-row">
+                <div class="info-label">Eye Colour</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.EyeColor </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.EyeColor">
+                            <option>Brown</option>
+                            <option>Blue</option>
+                            <option>Green</option>
+                            <option>Hazel</option>
+                            <option>Grey</option>
+                            <option>Amber</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Skin Tone -->
+            <div class="info-row">
+                <div class="info-label">Skin Tone</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.SkinTone </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.SkinTone">
+                            <option>Fair</option>
+                            <option>Light</option>
+                            <option>Medium</option>
+                            <option>Olive</option>
+                            <option>Tan</option>
+                            <option>Dark</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Ethnicity -->
+            <div class="info-row">
+                <div class="info-label">Ethnicity</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Ethnicity </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.Ethnicity">
+                            <option>White</option>
+                            <option>Black</option>
+                            <option>Asian</option>
+                            <option>Hispanic</option>
+                            <option>Middle eastern</option>
+                            <option>Mixed</option>
+                            <option>Other</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Height -->
+            <div class="info-row">
+                <div class="info-label">Height</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.HeightCm cm</div>
+                    }
+                    else
+                    {
+                        <input class="value-input" type="number" min="120" max="230" step="1" @bind="editProfile.HeightCm" />
+                    }
+                </div>
+            </div>
+
+            <!-- Body Type -->
+            <div class="info-row">
+                <div class="info-label">Body Type</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.BodyType </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.BodyType">
+                            <option>Slim</option>
+                            <option>Athletic</option>
+                            <option>Average</option>
+                            <option>Curvy</option>
+                            <option>Muscular</option>
+                            <option>Plus sized</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- LIFESTYLE SECTION -->
+            <div class="section-title">Lifestyle</div>
+
+            <!-- Smoking -->
+            <div class="info-row">
+                <div class="info-label">Smoking</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Smoking </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.Smoking">
+                            <option>Never</option>
+                            <option>Rarely</option>
+                            <option>Socially</option>
+                            <option>Occasionally</option>
+                            <option>Regularly</option>
+                        </select>
+                    }
+                </div>
+            </div>
+
+            <!-- Drinking -->
+            <div class="info-row">
+                <div class="info-label">Drinking</div>
+                <div class="info-value">
+                    @if (!isEditing)
+                    {
+                        <div class="value-pill">@profile.Drinking </div>
+                    }
+                    else
+                    {
+                        <select class="value-input" @bind="editProfile.Drinking">
+                            <option>Never</option>
+                            <option>Rarely</option>
+                            <option>Socially</option>
+                            <option>Occasionally</option>
+                            <option>Regularly</option>
+                        </select>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Images section -->
+        @* <aside class="images-col">
+            <div class="section-title">
+                <div>Your profile images.</div>
+            </div>
+
+            <div class="images-grid">
+                @foreach (var photoUrl in profile.Photos ?? new List<string>())
+                {
+                    <div class="image-item">
+                        <img src="@photoUrl" alt="Profile Photo" />
+                        @if (isEditing)
+                        {
+                            <button class="remove-photo-btn" @onclick="() => RemoveGalleryPhoto(photoUrl)">
+                                ✕
+                            </button>
+                        }
+                    </div>
+                }
+
+                @if (isEditing)
+                {
+                    <div class="image-item add-photo">
+                        <label class="upload-btn">
+                            +
+                            <InputFile OnChange="UploadGalleryPhoto" accept="image/*" />
+                        </label>
+                    </div>
+                }
+            </div>
+        </aside> *@
+    </div>
+</section>
+
+@code {
+    private bool isEditing = false;
+
+    private ProfileModel profile = new();
+    private ProfileModel editProfile = new();
+
+    // Compatibility
+    private int compatibilityScore = 0;
+    private List<string> compatibilityReasons = new();
+    private ProfileModel? otherProfile; // this will be the profile you’re comparing with
+
+    protected override async Task OnInitializedAsync()
+    {
+        profile = await ProfileService.GetProfileByUserIdAsync(Session.UserId!.Value);
+        profile.Photos ??= new List<string>();
+
+        if (profile == null)
+        {
+            profile = new ProfileModel
+            {
+                UserId = Session.UserId!.Value
+            };
+        }
+    }
+
+    private void CopyToEdit()
+    {
+        editProfile = new ProfileModel
+        {
+            UserId = profile.UserId,
+            Age = profile.Age,
+            Gender = profile.Gender,
+            LookingFor = profile.LookingFor,
+            HeightCm = profile.HeightCm,
+            Bio = profile.Bio,
+            Location = profile.Location,
+            HairColor = profile.HairColor,
+            EyeColor = profile.EyeColor,
+            SkinTone = profile.SkinTone,
+            BodyType = profile.BodyType,
+            Ethnicity = profile.Ethnicity,
+            Smoking = profile.Smoking,
+            Drinking = profile.Drinking,
+
+            ProfilePhotoUrl = profile.ProfilePhotoUrl,
+            Photos = profile.Photos
+        };
+    }
+
+    private void ToggleEdit()
+    {
+        isEditing = !isEditing;
+        if (isEditing) CopyToEdit();
+    }
+
+    private async Task SaveProfile()
+    {
+        var dto = new UpdateProfileDto
+        {
+            Name = string.IsNullOrWhiteSpace(editProfile.Name) ? profile.Name : editProfile.Name,
+            Age = editProfile.Age,
+            Gender = editProfile.Gender,
+            LookingFor = editProfile.LookingFor,
+            HeightCm = editProfile.HeightCm,
+            Bio = editProfile.Bio,
+            Location = editProfile.Location,
+            HairColor = editProfile.HairColor,
+            EyeColor = editProfile.EyeColor,
+            SkinTone = editProfile.SkinTone,
+            BodyType = editProfile.BodyType,
+            Ethnicity = editProfile.Ethnicity,
+            Smoking = editProfile.Smoking,
+            Drinking = editProfile.Drinking
+        };
+
+        var updated = await ProfileService.UpdateProfileAsync(Session.UserId!.Value, dto);
+
+        if (updated != null)
+        {
+            // reload fresh DB values
+            profile = await ProfileService.GetProfileByUserIdAsync(Session.UserId!.Value) ?? new ProfileModel();
+        }
+
+        isEditing = false;
+    }
+
+    private async Task<string> ConvertFileToBase64(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        using var stream = file.OpenReadStream(5 * 1024 * 1024);
+        using var ms = new MemoryStream();
+
+        await stream.CopyToAsync(ms);
+
+        return $"data:{file.ContentType};base64,{Convert.ToBase64String(ms.ToArray())}";
+    }
+
+    private async Task UploadProfilePhoto(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var url = await ProfileService.SaveProfilePhotoAsync(profile.UserId, file, "profile");
+
+        profile.ProfilePhotoUrl = url;
+        await ProfileService.UpdateProfilePhotoAsync(profile.UserId, url);
+    }
+
+    private async Task UploadGalleryPhoto(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var url = await ProfileService.SaveProfilePhotoAsync(profile.UserId, file, "gallery");
+
+        var updatedProfile = await ProfileService.AddGalleryPhotoAsync(profile.UserId, url);
+
+        if (updatedProfile != null)
+        {
+            profile.Photos = updatedProfile.Photos;
+            StateHasChanged(); // force Blazor to re-render the images grid
+        }
+    }
+
+    private async Task RemoveGalleryPhoto(string photoUrl)
+    {
+        if (profile.Photos.Contains(photoUrl))
+        {
+            profile.Photos.Remove(photoUrl); // remove from local list immediately
+            StateHasChanged(); // update UI
+        }
+
+        var updatedProfile = await ProfileService.RemoveGalleryPhotoAsync(profile.UserId, photoUrl);
+        if (updatedProfile != null)
+        {
+            profile.Photos = updatedProfile.Photos;
+            StateHasChanged();
+        }
+    }
+
+    private void CalculateCompatibility()
+    {
+        if (otherProfile == null) return;
+
+        compatibilityScore = 0;
+        compatibilityReasons.Clear();
+
+        // 1. Preference match
+        bool currentLikesOther =
+            editProfile.LookingFor.Equals(otherProfile.Gender, StringComparison.OrdinalIgnoreCase)
+            || editProfile.LookingFor.Equals("Everyone", StringComparison.OrdinalIgnoreCase);
+
+        bool otherLikesCurrent =
+            otherProfile.LookingFor.Equals(editProfile.Gender, StringComparison.OrdinalIgnoreCase)
+            || otherProfile.LookingFor.Equals("Everyone", StringComparison.OrdinalIgnoreCase);
+
+        if (currentLikesOther && otherLikesCurrent)
+        {
+            compatibilityScore += 40;
+            compatibilityReasons.Add("Your preferences match each other.");
+        }
+        else if (currentLikesOther || otherLikesCurrent)
+        {
+            compatibilityScore += 20;
+            compatibilityReasons.Add("There is a partial preference match.");
+        }
+
+        // 2. Age compatibility
+        int ageDiff = Math.Abs(editProfile.Age - otherProfile.Age);
+        if (ageDiff <= 2) { compatibilityScore += 20; compatibilityReasons.Add("You are very close in age."); }
+        else if (ageDiff <= 5) { compatibilityScore += 15; compatibilityReasons.Add("You are in a similar age range."); }
+        else if (ageDiff <= 8) { compatibilityScore += 10; }
+        else if (ageDiff <= 12) { compatibilityScore += 5; }
+
+        if (compatibilityScore > 100) compatibilityScore = 100;
+    }
+
+    private async Task LoadOtherProfile(int otherUserId)
+    {
+        otherProfile = await ProfileService.GetProfileByUserIdAsync(otherUserId);
+        if (otherProfile != null)
+        {
+            CalculateCompatibility();
+        }
+    }
+}

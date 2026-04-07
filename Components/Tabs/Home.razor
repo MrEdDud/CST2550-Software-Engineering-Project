@@ -1,0 +1,108 @@
+﻿@page "/"
+@page "/home"
+@inject ProfileService ProfileService
+@inject SessionService Session
+@using CST2550Project.DTOs
+
+<section>
+    <div class="discovery-container">
+        <div class="card-stack">
+
+            @if (IsLoading)
+            {
+                <div class="loading-card">
+                    <div class="loader"></div>
+                    <p>Finding people near you...</p>
+                </div>
+            }
+            else if (noMoreProfiles)
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-heart-broken"></i>
+                    </div>
+                    <h2>No more profiles</h2>
+                    <p>You've seen everyone for now. Check back later for new people!</p>
+                    <button class="btn btn-primary" @onclick="LoadProfiles">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            }
+            else
+            {
+                <SwipeCard Profiles="Profiles" OnSwipe="@HandleSwipe" />
+            }
+
+        </div>
+    </div>
+</section>
+
+<div class="toast-container"></div>
+
+@code {
+    private List<ProfileModel> Profiles = new();
+
+    private bool noMoreProfiles = false;
+    private bool IsLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfiles();
+    }
+
+    private async Task LoadProfiles()
+    {
+        IsLoading = true;
+        noMoreProfiles = false;
+
+        var discoveryFilter = new DiscoverFilterDto
+        {
+            MinAge = MinAge,
+            MaxAge = MaxAge,
+            Gender = SelectedGender 
+        };
+
+        var currentUserId = Session.UserId ?? 0;
+        var profiles = await ProfileService.GetDiscoveryProfilesAsync(currentUserId, discoveryFilter);
+
+        Profiles = profiles.Select(p => new ProfileModel
+        {
+            UserId = p.UserId,
+            Name = p.Name,
+            Age = p.Age,
+            Bio = p.Bio,
+            ProfilePhotoUrl = p.ProfilePhotoUrl
+        }).ToList();
+
+        IsLoading = false;
+        noMoreProfiles = Profiles.Count == 0;
+    }
+
+    private async Task HandleSwipe((ProfileModel profile, bool isLike) data)
+    {
+        var currentUserId = Session.UserId ?? 0;
+
+        if (data.isLike)
+        {
+            await ProfileService.LikeProfileAsync(currentUserId, data.profile.UserId);
+        }
+        else
+        {
+            await ProfileService.DeclineProfileAsync(currentUserId, data.profile.UserId);
+        }
+
+        Profiles.RemoveAll(p => p.UserId == data.profile.UserId);
+
+        if (Profiles.Count == 0)
+        {
+            noMoreProfiles = true;
+        }
+    }
+
+    private string SearchTerm = "";
+    private bool ShowFilters = false;
+
+    private int MinAge = 18;
+    private int MaxAge = 35;
+    private string SelectedGender = "";
+}

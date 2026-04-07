@@ -1,27 +1,84 @@
 ﻿@inherits LayoutComponentBase
+@using CST2550Project.Services
+@inject SessionService Session
 
 <div class="app-shell">
-    <!-- Top bar -->
     <header class="topbar">
         <div class="brand">
-            <span class="brand-dot"></span>
+            <i class="fa-solid fa-heart"></i>
             <span class="brand-name">Pairly</span>
         </div>
 
-        <nav class="topnav">
-            <a href="/home" class="topnav-link">Discover</a>
-            <a href="/matches" class="topnav-link">Matches</a>
-            <a href="/messages" class="topnav-link">Messages</a>
-            <a href="/profile" class="topnav-link">Profile</a>
-        </nav>
-
         <div class="topbar-actions">
-            <a class="ghost-btn" href="/login">Logout</a>
+            <button class="header-btn">
+                <i class="fas fa-bell"></i>
+            </button>
         </div>
     </header>
 
-    <!-- Page content -->
-    <main class="app-content">
-        @Body
-    </main>
+    <div class="main-layout">
+        <aside class="app-sidebar">
+            <div class="sidebar-profile">
+                <i class="fa-regular fa-circle-user sidebar-avatar"></i>
+                <div>
+                    <strong>@Username</strong><br />
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/home" class="sidebar-link">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Home</span>
+                </a>
+
+                <a href="/matches" class="sidebar-link">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Matches</span>
+                </a>
+
+                <a href="/profile" class="sidebar-link">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Profile</span>
+                </a>
+
+                <a href="/search" class="sidebar-link">
+                    <i class="fas fa-search search-icon"></i>
+                    <span>Search</span>
+                </a>
+
+                <a href="/settings" class="sidebar-link">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="">
+            @Body
+        </main>
+    </div>
 </div>
+
+<!-- LOGIN BLOCKER MODAL -->
+@if (!Session.IsLoggedIn)
+{
+    <div class="login-blocker">
+        <div class="login-blocker-content">
+            <h2>You're not logged in</h2>
+            <p>Please log in to access Pairly.</p>
+            <a href="/login" class="btn btn-primary">Go to Login</a>
+        </div>
+    </div>
+}
+
+@code {
+    string Username = "Guest";
+
+    protected override void OnInitialized()
+    {
+        if (Session.IsLoggedIn)
+        {
+            Username = Session.Username;
+        }
+    }
+}
