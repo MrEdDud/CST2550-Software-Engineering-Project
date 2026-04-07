@@ -234,24 +234,56 @@ namespace CST2550Project.Services
             return profiles.Select(MapToDto).ToList();
         }
 
-        public async Task<bool> LikeProfileAsync(int fromUserId, int toUserId)
+        public async Task LikeProfileAsync(int fromUserId, int toUserId)
         {
-            // Check if already liked
-            if (await _context.Likes.AnyAsync(l => l.FromUserId == fromUserId && l.ToUserId == toUserId))
-                return false;
+            // Check if the like already exists
+            var existingLike = await _context.Likes
+                .FirstOrDefaultAsync(l => l.FromUserId == fromUserId && l.ToUserId == toUserId);
 
-            // Save like
-            _context.Likes.Add(new Like { FromUserId = fromUserId, ToUserId = toUserId, CreatedAt = DateTime.UtcNow });
-
-            // Check for mutual like
-            var mutual = await _context.Likes.FirstOrDefaultAsync(l => l.FromUserId == toUserId && l.ToUserId == fromUserId);
-            if (mutual != null)
+            if (existingLike != null)
             {
-                _context.Matches.Add(new Match { User1Id = fromUserId, User2Id = toUserId, MatchedAt = DateTime.UtcNow });
+                // Already liked, just return
+                return;
+            }
+
+            // Create the like
+            var like = new Like
+            {
+                FromUserId = fromUserId,
+                ToUserId = toUserId,
+                CreatedAt = DateTime.UtcNow,
+                IsSuperLike = false
+            };
+            _context.Likes.Add(like);
+
+            // Check if the other user has liked back
+            var reciprocalLike = await _context.Likes
+                .FirstOrDefaultAsync(l => l.FromUserId == toUserId && l.ToUserId == fromUserId);
+
+            if (reciprocalLike != null)
+            {
+                // Normalize IDs so the smaller is always User1Id
+                int user1Id = Math.Min(fromUserId, toUserId);
+                int user2Id = Math.Max(fromUserId, toUserId);
+
+                // Check if the match already exists (just in case)
+                var existingMatch = await _context.Matches
+                    .FirstOrDefaultAsync(m => m.User1Id == user1Id && m.User2Id == user2Id);
+
+                if (existingMatch == null)
+                {
+                    var match = new Match
+                    {
+                        User1Id = user1Id,
+                        User2Id = user2Id,
+                        MatchedAt = DateTime.UtcNow,
+                        IsActive = true
+                    };
+                    _context.Matches.Add(match);
+                }
             }
 
             await _context.SaveChangesAsync();
-            return true;
         }
 
         public async Task<bool> DeclineProfileAsync(int fromUserId, int toUserId)

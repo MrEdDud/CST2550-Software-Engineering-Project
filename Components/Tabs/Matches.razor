@@ -27,8 +27,8 @@
                                 <span class="match-name">@profile.Username</span>
                             </div>
                             <div class="match-actions">
-                                <button class="btn btn-success btn-sm" @onclick:stopPropagation="true" @onclick="() => AcceptMatch(profile.Id)">Accept</button>
-                                <button class="btn btn-danger btn-sm" @onclick:stopPropagation="true" @onclick="() => DeclineMatch(profile.Id)">Decline</button>
+                                <button class="btn btn-success btn-sm" @onclick:stopPropagation="true" @onclick="() => AcceptMatch(profile.UserId)">Accept</button>
+                                <button class="btn btn-danger btn-sm" @onclick:stopPropagation="true" @onclick="() => DeclineMatch(profile.UserId)">Decline</button>
                             </div>
                         </li>
                     }
@@ -88,7 +88,7 @@
             </div>
 
             <div class="input-bar">
-                    <button class="btn btn-secondary" @onclick="GenerateMessage">
+                    <button class="ai-btn" @onclick="GenerateMessage">
                         🤖 AI Suggest
                     </button>
                 <input class="message-input"
@@ -143,9 +143,11 @@
             ? MatchList.FirstOrDefault(m => m.Id == MatchId.Value)
             : MatchList.FirstOrDefault();
 
-        if (SelectedMatch != null)
+        if (SelectedMatch != null) 
+        {
             await SetCurrentChatProfile(SelectedMatch);
             await LoadMessages(SelectedMatch.Id);
+        }
     }
 
     private async Task ToggleMatchRequests()

@@ -41,26 +41,41 @@ namespace CST2550Project.Services
 
             if (mutualLike != null)
             {
-                var match = new Match
+                var user1 = Math.Min(userId, dto.TargetUserId);
+                var user2 = Math.Max(userId, dto.TargetUserId);
+
+                var existingMatch = await _context.Matches
+                    .FirstOrDefaultAsync(m =>
+                        m.User1Id == user1 &&
+                        m.User2Id == user2 &&
+                        m.IsActive);
+
+                if (existingMatch == null)
                 {
-                    User1Id = Math.Min(userId, dto.TargetUserId),
-                    User2Id = Math.Max(userId, dto.TargetUserId)
-                };
+                    var match = new Match
+                    {
+                        User1Id = user1,
+                        User2Id = user2,
+                        MatchedAt = DateTime.UtcNow
+                    };
 
-                _context.Matches.Add(match);
-                await _context.SaveChangesAsync();
+                    _context.Matches.Add(match);
+                    await _context.SaveChangesAsync();
 
-                var matchedProfile = await _context.Profiles
-                    .Include(p => p.User)
-                    .FirstOrDefaultAsync(p => p.UserId == dto.TargetUserId);
+                    var matchedProfile = await _context.Profiles
+                        .Include(p => p.User)
+                        .FirstOrDefaultAsync(p => p.UserId == dto.TargetUserId);
 
-                result.IsMatch = true;
-                result.Match = new MatchDto
-                {
-                    Id = match.Id,
-                    MatchedAt = match.MatchedAt,
-                    MatchedUser = matchedProfile != null ? MapToProfileDto(matchedProfile) : new ProfileDto()
-                };
+                    result.IsMatch = true;
+                    result.Match = new MatchDto
+                    {
+                        Id = match.Id,
+                        MatchedAt = match.MatchedAt,
+                        MatchedUser = matchedProfile != null
+                            ? MapToProfileDto(matchedProfile)
+                            : new ProfileDto()
+                    };
+                }
             }
 
             return result;
@@ -156,17 +171,25 @@ namespace CST2550Project.Services
 
         public async Task<bool> AcceptMatchAsync(int currentUserId, int otherUserId)
         {
-            // Add a match record if not already exists
+            // Swap so smaller ID is User1Id
+            int user1Id = Math.Min(currentUserId, otherUserId);
+            int user2Id = Math.Max(currentUserId, otherUserId);
+
+            var user1 = await _context.Users.FindAsync(user1Id);
+            var user2 = await _context.Users.FindAsync(user2Id);
+
+            if (user1 == null || user2 == null)
+                throw new Exception($"Cannot accept match. Missing user: {user1Id} or {user2Id}");
+
             var exists = await _context.Matches.AnyAsync(m =>
-                (m.User1Id == currentUserId && m.User2Id == otherUserId) ||
-                (m.User1Id == otherUserId && m.User2Id == currentUserId));
+                m.User1Id == user1Id && m.User2Id == user2Id);
 
             if (exists) return false;
 
             _context.Matches.Add(new Match
             {
-                User1Id = currentUserId,
-                User2Id = otherUserId,
+                User1Id = user1Id,
+                User2Id = user2Id,
                 MatchedAt = DateTime.UtcNow
             });
 
