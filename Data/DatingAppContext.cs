@@ -19,6 +19,10 @@ namespace CST2550Project.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Match>()
+                .HasIndex(m => new { m.User1Id, m.User2Id })
+                .IsUnique();
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Username).IsUnique();

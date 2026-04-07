@@ -1995,6 +1995,28 @@ input.form-control {
         transform: scale(1.07);
     }
 
+.ai-btn {
+    background: var(--pink-mid);
+    color: var(--text-dark);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px; 
+    height: 38px; 
+    border-radius: 999px;
+    transition: transform 0.15s, background 0.2s;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+}
+    .ai-btn:hover {
+        background: var(--pink-bubble);
+        color: var(--white);
+        transform: scale(1.05);
+    }
+
 .media-btn {
     background: var(--pink-light);
     color: var(--text-muted);
