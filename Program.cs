@@ -7,9 +7,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-var openAiKey = builder.Configuration["OpenAI:ApiKey"];
-
-builder.Configuration["OpenAI:ApiKey"] = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
