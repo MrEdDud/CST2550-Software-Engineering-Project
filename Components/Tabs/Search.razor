@@ -253,8 +253,6 @@ else
     private string Drinking = "";
     private bool ShowFilters = false;
 
-    private const int DemoUserId = 1;
-
     protected override async Task OnInitializedAsync()
     {
         await LoadProfilesAsync();
@@ -271,6 +269,14 @@ else
     private async Task LoadProfilesAsync()
     {
         isLoading = true;
+
+        var currentUserId = Session.UserId ?? 0;
+        if (currentUserId == 0)
+        {
+            isLoading = false;
+            profiles.Clear();
+            return;
+        }
 
         var filter = new DiscoverFilterDto
         {
@@ -289,7 +295,7 @@ else
             IncludeLikedOrSkipped = true
         };
 
-        profiles = await ProfileService.GetDiscoveryProfilesAsync(DemoUserId, filter);
+        profiles = await ProfileService.GetDiscoveryProfilesAsync(currentUserId, filter);
 
         isLoading = false;
     }
