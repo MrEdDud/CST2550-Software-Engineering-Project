@@ -1,63 +1,101 @@
 ﻿@using CST2550Project.Models
+@using CST2550Project.DTOs
 
-<div class="home-card"
-     @onmousedown="StartDrag"
-     @onmousemove="OnDrag"
-     @onmouseup="EndDrag"
-     @onmouseleave="EndDrag"
-     style="transform: translateX(@Xpx) rotate(@RotationDeg); transition:@Transition;">
+<div class="swipe-card-wrapper"
+     style="position: relative; width: 100%; height: 100%; overflow: visible;">
 
     @if (Profiles?.Any() == true)
     {
-        var profile = Profiles.First();
-        var mainPhoto = profile.ProfilePhotoUrl;
+        <!-- Aesthetic background shadow cards -->
+        @if (Profiles.Count > 1)
+        {
+            <div style="position: absolute; left: -10px; top: 15px; transform: scale(0.95); width: 100%; height: 100%; background: rgba(226,232,240,0.6); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1; pointer-events: none;"></div>
+        }
 
-        <img src="@mainPhoto" class="card-photo" draggable="false" />
+        <button class="side-action-btn dislike-btn" 
+                @onclick="() => Swipe(false)" 
+                style="pointer-events: auto; position: absolute; left: -85px; top: 50%; transform: translateY(-50%); width: 65px; height: 65px; background: white; color: #ff4757; border: 2px solid #ff4757; border-radius: 16px; font-size: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(255,71,87,0.2); transition: all 0.2s; z-index: 100;">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
 
-        <div class="card-info">
-            <h2>@profile.Name, @profile.Age</h2>
-            <p>@profile.Bio</p>
-        </div>
+        <button class="side-action-btn like-btn" 
+                @onclick="() => Swipe(true)" 
+                style="pointer-events: auto; position: absolute; right: -85px; top: 50%; transform: translateY(-50%); width: 65px; height: 65px; background: white; color: #2ee59d; border: 2px solid #2ee59d; border-radius: 16px; font-size: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(46,229,157,0.2); transition: all 0.2s; z-index: 100;">
+            <i class="fa-solid fa-check"></i>
+        </button>
 
-        <div class="action-buttons">
-            <button class="icon-btn nope" style="color: rgb(255,77,109)"
-                    @onclick="() => Swipe(false)">
-                ✕
-            </button>
+        <div class="profile-card"
+             @onmousedown="StartDrag"
+             @onmousemove="OnDrag"
+             @onmouseup="EndDrag"
+             @onmouseleave="EndDrag"
+             style="pointer-events: auto; z-index: 5; opacity: @Opacity; transform: translateX(@Xpx) rotate(@RotationDeg); transition: @Transition;">
+            
+            @{
+                var profile = Profiles.First();
+                var mainPhoto = profile.Photos.FirstOrDefault() ?? profile.ProfilePhotoUrl;
+            }
 
-            <button class="icon-btn like" style="color: rgb(46,229,157)"
-                    @onclick="() => Swipe(true)">
-                ❤
-            </button>
+            <img src="@mainPhoto" class="card-photo" draggable="false" />
+
+            <!-- Animated overlay for Red X / Green Tick based on swipe direction -->
+            @if (ShowOverlay)
+            {
+                <div class="card-overlay" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; border-radius: 24px; z-index: 6; background: @(IsLikeOverlay ? "rgba(46,229,157,0.6)" : "rgba(255,71,87,0.6)"); opacity: @OverlayOpacity; transition: opacity 0.1s;">
+                    <i class="fa-solid @(IsLikeOverlay ? "fa-check" : "fa-xmark")" style="font-size: 110px; color: white; filter: drop-shadow(0 4px 15px rgba(0,0,0,0.4));"></i>
+                </div>
+            }
+
+            <div class="card-info" style="border-radius: 0 0 24px 24px; padding-bottom: 40px; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);">
+                <h2 style="margin:0; font-size: 2rem;">@profile.Name, @profile.Age</h2>
+                <p style="margin-top: 5px; font-size: 1.1rem; opacity: 0.9;">@profile.Bio</p>
+            </div>
         </div>
     }
     else
     {
-        <div class="empty-state">
-            <h2>No more profiles</h2>
+        <div class="profile-card" style="z-index: 5;">
+            <div class="empty-state" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                <h2>No More Profiles</h2>
+            </div>
         </div>
     }
 
 </div>
 
 @code {
-    [Parameter] public List<ProfileModel> Profiles { get; set; } = new();
-    [Parameter] public EventCallback<(ProfileModel, bool)> OnSwipe { get; set; }
+    [Parameter] public List<ProfileDto> Profiles { get; set; } = new();
+    [Parameter] public EventCallback<(ProfileDto, bool)> OnSwipe { get; set; }
 
     private bool IsDragging = false;
     private double StartX;
     private double CurrentX;
+    
+    // Animation States
+    private bool AnimatingOut = false;
+    private bool AnimatingIsLike = false;
 
     private double X => CurrentX - StartX;
     private double Rotation => X * 0.05;
 
-    private string Xpx => $"{X}px";
-    private string RotationDeg => $"{Rotation}deg";
-    private string Transition => IsDragging ? "none" : "0.3s ease";
+    // Apply massive throw-off offset if animating, otherwise follow mouse
+    private string Xpx => AnimatingOut ? (AnimatingIsLike ? "150%" : "-150%") : $"{X}px";
+    private string RotationDeg => AnimatingOut ? (AnimatingIsLike ? "60deg" : "-60deg") : $"{Rotation}deg";
+    
+    // Fade out while throwing off
+    private string Opacity => AnimatingOut ? "0" : "1";
+    
+    // Smooth transition specifically when animating out or letting go
+    private string Transition => (IsDragging && !AnimatingOut) ? "none" : "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-out";
 
+    // Overlay Logic (Triggered during drag threshold OR when button animating out)
+    private bool ShowOverlay => AnimatingOut || Math.Abs(X) > 20;
+    private bool IsLikeOverlay => AnimatingOut ? AnimatingIsLike : X > 0;
+    private double OverlayOpacity => AnimatingOut ? 1.0 : Math.Min(Math.Abs(X) / 100.0, 0.8);
 
     void StartDrag(MouseEventArgs e)
     {
+        if (AnimatingOut) return;
         IsDragging = true;
         StartX = e.ClientX;
         CurrentX = e.ClientX;
@@ -65,13 +103,14 @@
 
     void OnDrag(MouseEventArgs e)
     {
-        if (!IsDragging) return;
+        if (!IsDragging || AnimatingOut) return;
         CurrentX = e.ClientX;
         StateHasChanged();
     }
 
     async Task EndDrag()
     {
+        if (!IsDragging || AnimatingOut) return;
         IsDragging = false;
 
         if (X > 120)
@@ -82,17 +121,35 @@
         {
             await Swipe(false);  // dislike
         }
-
-        // reset position
-        StartX = 0;
-        CurrentX = 0;
+        else 
+        {
+            // reset position if threshold not met
+            StartX = 0;
+            CurrentX = 0;
+            StateHasChanged();
+        }
     }
 
     async Task Swipe(bool isLike)
     {
-        if (Profiles.Count == 0) return;
+        if (Profiles.Count == 0 || AnimatingOut) return;
 
+        // 1) Trigger visual animation
+        AnimatingOut = true;
+        AnimatingIsLike = isLike;
+        StateHasChanged();
+
+        // 2) Wait for the card to fly off screen
+        await Task.Delay(350);
+
+        // 3) Inform parent to remove profile
         var profile = Profiles.First();
         await OnSwipe.InvokeAsync((profile, isLike));
+        
+        // 4) Reset state cleanly for the next incoming profile
+        AnimatingOut = false;
+        StartX = 0;
+        CurrentX = 0;
+        StateHasChanged();
     }
 }

@@ -1,9 +1,6 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
-@using CST2550Project.DTOs
 @inject NavigationManager Navigation
-@inject AuthService AuthService
-@inject SessionService Session
 @layout AuthLayout
 
 <div class="auth-header">
@@ -53,8 +50,10 @@
 
         <InputText type="password"
                     class="form-control"
-                    @bind-Value="confirmPassword"
+                    @bind-Value="registerData.ConfPassword"
                     placeholder="Write your password again" />
+
+        <ValidationMessage For="@(() => registerData.ConfPassword)" />
     </div>
 
     <div class="form-group">
@@ -86,46 +85,35 @@
 </div>
 
 @code {
+    private sealed class RegisterModel
+    {
+        [Required(ErrorMessage = "Your username is required")]
+        public string Name { get; set; } = string.Empty;
 
-    private RegisterDto registerData = new();
+        [Required(ErrorMessage = "Your email is required")]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
 
-    private string confirmPassword = "";
+        [Required(ErrorMessage = "You must create a password")]
+        [MinLength(6)]
+        public string Password { get; set; } = string.Empty;
+
+		[Required(ErrorMessage = "You must confirm your password")]
+        [Compare("Password")]
+        public string ConfPassword { get; set; } = string.Empty;
+
+		[Required]
+        [Range(18, 120, ErrorMessage = "You must be at least 18 years old")]
+        public int Age { get; set; }
+    }
+
+    private RegisterModel registerData = new();
 
     private string successMessage = string.Empty;
 
-    private async Task HandleRegister()
+    private void HandleRegister()
     {
-        if (registerData.Password != confirmPassword)
-        {
-            successMessage = "Passwords do not match";
-            return;
-        }
-
-        try
-        {
-            var result = await AuthService.RegisterAsync(registerData);
-
-            if (result != null)
-            {
-                await Session.SetSessionAsync(
-                    result.UserId,
-                    result.Username,
-                    result.Token,
-                    result.HasProfile
-                );
-
-                successMessage = "Account created successfully";
-
-                Navigation.NavigateTo("/details");
-            }
-            else
-            {
-                successMessage = "Registration failed";
-            }
-        }
-        catch (Exception ex)
-        {
-            successMessage = ex.Message;
-        }
+        successMessage = "Success!";
+        Navigation.NavigateTo("/details", true);
     }
 }

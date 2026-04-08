@@ -1,10 +1,8 @@
 // profile crud and discovery with server-side filtering
-using System.Security.Cryptography;
-using CST2550Project.Data;
-using CST2550Project.DTOs;
-using CST2550Project.Models;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using CST2550Project.Models;
+using CST2550Project.DTOs;
+using CST2550Project.Data;
 
 namespace CST2550Project.Services
 {
@@ -39,19 +37,6 @@ namespace CST2550Project.Services
             return MapToDto(profile);
         }
 
-        public async Task<ProfileModel?> GetProfileByUserIdAsync(int userId)
-        {
-            return await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
-        }
-
-        public async Task<ProfileDto> CreateProfileAsync(ProfileModel model)
-        {
-            _context.Profiles.Add(model);
-            await _context.SaveChangesAsync();
-
-            return MapToDto(model); // return a DTO if you want
-        }
-
         public async Task<ProfileDto?> UpdateProfileAsync(int userId, UpdateProfileDto dto)
         {
             var profile = await _context.Profiles
@@ -79,8 +64,12 @@ namespace CST2550Project.Services
             if (dto.Location != null) profile.Location = dto.Location.Trim();
             if (dto.ProfilePhotoUrl != null) profile.ProfilePhotoUrl = dto.ProfilePhotoUrl;
             if (dto.Photos != null) profile.Photos = dto.Photos;
-            if (dto.Gender != null) profile.Gender = dto.Gender;
+            if (dto.Interests != null) profile.Interests = dto.Interests;
+            if (dto.MinAge.HasValue) profile.MinAge = dto.MinAge.Value;
+            if (dto.MaxAge.HasValue) profile.MaxAge = dto.MaxAge.Value;
+            if (dto.MaxDistance.HasValue) profile.MaxDistance = dto.MaxDistance.Value;
             if (dto.LookingFor != null) profile.LookingFor = dto.LookingFor;
+
             if (dto.HairColor != null) profile.HairColor = dto.HairColor;
             if (dto.SkinTone != null) profile.SkinTone = dto.SkinTone;
             if (dto.EyeColor != null) profile.EyeColor = dto.EyeColor;
@@ -89,63 +78,13 @@ namespace CST2550Project.Services
             if (dto.HeightCm.HasValue) profile.HeightCm = dto.HeightCm.Value;
             if (dto.Smoking != null) profile.Smoking = dto.Smoking;
             if (dto.Drinking != null) profile.Drinking = dto.Drinking;
+            if (dto.Education != null) profile.Education = dto.Education;
+            if (dto.Occupation != null) profile.Occupation = dto.Occupation;
+            if (dto.Hobbies != null) profile.Hobbies = dto.Hobbies;
 
             profile.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-
-            return MapToDto(profile);
-        }
-
-        public async Task<string> SaveProfilePhotoAsync(int userId, IBrowserFile file, string folder = "profile")
-        {
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", folder);
-            if (!Directory.Exists(uploadsFolder))
-                Directory.CreateDirectory(uploadsFolder);
-
-            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
-
-            await using var stream = new FileStream(filePath, FileMode.Create);
-            await file.OpenReadStream(5 * 1024 * 1024).CopyToAsync(stream);
-
-            // Return relative URL
-            return $"/uploads/{folder}/{fileName}";
-        }
-
-        public async Task<ProfileDto?> UpdateProfilePhotoAsync(int userId, string photoUrl)
-        {
-            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
-            if (profile == null) return null;
-
-            profile.ProfilePhotoUrl = photoUrl;
-            await _context.SaveChangesAsync();
-
-            return MapToDto(profile);
-        }
-
-        public async Task<ProfileModel?> AddGalleryPhotoAsync(int userId, string photoUrl)
-        {
-            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
-            if (profile == null) return null;
-
-            profile.Photos ??= new List<string>();
-            profile.Photos.Add(photoUrl);  // Updates PhotosJson automatically
-
-            await _context.SaveChangesAsync();
-            return profile; // <-- return full model for Blazor to update UI
-        }
-
-        public async Task<ProfileDto?> RemoveGalleryPhotoAsync(int userId, string photoUrl)
-        {
-            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
-            if (profile == null) return null;
-
-            if (profile.Photos != null && profile.Photos.Contains(photoUrl))
-            {
-                profile.Photos.Remove(photoUrl);
-                await _context.SaveChangesAsync();
-            }
 
             return MapToDto(profile);
         }
@@ -173,10 +112,15 @@ namespace CST2550Project.Services
             // Base query: everyone except self
             var query = _context.Profiles
                 .Include(p => p.User)
+<<<<<<< HEAD
                 .Where(p => p.UserId != userId);
 
             // Hide liked users
             query = query.Where(p => !likedUserIds.Contains(p.UserId));
+=======
+                .Where(p => p.UserId != userId)
+                .Where(p => !swipedUserIds.Contains(p.UserId));
+>>>>>>> origin/main
 
             // Hide matched users
             query = query.Where(p => !matchedUserIds.Contains(p.UserId));
@@ -186,14 +130,22 @@ namespace CST2550Project.Services
             if (!string.IsNullOrWhiteSpace(genderFilter) && genderFilter != "Everyone")
                 query = query.Where(p => p.Gender == genderFilter);
 
+<<<<<<< HEAD
             // Search term
+=======
+            var minAge = filter.MinAge ?? userProfile.MinAge;
+            var maxAge = filter.MaxAge ?? userProfile.MaxAge;
+            query = query.Where(p => p.Age >= minAge && p.Age <= maxAge);
+
+>>>>>>> origin/main
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var term = filter.SearchTerm.Trim().ToLower();
                 query = query.Where(p =>
                     p.Name.ToLower().Contains(term) ||
                     p.Bio.ToLower().Contains(term) ||
-                    p.Location.ToLower().Contains(term));
+                    p.Location.ToLower().Contains(term) ||
+                    p.Occupation.ToLower().Contains(term));
             }
 
             // Other filters
@@ -209,78 +161,10 @@ namespace CST2550Project.Services
             var count = filter.Count <= 0 ? 20 : filter.Count;
 
             var profiles = await query
-                .OrderBy(p => Guid.NewGuid())
                 .Take(count)
                 .ToListAsync();
 
-            return profiles.Select(MapToDto).ToList();
-        }
-
-        public async Task LikeProfileAsync(int fromUserId, int toUserId)
-        {
-            // Check if the like already exists
-            var existingLike = await _context.Likes
-                .FirstOrDefaultAsync(l => l.FromUserId == fromUserId && l.ToUserId == toUserId);
-
-            if (existingLike != null)
-            {
-                // Already liked, just return
-                return;
-            }
-
-            // Create the like
-            var like = new Like
-            {
-                FromUserId = fromUserId,
-                ToUserId = toUserId,
-                CreatedAt = DateTime.UtcNow,
-                IsSuperLike = false
-            };
-            _context.Likes.Add(like);
-
-            // Check if the other user has liked back
-            var reciprocalLike = await _context.Likes
-                .FirstOrDefaultAsync(l => l.FromUserId == toUserId && l.ToUserId == fromUserId);
-
-            if (reciprocalLike != null)
-            {
-                // Normalize IDs so the smaller is always User1Id
-                int user1Id = Math.Min(fromUserId, toUserId);
-                int user2Id = Math.Max(fromUserId, toUserId);
-
-                // Check if the match already exists (just in case)
-                var existingMatch = await _context.Matches
-                    .FirstOrDefaultAsync(m => m.User1Id == user1Id && m.User2Id == user2Id);
-
-                if (existingMatch == null)
-                {
-                    var match = new Match
-                    {
-                        User1Id = user1Id,
-                        User2Id = user2Id,
-                        MatchedAt = DateTime.UtcNow,
-                        IsActive = true
-                    };
-                    _context.Matches.Add(match);
-                }
-            }
-
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<bool> DeclineProfileAsync(int fromUserId, int toUserId)
-        {
-            if (!await _context.Likes.AnyAsync(l => l.FromUserId == fromUserId && l.ToUserId == toUserId))
-            {
-                _context.Likes.Add(new Like
-                {
-                    FromUserId = fromUserId,
-                    ToUserId = toUserId,
-                    CreatedAt = DateTime.UtcNow
-                });
-                await _context.SaveChangesAsync();
-            }
-            return true;
+            return profiles.OrderBy(p => Guid.NewGuid()).Select(MapToDto).ToList();
         }
 
         private ProfileDto MapToDto(ProfileModel profile)
@@ -298,6 +182,7 @@ namespace CST2550Project.Services
                 Location = profile.Location,
                 ProfilePhotoUrl = profile.ProfilePhotoUrl,
                 Photos = profile.Photos,
+                Interests = profile.Interests,
                 HairColor = profile.HairColor,
                 SkinTone = profile.SkinTone,
                 EyeColor = profile.EyeColor,
@@ -306,81 +191,10 @@ namespace CST2550Project.Services
                 HeightCm = profile.HeightCm,
                 Smoking = profile.Smoking,
                 Drinking = profile.Drinking,
+                Education = profile.Education,
+                Occupation = profile.Occupation,
+                Hobbies = profile.Hobbies
             };
-        }
-
-        public async Task<UpdateAccountDto?> GetAccountAsync(int userId)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
-                return null;
-
-            return new UpdateAccountDto
-            {
-                Username = user.Username,
-                Email = user.Email
-            };
-        }
-        private string HashPassword(string password)
-        {
-            byte[] salt = new byte[16];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-            byte[] hash = pbkdf2.GetBytes(32);
-
-            byte[] hashBytes = new byte[48];
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 32);
-
-            return Convert.ToBase64String(hashBytes);
-        }
-
-        private bool VerifyPassword(string password, string storedHash)
-        {
-            byte[] hashBytes = Convert.FromBase64String(storedHash);
-
-            byte[] salt = new byte[16];
-            Array.Copy(hashBytes, 0, salt, 0, 16);
-
-            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000, HashAlgorithmName.SHA256);
-            byte[] hash = pbkdf2.GetBytes(32);
-
-            for (int i = 0; i < 32; i++)
-            {
-                if (hashBytes[i + 16] != hash[i])
-                    return false;
-            }
-
-            return true;
-        }
-
-        public async Task<bool> UpdateAccountAsync(int userId, UpdateAccountDto dto)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null) return false;
-
-            if (!string.IsNullOrWhiteSpace(dto.Username))
-                user.Username = dto.Username.Trim();
-
-            if (!string.IsNullOrWhiteSpace(dto.Email))
-                user.Email = dto.Email.Trim();
-
-            if (!string.IsNullOrWhiteSpace(dto.NewPassword))
-            {
-                if (!VerifyPassword(dto.CurrentPassword, user.PasswordHash))
-                    throw new InvalidOperationException("Current password is incorrect.");
-
-                user.PasswordHash = HashPassword(dto.NewPassword);
-            }
-
-            await _context.SaveChangesAsync();
-            return true;
         }
     }
 }

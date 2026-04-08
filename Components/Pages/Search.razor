@@ -1,0 +1,141 @@
+﻿@page "/search"
+@using CST2550Project.DTOs
+@using CST2550Project.Services
+@inject ProfileService ProfileService
+
+<div class="page">
+
+    <h1 class="page-title">Discover</h1>
+    <p class="page-subtitle">People near you</p>
+
+    <div class="search-filter-row">
+        <div class="search-filter-item search-filter-item--wide">
+            <input class="form-control"
+                   placeholder="Search by name, bio, location, occupation..."
+                   @bind="SearchTerm" />
+        </div>
+
+        <div class="search-filter-item">
+            <select class="form-control" @bind="SelectedGender">
+                <option value="">Everyone</option>
+                <option value="Male">Men</option>
+                <option value="Female">Women</option>
+            </select>
+        </div>
+
+        <div class="search-filter-item search-filter-item--age">
+            <label>Min</label>
+            <input class="form-control" type="number" @bind="MinAge" />
+        </div>
+
+        <div class="search-filter-item search-filter-item--age">
+            <label>Max</label>
+            <input class="form-control" type="number" @bind="MaxAge" />
+        </div>
+
+        <button class="btn btn-primary search-apply-btn" @onclick="LoadProfiles">
+            Apply
+        </button>
+    </div>
+
+    <div class="search-results-wrap">
+        @if (Profiles.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h2>No profiles found</h2>
+                <p>Try changing your filters or search term.</p>
+            </div>
+        }
+        else
+        {
+            <div class="card-grid">
+                @foreach (var p in Profiles)
+                {
+                    <div class="profile-card">
+
+                        <div class="profile-photo">
+                            <span class="profile-initial">
+                                @(string.IsNullOrWhiteSpace(p.Name) ? "?" : p.Name.Substring(0, 1))
+                            </span>
+                        </div>
+
+                        <div class="profile-info">
+                            <div class="profile-name">
+                                @p.Name
+                                <span class="profile-age">@p.Age</span>
+                            </div>
+                            <div class="profile-bio">@p.Bio</div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="icon-btn nope"
+                                    @onclick='() => HandleAction("Nope", p.Name)'>
+                                ✕
+                            </button>
+
+                            <button class="icon-btn like"
+                                    @onclick='() => HandleAction("Like", p.Name)'>
+                                ❤
+                            </button>
+                        </div>
+
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="search-toast-wrap">
+        @if (!string.IsNullOrWhiteSpace(lastAction))
+        {
+            <div class="toast">@lastAction</div>
+        }
+    </div>
+
+</div>
+
+@code {
+    private string lastAction = string.Empty;
+
+    private string SearchTerm = "";
+    private string SelectedGender = "";
+    private int? MinAge = 18;
+    private int? MaxAge = 35;
+
+    private List<ProfileDto> Profiles = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfiles();
+    }
+
+    private async Task LoadProfiles()
+    {
+        var filter = new DiscoverFilterDto
+        {
+            SearchTerm = SearchTerm,
+            Gender = SelectedGender,
+            MinAge = MinAge,
+            MaxAge = MaxAge,
+            Count = 50
+        };
+
+        // demo user id 1 for now
+        Profiles = await ProfileService.GetDiscoveryProfilesAsync(1, filter);
+    }
+
+    private void HandleAction(string action, string name)
+    {
+        if (action == "Like")
+        {
+            lastAction = $"❤️ You liked {name}";
+        }
+        else
+        {
+            lastAction = $"❌ You skipped {name}";
+        }
+    }
+}

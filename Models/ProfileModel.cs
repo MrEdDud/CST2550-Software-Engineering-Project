@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
 
 namespace CST2550Project.Models
 {
@@ -29,18 +27,11 @@ namespace CST2550Project.Models
         [StringLength(100)]
         public string Location { get; set; } = string.Empty;
 
-        [Required]
         public string ProfilePhotoUrl { get; set; } = string.Empty;
 
-        // must be lists
-        public string PhotosJson { get; set; } = "[]";
-
-        [NotMapped]
-        public List<string> Photos
-        {
-            get => string.IsNullOrWhiteSpace(PhotosJson) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(PhotosJson)!;
-            set => PhotosJson = JsonSerializer.Serialize(value);
-        }
+        // ✅ FIXED (must be lists)
+        public List<string> Photos { get; set; } = new();
+        public List<string> Interests { get; set; } = new();
 
         [StringLength(30)]
         public string HairColor { get; set; } = string.Empty;
@@ -65,6 +56,24 @@ namespace CST2550Project.Models
 
         [StringLength(30)]
         public string Drinking { get; set; } = string.Empty;
+
+        [StringLength(50)]
+        public string Education { get; set; } = string.Empty;
+
+        [StringLength(100)]
+        public string Occupation { get; set; } = string.Empty;
+
+        // ✅ FIXED (must be list)
+        public List<string> Hobbies { get; set; } = new();
+
+        [Range(18, 120)]
+        public int MinAge { get; set; } = 18;
+
+        [Range(18, 120)]
+        public int MaxAge { get; set; } = 100;
+
+        [Range(1, 500)]
+        public int MaxDistance { get; set; } = 50;
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 

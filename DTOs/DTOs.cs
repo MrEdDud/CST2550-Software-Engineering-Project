@@ -7,7 +7,7 @@ namespace CST2550Project.DTOs
     {
         [Required]
         [StringLength(50, MinimumLength = 3)]
-        public string Name { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
 
         [Required]
         [EmailAddress]
@@ -18,8 +18,18 @@ namespace CST2550Project.DTOs
         public string Password { get; set; } = string.Empty;
 
         [Required]
+        [StringLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [Required]
         [Range(18, 120)]
         public int Age { get; set; }
+
+        [Required]
+        public string Gender { get; set; } = string.Empty;
+
+        [Required]
+        public string LookingFor { get; set; } = string.Empty;
     }
 
     public class LoginDto
@@ -62,6 +72,7 @@ namespace CST2550Project.DTOs
         public int? HeightCm { get; set; }
         public string Smoking { get; set; } = string.Empty;
         public string Drinking { get; set; } = string.Empty;
+        public string Education { get; set; } = string.Empty;
         public string Occupation { get; set; } = string.Empty;
         public List<string> Hobbies { get; set; } = new();
     }
@@ -80,8 +91,6 @@ namespace CST2550Project.DTOs
         [StringLength(500)]
         public string? Bio { get; set; }
 
-        public string? Gender { get; set; }
-
         [StringLength(100)]
         public string? Location { get; set; }
 
@@ -99,6 +108,7 @@ namespace CST2550Project.DTOs
         public int? HeightCm { get; set; }
         public string? Smoking { get; set; }
         public string? Drinking { get; set; }
+        public string? Education { get; set; }
         public string? Occupation { get; set; }
         public List<string>? Hobbies { get; set; }
 
@@ -114,16 +124,6 @@ namespace CST2550Project.DTOs
         public string? LookingFor { get; set; }
     }
 
-    public class UpdateAccountDto
-    {
-        public string? Username { get; set; }
-        public string? Email { get; set; }
-
-        public string? CurrentPassword { get; set; }
-        public string? NewPassword { get; set; }
-        public string? ConfirmNewPassword { get; set; }
-    }
-    
     public class DiscoverFilterDto
     {
         public int Count { get; set; } = 10;
@@ -140,7 +140,6 @@ namespace CST2550Project.DTOs
         public string? Drinking { get; set; }
         public string? Hobby { get; set; }
         public string? Interest { get; set; }
-        public bool IncludeLikedOrSkipped { get; set; } = false;
     }
 
     public class SwipeDto
@@ -163,32 +162,21 @@ namespace CST2550Project.DTOs
     public class MatchDto
     {
         public int Id { get; set; }
-        public int User1Id { get; set; }
-        public int User2Id { get; set; }
-        public UserDto? User1 { get; set; }
-        public UserDto? User2 { get; set; }
-        public List<MessageDto> Messages { get; set; } = new();
-        public ProfileDto? MatchedUser { get; set; }
-        public MessageDto? LastMessage { get; set; } 
-        public int UnreadCount { get; set; }
+        public ProfileDto MatchedUser { get; set; } = new();
         public DateTime MatchedAt { get; set; }
-    }
-    public class UserDto
-    {
-        public int Id { get; set; }
-        public string Username { get; set; } = "";
+        public MessageDto? LastMessage { get; set; }
+        public int UnreadCount { get; set; }
     }
 
     public class MessageDto
     {
         public int Id { get; set; }
-        public int MatchId { get; set; }
         public int SenderId { get; set; }
-        public string Content { get; set; } = "";
+        public string SenderName { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
         public DateTime SentAt { get; set; }
-        public string SenderName { get; set; } = "";  
-        public bool IsRead { get; set; }              
-        public bool IsMine { get; set; }              
+        public bool IsRead { get; set; }
+        public bool IsMine { get; set; }
     }
 
     public class SendMessageDto

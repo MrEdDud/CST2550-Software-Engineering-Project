@@ -1,10 +1,5 @@
 ﻿@page "/login"
 @using System.ComponentModel.DataAnnotations
-@using CST2550Project.DTOs
-@inject HttpClient Http
-@inject AuthService AuthService
-@inject SessionService Session
-@inject NavigationManager Navigation
 @layout AuthLayout
 
 <div class="auth-header">
@@ -37,11 +32,6 @@
         Sign In
     </button>
 
-    @if (!string.IsNullOrWhiteSpace(successMessage))
-    {
-        <div class="text-danger mt-2">@successMessage</div>
-    }
-
 </EditForm>
 
 <div class="auth-footer">
@@ -62,36 +52,8 @@
 
     private string successMessage = string.Empty;
 
-    private async Task HandleLogin()
+    private void HandleLogin()
     {
-        var dto = new LoginDto
-        {
-            Username = loginData.Username,
-            Password = loginData.Password
-        };
-
-        var response = await Http.PostAsJsonAsync("api/auth/login", dto);
-
-        if (response.IsSuccessStatusCode)
-        {
-            var authResult = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-
-            if (authResult != null)
-            {
-                // Use the proper method instead of setting read-only properties
-                await Session.SetSessionAsync(
-                    authResult.UserId,
-                    authResult.Username,
-                    authResult.Token,
-                    authResult.HasProfile
-                );
-
-                Navigation.NavigateTo("/");
-            }
-        }
-        else
-        {
-            successMessage = "Invalid username or password";
-        }
+        successMessage = "Login successful";
     }
 }
