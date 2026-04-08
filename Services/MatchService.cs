@@ -168,10 +168,8 @@ namespace CST2550Project.Services
 
             return profiles.Select(MapToProfileDto).ToList();
         }
-
         public async Task<bool> AcceptMatchAsync(int currentUserId, int otherUserId)
         {
-            // Swap so smaller ID is User1Id
             int user1Id = Math.Min(currentUserId, otherUserId);
             int user2Id = Math.Max(currentUserId, otherUserId);
 
@@ -182,15 +180,29 @@ namespace CST2550Project.Services
                 throw new Exception($"Cannot accept match. Missing user: {user1Id} or {user2Id}");
 
             var exists = await _context.Matches.AnyAsync(m =>
-                m.User1Id == user1Id && m.User2Id == user2Id);
+                m.User1Id == user1Id &&
+                m.User2Id == user2Id &&
+                m.IsActive);
 
             if (exists) return false;
 
+            // remove like(s)
+            var likesToRemove = await _context.Likes
+                .Where(l =>
+                    (l.FromUserId == otherUserId && l.ToUserId == currentUserId) ||
+                    (l.FromUserId == currentUserId && l.ToUserId == otherUserId))
+                .ToListAsync();
+
+            if (likesToRemove.Any())
+                _context.Likes.RemoveRange(likesToRemove);
+
+            // create match
             _context.Matches.Add(new Match
             {
                 User1Id = user1Id,
                 User2Id = user2Id,
-                MatchedAt = DateTime.UtcNow
+                MatchedAt = DateTime.UtcNow,
+                IsActive = true
             });
 
             await _context.SaveChangesAsync();
