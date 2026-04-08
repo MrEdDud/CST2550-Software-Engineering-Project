@@ -21,6 +21,14 @@ namespace CST2550Project.Services
 
             if (!dto.IsLike) return result;
 
+            var isAlreadyMatched = await _context.Matches.AnyAsync(m =>
+            m.IsActive &&
+            ((m.User1Id == userId && m.User2Id == dto.TargetUserId) ||
+             (m.User1Id == dto.TargetUserId && m.User2Id == userId)));
+
+            if (isAlreadyMatched)
+                return result;
+
             var existingLike = await _context.Likes
                 .FirstOrDefaultAsync(l => l.FromUserId == userId && l.ToUserId == dto.TargetUserId);
 

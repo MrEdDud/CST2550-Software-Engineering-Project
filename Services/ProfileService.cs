@@ -158,72 +158,54 @@ namespace CST2550Project.Services
             if (userProfile == null)
                 return new List<ProfileDto>();
 
-            var swipedUserIds = await _context.Likes
+            // Users that this user has liked (hide them)
+            var likedUserIds = await _context.Likes
                 .Where(l => l.FromUserId == userId)
                 .Select(l => l.ToUserId)
                 .ToListAsync();
 
+            // Active matches (hide them)
+            var matchedUserIds = await _context.Matches
+                .Where(m => m.IsActive && (m.User1Id == userId || m.User2Id == userId))
+                .Select(m => m.User1Id == userId ? m.User2Id : m.User1Id)
+                .ToListAsync();
+
+            // Base query: everyone except self
             var query = _context.Profiles
                 .Include(p => p.User)
                 .Where(p => p.UserId != userId);
 
-            // Only filter out swiped users if IncludeLikedOrSkipped is false
-            if (filter.IncludeLikedOrSkipped == false)
-            {
-                query = query.Where(p => !swipedUserIds.Contains(p.UserId));
-            }
+            // Hide liked users
+            query = query.Where(p => !likedUserIds.Contains(p.UserId));
 
+            // Hide matched users
+            query = query.Where(p => !matchedUserIds.Contains(p.UserId));
+
+            // Gender filter
             var genderFilter = filter.Gender ?? userProfile.LookingFor;
             if (!string.IsNullOrWhiteSpace(genderFilter) && genderFilter != "Everyone")
-            {
                 query = query.Where(p => p.Gender == genderFilter);
-            }
 
+            // Search term
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var term = filter.SearchTerm.Trim().ToLower();
-
                 query = query.Where(p =>
                     p.Name.ToLower().Contains(term) ||
                     p.Bio.ToLower().Contains(term) ||
                     p.Location.ToLower().Contains(term));
             }
 
-            if (!string.IsNullOrWhiteSpace(filter.HairColor))
-            {
-                query = query.Where(p => p.HairColor == filter.HairColor);
-            }
+            // Other filters
+            if (!string.IsNullOrWhiteSpace(filter.HairColor)) query = query.Where(p => p.HairColor == filter.HairColor);
+            if (!string.IsNullOrWhiteSpace(filter.SkinTone)) query = query.Where(p => p.SkinTone == filter.SkinTone);
+            if (!string.IsNullOrWhiteSpace(filter.EyeColor)) query = query.Where(p => p.EyeColor == filter.EyeColor);
+            if (!string.IsNullOrWhiteSpace(filter.BodyType)) query = query.Where(p => p.BodyType == filter.BodyType);
+            if (!string.IsNullOrWhiteSpace(filter.Ethnicity)) query = query.Where(p => p.Ethnicity == filter.Ethnicity);
+            if (!string.IsNullOrWhiteSpace(filter.Smoking)) query = query.Where(p => p.Smoking == filter.Smoking);
+            if (!string.IsNullOrWhiteSpace(filter.Drinking)) query = query.Where(p => p.Drinking == filter.Drinking);
 
-            if (!string.IsNullOrWhiteSpace(filter.SkinTone))
-            {
-                query = query.Where(p => p.SkinTone == filter.SkinTone);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter.EyeColor))
-            {
-                query = query.Where(p => p.EyeColor == filter.EyeColor);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter.BodyType))
-            {
-                query = query.Where(p => p.BodyType == filter.BodyType);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter.Ethnicity))
-            {
-                query = query.Where(p => p.Ethnicity == filter.Ethnicity);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter.Smoking))
-            {
-                query = query.Where(p => p.Smoking == filter.Smoking);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter.Drinking))
-            {
-                query = query.Where(p => p.Drinking == filter.Drinking);
-            }
-
+            // Limit number of profiles
             var count = filter.Count <= 0 ? 20 : filter.Count;
 
             var profiles = await query
