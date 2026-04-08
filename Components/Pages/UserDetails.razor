@@ -1,11 +1,6 @@
 ﻿@page "/details"
 @using System.ComponentModel.DataAnnotations
-@using System.Text.Json
-@using CST2550Project.DTOs
-@inject SessionService Session
-@inject ProfileService ProfileService
 @inject NavigationManager Navigation
-@inject HttpClient Http
 @layout AuthLayout
 
 <div class="auth-header">
@@ -13,193 +8,38 @@
     <p>Let us know more about you and what you like. This is all optional.</p>
 </div>
 
-<EditForm Model="@profileDto"
-          OnSubmit="@HandleUpdate"
+<EditForm Model="@registerData"
+          OnValidSubmit="@HandleRegister"
           class="auth-form">
 
     <DataAnnotationsValidator />
 
     <div class="form-group">
-        <label><i class="fas fa-pen"></i> Bio</label>
-
-        <InputTextArea class="form-control"
-                       @bind-Value="profileDto.Bio"
-                       placeholder="Tell us about yourself...">
-        </InputTextArea>
-
-        <ValidationMessage For="@(() => profileDto.Bio)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fas fa-map-marker-alt"></i> Location</label>
-
-        <InputText class="form-control"
-                   @bind-Value="searchText"
-                   @oninput="FilterCities"
-                   placeholder="Start typing a city..." 
-                   autocomplete="off" />
-
-        @if (FilteredCities.Any())
-        {
-            <ul class="list-group mt-1">
-                @foreach (var city in FilteredCities)
-                {
-                    <li class="list-group-item list-group-item-action"
-                        @onclick="() => SelectCity(city)">
-                        @city.City, @city.Country
-                    </li>
-                }
-            </ul>
-        }
-
-        <ValidationMessage For="@(() => profileDto.Location)" />
-    </div>
-
-    <div class="form-group">
         <label><i class="fas fa-venus-mars"></i> Gender</label>
 
         <InputSelect class="form-control"
-                        @bind-Value="profileDto.Gender">
+                        @bind-Value="registerData.Gender">
             <option value="">Select...</option>
             <option>Male</option>
             <option>Female</option>
             <option>Other</option>
         </InputSelect>
 
-        <ValidationMessage For="@(() => profileDto.Gender)" />
+        <ValidationMessage For="@(() => registerData.Gender)" />
     </div>
 
     <div class="form-group">
         <label><i class="fas fa-heart"></i> Interested In</label>
 
         <InputSelect class="form-control"
-                        @bind-Value="profileDto.LookingFor">
+                        @bind-Value="registerData.LookingFor">
             <option value="">Select...</option>
             <option>Male</option>
             <option>Female</option>
             <option>Everyone</option>
         </InputSelect>
 
-        <ValidationMessage For="@(() => profileDto.LookingFor)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-eye-dropper"></i> Hair Colour</label>
-
-        <InputSelect class="form-control"
-                     @bind-Value="profileDto.HairColor">
-            <option value="">Select...</option>
-            <option>Black</option>
-            <option>Brown</option>
-            <option>Blonde</option>
-            <option>Red</option>
-            <option>Auburn</option>
-            <option>Grey</option>
-            <option>White</option>
-            <option>Other</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => profileDto.HairColor)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-eye-dropper"></i> Skin Tone</label>
-
-        <InputSelect class="form-control"
-                     @bind-Value="profileDto.SkinTone">
-            <option value="">Select...</option>
-            <option>Fair</option>
-            <option>Light</option>
-            <option>Medium</option>
-            <option>Olive</option>
-            <option>Tan</option>
-            <option>Dark</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => profileDto.SkinTone)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-eye-dropper"></i> Eye Colour</label>
-
-        <InputSelect class="form-control"
-                     @bind-Value="profileDto.EyeColor">
-            <option value="">Select...</option>
-            <option>Brown</option>
-            <option>Blue</option>
-            <option>Green</option>
-            <option>Hazel</option>
-            <option>Grey</option>
-            <option>Amber</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => profileDto.EyeColor)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-person"></i> Body Size</label>
-
-        <InputSelect class="form-control"
-                     @bind-Value="profileDto.BodyType">
-            <option value="">Select...</option>
-            <option>Slim</option>
-            <option>Athletic</option>
-            <option>Average</option>
-            <option>Curvy</option>
-            <option>Muscular</option>
-            <option>Plus sized</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => profileDto.BodyType)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-earth-europe"></i> Ethnicity</label>
-
-        <InputSelect class="form-control"
-                     @bind-Value="profileDto.Ethnicity">
-            <option value="">Select...</option>
-            <option>White</option>
-            <option>Black</option>
-            <option>Asian</option>
-            <option>Hispanic</option>
-            <option>Middle eastern</option>
-            <option>Mixed</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => profileDto.Ethnicity)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-smoking"></i> Smoking</label>
-
-        <InputSelect class="form-control"
-                     @bind-Value="profileDto.Smoking">
-            <option value="">Select...</option>
-            <option>Never</option>
-            <option>Rarely</option>
-            <option>Socially</option>
-            <option>Occasionally</option>
-            <option>Regularly</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => profileDto.Smoking)" />
-    </div>
-
-    <div class="form-group">
-        <label><i class="fa-solid fa-champagne-glasses"></i> Drinking</label>
-
-        <InputSelect class="form-control"
-                     @bind-Value="profileDto.Drinking">
-            <option value="">Select...</option>
-            <option>Never</option>
-            <option>Rarely</option>
-            <option>Socially</option>
-            <option>Occasionally</option>
-            <option>Regularly</option>
-        </InputSelect>
-
-        <ValidationMessage For="@(() => profileDto.Drinking)" />
+        <ValidationMessage For="@(() => registerData.LookingFor)" />
     </div>
 
     <button type="submit" class="btn btn-primary btn-block">
@@ -222,120 +62,21 @@
 </div>
 
 @code {
-    private UpdateProfileDto profileDto = new();
-    private ProfileDto? profileData;
 
-    private List<CityOption> AllCities = new();
-    private List<CityOption> FilteredCities = new();
+    private sealed class RegisterModel
+    {
+		public string Gender { get; set; } = string.Empty;
+	
+		public string LookingFor { get; set; } = string.Empty;
+    }
 
-    private string searchText = "";
-    private string message = "";
+    private RegisterModel registerData = new();
 
     private string successMessage = string.Empty;
 
-    private int userId;
-
-    public class CityOption
+    private void HandleRegister()
     {
-        public string City { get; set; } = "";
-        public string Country { get; set; } = "";
-        public long Population { get; set; } = 0;
-
-        public override string ToString()
-            => $"{City}, {Country}";
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (!Session.IsLoggedIn)
-        {
-            Navigation.NavigateTo("/login");
-            return;
-        }
-
-        // Fetch the profile for the logged-in user
-        profileData = await ProfileService.GetProfileAsync(Session.UserId.Value);
-
-        if (profileData != null)
-        {
-            // Initialize DTO for form binding
-            profileDto.Bio = profileData.Bio;
-            profileDto.Location = profileData.Location;
-            profileDto.LookingFor = profileData.LookingFor;
-            profileDto.Gender = profileData.Gender;
-            profileDto.HairColor = profileData.HairColor;
-            profileDto.SkinTone = profileData.SkinTone;
-            profileDto.EyeColor = profileData.EyeColor;
-            profileDto.BodyType = profileData.BodyType;
-            profileDto.Ethnicity = profileData.Ethnicity;
-            profileDto.Smoking = profileData.Smoking;
-            profileDto.Drinking = profileData.Drinking;
-        }
-
-        // Load cities for autocomplete
-        var rawCities = await Http.GetFromJsonAsync<List<RawCity>>("data/cities.json") ?? new();
-        AllCities = rawCities
-            .Where(c => long.TryParse(c.Population, out var pop) && pop >= 100_000)
-            .Select(c => new CityOption
-            {
-                City = c.City,
-                Country = c.Country,
-                Population = long.Parse(c.Population)
-            })
-            .OrderByDescending(c => c.Population)
-            .ToList();
-    }
-
-    private void FilterCities(ChangeEventArgs e)
-    {
-        searchText = e.Value?.ToString() ?? "";
-
-        if (string.IsNullOrWhiteSpace(searchText))
-        {
-            FilteredCities.Clear();
-            return;
-        }
-
-        FilteredCities = AllCities
-            .Where(c => c.City.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-            .Take(10)
-            .ToList();
-    }
-    
-    private void SelectCity(CityOption option)
-    {
-        searchText = option.ToString();
-        FilteredCities.Clear();
-
-        // store in your registration model
-        profileDto.Location = option.ToString();
-    }
-
-    public class RawCity
-    {
-        public string City { get; set; } = "";
-        public string City_Ascii { get; set; } = "";
-        public string Country { get; set; } = "";
-        public string Population { get; set; } = "0";
-    }
-
-    private async Task HandleUpdate()
-    {
-        if (!Session.IsLoggedIn)
-        {
-            successMessage = "Error: user not logged in";
-            return;
-        }
-
-        try
-        {
-            await ProfileService.UpdateProfileAsync(Session.UserId.Value, profileDto);
-            successMessage = "Profile updated successfully!";
-            Navigation.NavigateTo("/");
-        }
-        catch (Exception ex)
-        {
-            successMessage = $"Error updating profile: {ex.Message}";
-        }
+        successMessage = "Account created";
+        Navigation.NavigateTo("/home", true);
     }
 }
