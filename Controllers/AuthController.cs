@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using CST2550Project.DTOs;
 using CST2550Project.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace CST2550Project.Controllers
 {
@@ -46,11 +49,25 @@ namespace CST2550Project.Controllers
         {
             try
             {
-                var result = await _authService.LoginAsync(dto);
+                var result = await _authService.LoginAsync(dto); // keep your service logic
                 if (result == null)
                 {
                     return Unauthorized(new { message = "Invalid username or password" });
                 }
+
+                // Create claims
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, result.Username)
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                // Sign in user with cookie
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
                 return Ok(result);
             }
             catch (Exception ex)
@@ -58,6 +75,13 @@ namespace CST2550Project.Controllers
                 _logger.LogError(ex, "Error during login");
                 return StatusCode(500, new { message = "An error occurred during login" });
             }
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok(new { message = "Logged out successfully" });
         }
 
         [HttpGet("validate")]

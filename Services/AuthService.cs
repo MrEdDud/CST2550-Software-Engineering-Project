@@ -24,7 +24,7 @@ namespace CST2550Project.Services
 
         public async Task<AuthResponseDto?> RegisterAsync(RegisterDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == dto.Username))
+            if (await _context.Users.AnyAsync(u => u.Username == dto.Name))
             {
                 throw new InvalidOperationException("Username already taken");
             }
@@ -36,7 +36,7 @@ namespace CST2550Project.Services
 
             var user = new User
             {
-                Username = dto.Username,
+                Username = dto.Name,
                 Email = dto.Email,
                 PasswordHash = HashPassword(dto.Password)
             };
@@ -49,9 +49,21 @@ namespace CST2550Project.Services
                 UserId = user.Id,
                 Name = dto.Name,
                 Age = dto.Age,
-                Gender = dto.Gender,
-                LookingFor = dto.LookingFor,
-                ProfilePhotoUrl = GetDefaultAvatar(dto.Gender)
+                Gender = "",         // optional
+                LookingFor = "",     // optional
+                ProfilePhotoUrl = "",
+                Bio = "",
+                Location = "",
+                Photos = new List<string>(),
+                HairColor = "",
+                SkinTone = "",
+                EyeColor = "",
+                BodyType = "",
+                Ethnicity = "",
+                HeightCm = null,
+                Smoking = "",
+                Drinking = "",
+                UpdatedAt = DateTime.UtcNow
             };
 
             _context.Profiles.Add(profile);
@@ -64,7 +76,7 @@ namespace CST2550Project.Services
                 UserId = user.Id,
                 Username = user.Username,
                 Token = token,
-                HasProfile = true
+                HasProfile = false
             };
         }
 
@@ -161,16 +173,6 @@ namespace CST2550Project.Services
             {
                 return false;
             }
-        }
-
-        private string GetDefaultAvatar(string gender)
-        {
-            return gender.ToLower() switch
-            {
-                "male" => "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-                "female" => "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=400",
-                _ => "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400"
-            };
         }
     }
 }
