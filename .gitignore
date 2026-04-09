@@ -1,0 +1,32 @@
+.vs/
+bin/
+obj/
+CST2550.csproj.user
+appsettings.Development.json
+
+
+# Build folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio
+.vs/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node (if you ever use it)
+node_modules/
+
+# Environment files
+.env
