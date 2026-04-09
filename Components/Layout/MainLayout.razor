@@ -1,275 +1,84 @@
 ﻿@inherits LayoutComponentBase
-@inject NavigationManager NavigationManager
-@rendermode InteractiveServer
+@using CST2550Project.Services
+@inject SessionService Session
 
 <div class="app-shell">
     <header class="topbar">
-        <div class="brand" style="font-size: 1.45rem; display: flex; align-items: center; gap: 0.5rem;">
+        <div class="brand">
             <i class="fa-solid fa-heart"></i>
-            <span class="brand-name" style="font-size: 1.25rem; font-weight: bold;">Pairly</span>
+            <span class="brand-name">Pairly</span>
         </div>
 
         <div class="topbar-actions">
-            <div style="position: relative;" @onmouseleave="CloseNotifications">
-                <button class="header-btn" style="position: relative;" @onclick="ToggleNotifications">
-                    <i class="fas fa-bell"></i>
-                    @if (HasUnreadNotifications)
-                    {
-                        <span class="notification-dot" style="position: absolute; top: -2px; right: -2px; background: red; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; display: block;"></span>
-                    }
-                </button>
-
-                <div class="notification-panel @(ShowNotifications ? "show" : "")" style="position: absolute; top: 100%; right: 0; width: 280px; background: white; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); padding: 1rem; z-index: 1000; margin-top: 8px;" @onclick:stopPropagation>
-                    <div style="position: absolute; top: -15px; left: 0; right: 0; height: 15px; background: transparent;"></div>
-                    <style>
-                        .notification-panel {
-                            opacity: 0;
-                            visibility: hidden;
-                            transform: translateY(-10px);
-                            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
-                            pointer-events: none;
-                        }
-                        .notification-panel.show {
-                            opacity: 1;
-                            visibility: visible;
-                            transform: translateY(0);
-                            pointer-events: auto;
-                        }
-                        .notif-btns {
-                            display: flex;
-                            justify-content: space-between;
-                            margin-top: 15px;
-                            border-top: 1px solid #eee;
-                            padding-top: 10px;
-                        }
-                        .notif-btns button {
-                            background: none;
-                            border: none;
-                            color: navy;
-                            cursor: pointer;
-                            font-size: 0.8rem;
-                            font-weight: 500;
-                            transition: color 0.2s ease;
-                        }
-                        .notif-btns button:hover {
-                            color: #ff69b4;
-                        }
-                    </style>
-                    <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 1rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">Notifications</h4>
-                    <div style="font-size: 0.9rem; color: #666; text-align: center; padding: 1rem 0;">
-                        No New Notifications
-                    </div>
-                    <div class="notif-btns">
-                        <button @onclick="MarkNotificationsAsRead">Mark As Read</button>
-                        <button>Delete All</button>
-                    </div>
-                </div>
-            </div>
+            <button class="header-btn">
+                <i class="fas fa-bell"></i>
+            </button>
         </div>
     </header>
 
     <div class="main-layout">
-        <aside class="app-sidebar @(IsSidebarMinimized ? "minimized" : string.Empty)">
-
-            <div class="sidebar-header">
-                <div class="sidebar-profile">
-                    <div class="sidebar-avatar">
-                        <i class="fa-regular fa-circle-user"></i>
-                    </div>
-                    <div class="sidebar-profile-text">
-                        <strong>User Name</strong>
-                        <span>@@@user</span>
-                    </div>
+        <aside class="app-sidebar">
+            <div class="sidebar-profile">
+                <i class="fa-regular fa-circle-user sidebar-avatar"></i>
+                <div>
+                    <strong>@Username</strong><br />
                 </div>
             </div>
 
             <nav class="sidebar-nav">
-                <NavLink href="" class="sidebar-link" Match="NavLinkMatch.All">
+                <a href="/home" class="sidebar-link">
                     <i class="fa-solid fa-house"></i>
                     <span>Home</span>
-                </NavLink>
-                <NavLink href="/search" class="sidebar-link">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <span>Search</span>
-                </NavLink>
-                <NavLink href="/matches" class="sidebar-link">
+                </a>
+
+                <a href="/matches" class="sidebar-link">
                     <i class="fa-solid fa-heart"></i>
                     <span>Matches</span>
-                </NavLink>
-                <NavLink href="/settings" class="sidebar-link">
-                    <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                </NavLink>
-                <NavLink href="/profile" class="sidebar-link">
+                </a>
+
+                <a href="/profile" class="sidebar-link">
                     <i class="fa-solid fa-user"></i>
                     <span>Profile</span>
-                </NavLink>
+                </a>
+
+                <a href="/search" class="sidebar-link">
+                    <i class="fas fa-search search-icon"></i>
+                    <span>Search</span>
+                </a>
+
+                <a href="/settings" class="sidebar-link">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
             </nav>
-
-            <div class="sidebar-bottom">
-                <button class="sidebar-btn sidebar-options-btn" type="button" @onclick="ToggleSidebarOptions" title="Options">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                @if (ShowSidebarOptions)
-                {
-                    <div class="sidebar-options-menu">
-                        <a href="#" @onclick="() => { ShowSidebarOptions = false; }" @onclick:preventDefault class="options-menu-item">
-                            <i class="fa-solid fa-user-circle"></i>
-                            <span>Account Information</span>
-                        </a>
-                        <NavLink href="/profile" class="options-menu-item" @onclick="() => { ShowSidebarOptions = false; }">
-                            <i class="fa-solid fa-id-card"></i>
-                            <span>Go To Profile</span>
-                        </NavLink>
-                        <NavLink href="/premium" class="options-menu-item" @onclick="() => { ShowSidebarOptions = false; }">
-                            <i class="fa-solid fa-crown"></i>
-                            <span>Premium</span>
-                        </NavLink>
-                    </div>
-                }
-                <button class="sidebar-btn sidebar-collapse-btn" type="button" @onclick="ToggleSidebarMinimized" title="Collapse sidebar">
-                    <i class="fa-solid @(IsSidebarMinimized ? "fa-chevron-right" : "fa-chevron-left")"></i>
-                </button>
-            </div>
-
         </aside>
 
         <main class="">
             @Body
         </main>
-
-        <div class="filter-panel @(ShowFilters ? "open" : "")">
-            <div class="filter-header">
-                <h3>Filters</h3>
-            </div>
-            <div class="filter-content">
-                <div class="filter-group">
-                    <label>Interested In</label>
-                    <div class="filter-options">
-                        <button type="button" class="filter-option @(SelectedGender == "" ? "active" : "")" @onclick='() => SelectedGender = ""'>Everyone</button>
-                        <button type="button" class="filter-option @(SelectedGender == "Female" ? "active" : "")" @onclick='() => SelectedGender = "Female"'>Women</button>
-                        <button type="button" class="filter-option @(SelectedGender == "Male" ? "active" : "")" @onclick='() => SelectedGender = "Male"'>Men</button>
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <label>Age Range: <span>@MinAge - @MaxAge</span></label>
-                    <div class="dual-range">
-                        <div class="range-track"></div>
-                        <input type="range" min="18" max="65" @bind="MinAge" />
-                        <input type="range" min="18" max="65" @bind="MaxAge" />
-                    </div>
-                </div>
-                <div class="filter-group">
-                    <label>Hair Color</label>
-                    <select class="filter-select" @bind="HairColor">
-                        <option value="">Any</option>
-                        <option>Black</option><option>Brown</option><option>Blonde</option>
-                        <option>Red</option><option>Auburn</option><option>Grey</option><option>White</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Skin Tone</label>
-                    <select class="filter-select" @bind="SkinTone">
-                        <option value="">Any</option>
-                        <option>Fair</option><option>Light</option><option>Medium</option>
-                        <option>Olive</option><option>Tan</option><option>Dark</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Eye Color</label>
-                    <select class="filter-select" @bind="EyeColor">
-                        <option value="">Any</option>
-                        <option>Brown</option><option>Blue</option><option>Green</option>
-                        <option>Hazel</option><option>Grey</option><option>Amber</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Body Type</label>
-                    <select class="filter-select" @bind="BodyType">
-                        <option value="">Any</option>
-                        <option>Slim</option><option>Athletic</option><option>Average</option>
-                        <option>Curvy</option><option>Muscular</option><option>Plus Size</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Ethnicity</label>
-                    <select class="filter-select" @bind="Ethnicity">
-                        <option value="">Any</option>
-                        <option>White</option><option>Black</option><option>Asian</option>
-                        <option>Hispanic</option><option>Middle Eastern</option><option>Mixed</option><option>Other</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Smoking</label>
-                    <select class="filter-select" @bind="Smoking">
-                        <option value="">Any</option>
-                        <option>Never</option><option>Occasionally</option><option>Regularly</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Drinking</label>
-                    <select class="filter-select" @bind="Drinking">
-                        <option value="">Any</option>
-                        <option>Never</option><option>Rarely</option><option>Socially</option>
-                        <option>Occasionally</option><option>Regularly</option>
-                    </select>
-                </div>
-            </div>
-            <div class="filter-actions">
-                <button class="btn btn-ghost" @onclick="ResetFilters">Reset</button>
-                <button class="btn btn-primary" @onclick="ApplyFilters">Apply Filters</button>
-            </div>
-        </div>
     </div>
 </div>
 
+<!-- LOGIN BLOCKER MODAL -->
+@if (!Session.IsLoggedIn)
+{
+    <div class="login-blocker">
+        <div class="login-blocker-content">
+            <h2>You're not logged in</h2>
+            <p>Please log in to access Pairly.</p>
+            <a href="/login" class="btn btn-primary">Go to Login</a>
+        </div>
+    </div>
+}
+
 @code {
-    private string user = "user";
-    bool ShowFilters = false;
-    bool ShowNotifications = false;
-    bool IsSidebarMinimized = false;
-    bool ShowSidebarOptions = false;
-    bool HasUnreadNotifications = false;
+    string Username = "Guest";
 
-    void ToggleFilters() => ShowFilters = !ShowFilters;
-    void ToggleNotifications() => ShowNotifications = !ShowNotifications;
-    void ToggleSidebarOptions() => ShowSidebarOptions = !ShowSidebarOptions;
-    void ToggleSidebarMinimized() => IsSidebarMinimized = !IsSidebarMinimized;
-    void MarkNotificationsAsRead() => HasUnreadNotifications = false;
-
-    void CloseNotifications()
+    protected override void OnInitialized()
     {
-        if (ShowNotifications) ShowNotifications = false;
-    }
-
-    string SelectedGender = "";
-    int MinAge = 18;
-    int MaxAge = 35;
-    string HairColor = "";
-    string SkinTone = "";
-    string EyeColor = "";
-    string BodyType = "";
-    string Ethnicity = "";
-    string Smoking = "";
-    string Drinking = "";
-
-    void ResetFilters()
-    {
-        SelectedGender = "";
-        MinAge = 18;
-        MaxAge = 35;
-        HairColor = "";
-        SkinTone = "";
-        EyeColor = "";
-        BodyType = "";
-        Ethnicity = "";
-        Smoking = "";
-        Drinking = "";
-    }
-
-    void ApplyFilters()
-    {
-        ShowFilters = false;
-        Console.WriteLine("Filters applied");
+        if (Session.IsLoggedIn)
+        {
+            Username = Session.Username;
+        }
     }
 }
