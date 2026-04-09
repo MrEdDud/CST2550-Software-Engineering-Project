@@ -137,6 +137,8 @@
             <select class="filter-select" @bind="Smoking">
                 <option value="">Any</option>
                 <option>Never</option>
+                <option>Rarely</option>
+                <option>Socially</option>
                 <option>Occasionally</option>
                 <option>Regularly</option>
             </select>
@@ -269,7 +271,7 @@ else
     private async Task LoadProfilesAsync()
     {
         isLoading = true;
-
+        
         var currentUserId = Session.UserId ?? 0;
         if (currentUserId == 0)
         {
