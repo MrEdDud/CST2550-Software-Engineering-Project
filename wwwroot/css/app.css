@@ -556,6 +556,11 @@ input.form-control {
 
 .page {
     padding: 8px 0;
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .page-title {
@@ -953,7 +958,6 @@ input.form-control {
     color: black;
     transition: 0.2s;
 }
-<<<<<<< HEAD
 
 .empty-state .btn:hover i {
     color: white;
@@ -1461,12 +1465,6 @@ input.form-control {
     }
 }
 
-=======
-    .empty-state .btn:hover i {
-        color: white;
-    }
-
->>>>>>> 5bb387e (aaron settings page)
 /* 
 =========================================================
    SETTINGS PAGE
@@ -1559,7 +1557,6 @@ input.form-control {
     margin-top: 16px;
     color: #666;
     font-size: 0.95rem;
-<<<<<<< HEAD
 }
 
 
@@ -2074,6 +2071,4 @@ input.form-control {
     background: none;
     cursor: pointer;
     border-radius: 8px;
-=======
->>>>>>> 5bb387e (aaron settings page)
 }
