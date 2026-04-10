@@ -1,0 +1,131 @@
+Users database:
+
+CREATE TABLE [dbo].[Users] (
+    [Id]           INT            IDENTITY (1, 1) NOT NULL,
+    [Username]     NVARCHAR (50)  NOT NULL,
+    [Email]        NVARCHAR (450) NOT NULL,
+    [PasswordHash] NVARCHAR (MAX) NOT NULL,
+    [CreatedAt]    DATETIME2 (7)  NOT NULL,
+    [LastActive]   DATETIME2 (7)  NOT NULL,
+    [IsActive]     BIT            NOT NULL,
+    CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Users_Email]
+    ON [dbo].[Users]([Email] ASC);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Users_Username]
+    ON [dbo].[Users]([Username] ASC);
+
+---------------------------------------------------------------
+
+Profiles database:
+
+CREATE TABLE [dbo].[Profiles] (
+    [Id]              INT            IDENTITY (1, 1) NOT NULL,
+    [UserId]          INT            NOT NULL,
+    [Name]            NVARCHAR (100) NOT NULL,
+    [Age]             INT            NOT NULL,
+    [Gender]          NVARCHAR (20)  NULL,
+    [LookingFor]      NVARCHAR (20)  NULL,
+    [Bio]             NVARCHAR (500) NULL,
+    [Location]        NVARCHAR (100) NULL,
+    [ProfilePhotoUrl] NVARCHAR (MAX) CONSTRAINT [DF_Profiles_ProfilePhotoUrl] DEFAULT ('https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400') NULL,
+    [PhotosJson]      NVARCHAR (MAX) NULL,
+    [HairColor]       NVARCHAR (30)  NULL,
+    [SkinTone]        NVARCHAR (30)  NULL,
+    [EyeColor]        NVARCHAR (30)  NULL,
+    [BodyType]        NVARCHAR (20)  NULL,
+    [Ethnicity]       NVARCHAR (50)  NULL,
+    [HeightCm]        INT            NULL,
+    [Smoking]         NVARCHAR (30)  NULL,
+    [Drinking]        NVARCHAR (30)  NULL,
+    [UpdatedAt]       DATETIME2 (7)  NOT NULL,
+    CONSTRAINT [PK_Profiles] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Profiles_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([Id]) ON DELETE CASCADE
+);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Profiles_UserId]
+    ON [dbo].[Profiles]([UserId] ASC);
+
+---------------------------------------------------------------
+
+Messages database:
+
+CREATE TABLE [dbo].[Messages] (
+    [Id]       INT            IDENTITY (1, 1) NOT NULL,
+    [MatchId]  INT            NOT NULL,
+    [SenderId] INT            NOT NULL,
+    [Content]  NVARCHAR (MAX) NOT NULL,
+    [SentAt]   DATETIME2 (7)  NOT NULL,
+    [IsRead]   BIT            NOT NULL,
+    CONSTRAINT [PK_Messages] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Messages_Matches_MatchId] FOREIGN KEY ([MatchId]) REFERENCES [dbo].[Matches] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_Messages_Users_SenderId] FOREIGN KEY ([SenderId]) REFERENCES [dbo].[Users] ([Id])
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Messages_MatchId]
+    ON [dbo].[Messages]([MatchId] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Messages_SenderId]
+    ON [dbo].[Messages]([SenderId] ASC);
+
+---------------------------------------------------------------
+
+Matches database:
+
+CREATE TABLE [dbo].[Matches] (
+    [Id]        INT           IDENTITY (1, 1) NOT NULL,
+    [User1Id]   INT           NOT NULL,
+    [User2Id]   INT           NOT NULL,
+    [MatchedAt] DATETIME2 (7) NOT NULL,
+    [IsActive]  BIT           NOT NULL,
+    CONSTRAINT [PK_Matches] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Matches_Users_User1Id] FOREIGN KEY ([User1Id]) REFERENCES [dbo].[Users] ([Id]),
+    CONSTRAINT [FK_Matches_Users_User2Id] FOREIGN KEY ([User2Id]) REFERENCES [dbo].[Users] ([Id])
+);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Matches_User1Id_User2Id]
+    ON [dbo].[Matches]([User1Id] ASC, [User2Id] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Matches_User2Id]
+    ON [dbo].[Matches]([User2Id] ASC);
+
+---------------------------------------------------------------
+
+Likes database:
+
+CREATE TABLE [dbo].[Likes] (
+    [Id]          INT           IDENTITY (1, 1) NOT NULL,
+    [FromUserId]  INT           NOT NULL,
+    [ToUserId]    INT           NOT NULL,
+    [IsSuperLike] BIT           NOT NULL,
+    [CreatedAt]   DATETIME2 (7) NOT NULL,
+    CONSTRAINT [PK_Likes] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [FK_Likes_Users_FromUserId] FOREIGN KEY ([FromUserId]) REFERENCES [dbo].[Users] ([Id]),
+    CONSTRAINT [FK_Likes_Users_ToUserId] FOREIGN KEY ([ToUserId]) REFERENCES [dbo].[Users] ([Id])
+);
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Likes_FromUserId_ToUserId]
+    ON [dbo].[Likes]([FromUserId] ASC, [ToUserId] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Likes_ToUserId]
+    ON [dbo].[Likes]([ToUserId] ASC);
