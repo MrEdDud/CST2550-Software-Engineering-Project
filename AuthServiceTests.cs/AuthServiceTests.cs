@@ -20,7 +20,7 @@ namespace CST2550Project.Tests
     {
         // Helper method to create a fresh, empty fake database for each test
         private DatingAppContext GetInMemoryDbContext(string dbName)
-        {
+        {   
             var options = new DbContextOptionsBuilder<DatingAppContext>()
                 .UseInMemoryDatabase(databaseName: dbName)
                 .Options;
@@ -50,13 +50,10 @@ namespace CST2550Project.Tests
 
             var newUserDto = new RegisterDto
             {
-                Username = "TestUser",
+                Name = "TestUser",
                 Email = "test@test.com",
                 Password = "Password123!",
-                Name = "Test Name",
-                Age = 22,
-                Gender = "Male",
-                LookingFor = "Female"
+                Age = 22
             };
 
             // 2. ACT
@@ -86,9 +83,10 @@ namespace CST2550Project.Tests
 
             var duplicateDto = new RegisterDto
             {
-                Username = "ExistingUser", // Same username!
+                Name = "ExistingUser", // Same username!
                 Email = "different@test.com",
-                Password = "Password123!"
+                Password = "Password123!",
+                Age = 25
             };
 
             // 2 & 3. ACT & ASSERT (NUnit) - use try/catch to avoid async assertion overload differences
@@ -114,10 +112,10 @@ namespace CST2550Project.Tests
             // Register a user first so they are hashed properly in the DB
             await service.RegisterAsync(new RegisterDto
             {
-                Username = "LoginTester",
+                Name = "LoginTester",
                 Email = "login@test.com",
                 Password = "MySecretPassword123",
-                Gender = "Female"
+                Age = 21
             });
 
             var loginDto = new LoginDto
@@ -145,10 +143,10 @@ namespace CST2550Project.Tests
 
             await service.RegisterAsync(new RegisterDto
             {
-                Username = "WrongPassTester",
+                Name = "WrongPassTester",
                 Email = "wrong@test.com",
                 Password = "CorrectPassword123",
-                Gender = "Male"
+                Age = 22
             });
 
             var loginDto = new LoginDto
