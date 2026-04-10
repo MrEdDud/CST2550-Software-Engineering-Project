@@ -25,6 +25,7 @@ The project is built using C# (.NET) with a layered architecture including front
 - `report.pdf` → Final coursework report (design, analysis, testing, conclusion)
 - `daily-meetings.pdf` → Full Scrum documentation (35 daily stand-up meetings)
 - `sql-statements.txt` → SQL scripts used to create and manage the database schema
+- `video-demo.mp4` → Video demonstration of the web application
 
 ---
 
