@@ -12,9 +12,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddDbContext<DatingAppContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+// Use an in-memory database during development by default or when configured.
+var useInMemory = builder.Configuration.GetValue<bool>("UseInMemoryDatabase") || builder.Environment.IsDevelopment();
+if (useInMemory)
+{
+    builder.Services.AddDbContext<DatingAppContext>(options => 
+        options.UseInMemoryDatabase("DatingAppInMemory")); 
+}
+else
+{
+    builder.Services.AddDbContext<DatingAppContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+}
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ProfileService>();

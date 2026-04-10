@@ -69,5 +69,31 @@ namespace CST2550Project.Models
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public User? User { get; set; }
+
+        [Range(18, 120)]
+        public int MinAge { get; set; } = 18;
+
+        [Range(18, 120)]
+        public int MaxAge { get; set; } = 100;
+
+        // Interests stored as JSON in the DB
+        public string InterestsJson { get; set; } = "[]";
+
+        [NotMapped]
+        public List<string> Interests
+        {
+            get => string.IsNullOrWhiteSpace(InterestsJson) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(InterestsJson)!;
+            set => InterestsJson = JsonSerializer.Serialize(value);
+        }
+
+        // Hobbies stored as JSON in the DB
+        public string HobbiesJson { get; set; } = "[]";
+
+        [NotMapped]
+        public List<string> Hobbies
+        {
+            get => string.IsNullOrWhiteSpace(HobbiesJson) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(HobbiesJson)!;
+            set => HobbiesJson = JsonSerializer.Serialize(value);
+        }
     }
 }
